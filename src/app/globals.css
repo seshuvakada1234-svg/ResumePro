@@ -1,0 +1,88 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Times New Roman", Times, serif;
+}
+
+@layer base {
+  body {
+    @apply bg-gray-50 text-gray-900 antialiased;
+  }
+}
+
+@layer components {
+  .a4-page {
+    width: 210mm;
+    min-height: 297mm;
+    padding: 20mm;
+    margin: 0 auto;
+    background: white;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Responsive A4 scaling for preview */
+  .a4-preview-container {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 2rem 1rem;
+    display: flex;
+    justify-content: center;
+    background: #f3f4f6;
+    border-radius: 1rem;
+  }
+
+  .a4-preview-scale {
+    transform-origin: top center;
+    transition: transform 0.3s ease;
+  }
+
+  @media (max-width: 1024px) {
+    .a4-preview-scale {
+      transform: scale(0.8);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .a4-preview-scale {
+      transform: scale(0.6);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .a4-preview-scale {
+      transform: scale(0.4);
+    }
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
