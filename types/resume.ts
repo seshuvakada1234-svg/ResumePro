@@ -4,6 +4,20 @@ export interface PersonalInfo {
   phone: string;
   location: string;
   summary: string;
+  profileImage?: string;
+  linkedin?: string;
+  github?: string;
+  website?: string;
+}
+
+export interface Skill {
+  name: string;
+  level: number;
+}
+
+export interface Language {
+  name: string;
+  level: number;
 }
 
 export interface Education {
@@ -25,7 +39,7 @@ export interface Project {
   link?: string;
 }
 
-export type ResumeTemplate = 'classic' | 'modern' | 'minimal' | 'executive' | 'fresher-india' | 'two-column';
+export type ResumeTemplate = 'classic' | 'modern' | 'minimal' | 'executive' | 'fresher-india' | 'two-column' | 'premium';
 
 export interface ResumeData {
   id?: string;
@@ -35,7 +49,8 @@ export interface ResumeData {
   personalInfo: PersonalInfo;
   education: Education[];
   experience: Experience[];
-  skills: string[];
+  skills: Skill[];
+  languages: Language[];
   projects: Project[];
   createdAt?: string;
   updatedAt?: string;
@@ -44,16 +59,21 @@ export interface ResumeData {
 export const defaultResumeData: ResumeData = {
   uid: '',
   title: 'My Resume',
-  template: 'classic',
+  template: 'premium',
   personalInfo: {
     fullName: '',
     email: '',
     phone: '',
     location: '',
     summary: '',
+    profileImage: '',
+    linkedin: '',
+    github: '',
+    website: '',
   },
   education: [{ school: '', degree: '', year: '' }],
   experience: [{ company: '', position: '', duration: '', description: '' }],
   skills: [],
+  languages: [],
   projects: [{ name: '', description: '', link: '' }],
 };

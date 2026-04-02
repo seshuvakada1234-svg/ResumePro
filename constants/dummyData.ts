@@ -31,7 +31,21 @@ export const dummyResumeData: ResumeData = {
       description: '• Developed and maintained React components for a customer-facing dashboard.\n• Optimized database queries, reducing load times by 20%.\n• Collaborated with the UI/UX team to implement responsive designs.',
     },
   ],
-  skills: ['React', 'TypeScript', 'Node.js', 'Python', 'SQL', 'Git', 'Tailwind CSS', 'AWS'],
+  skills: [
+    { name: 'React', level: 90 },
+    { name: 'TypeScript', level: 85 },
+    { name: 'Node.js', level: 80 },
+    { name: 'Python', level: 75 },
+    { name: 'SQL', level: 70 },
+    { name: 'Git', level: 95 },
+    { name: 'Tailwind CSS', level: 90 },
+    { name: 'AWS', level: 65 }
+  ],
+  languages: [
+    { name: 'English', level: 100 },
+    { name: 'Hindi', level: 100 },
+    { name: 'Marathi', level: 80 }
+  ],
   projects: [
     {
       name: 'E-Commerce Platform',

@@ -1,12 +1,20 @@
-import { initializeApp, getApps, getApp } from 'firebase/app';
+import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, User } from 'firebase/auth';
-import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, deleteDoc, onSnapshot, query, where, getDocFromServer } from 'firebase/firestore';
-import firebaseConfig from '../../firebase-applet-config.json';
+import { initializeFirestore, collection, doc, getDoc, setDoc, updateDoc, deleteDoc, onSnapshot, query, where, getDocFromServer } from 'firebase/firestore';
+import { getStorage } from 'firebase/storage';
+import firebaseConfig from '../firebase-applet-config.json';
 
 // Initialize Firebase
-const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
-export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
+const app = initializeApp(firebaseConfig);
+
+// Use initializeFirestore with experimentalForceLongPolling: true to prevent idle stream timeouts
+// in environments with strict connection limits (like Cloud Run or behind proxies).
+export const db = initializeFirestore(app, {
+  experimentalForceLongPolling: true,
+}, firebaseConfig.firestoreDatabaseId);
+
 export const auth = getAuth(app);
+export const storage = getStorage(app);
 export const googleProvider = new GoogleAuthProvider();
 
 // Auth Helpers
@@ -43,8 +51,21 @@ export interface FirestoreErrorInfo {
 }
 
 export function handleFirestoreError(error: unknown, operationType: OperationType, path: string | null) {
+  const errorMessage = error instanceof Error ? error.message : String(error);
+
+  // Ignore benign connection cancellations or idle stream timeouts
+  // These are often transient and handled by the SDK's reconnection logic.
+  if (
+    errorMessage.includes('CANCELLED') || 
+    errorMessage.includes('Disconnecting idle stream') ||
+    errorMessage.includes('Timed out waiting for new targets')
+  ) {
+    console.warn(`Benign Firestore connection message (${operationType} on ${path}):`, errorMessage);
+    return;
+  }
+
   const errInfo: FirestoreErrorInfo = {
-    error: error instanceof Error ? error.message : String(error),
+    error: errorMessage,
     authInfo: {
       userId: auth.currentUser?.uid,
       email: auth.currentUser?.email,
@@ -67,7 +88,6 @@ export function handleFirestoreError(error: unknown, operationType: OperationTyp
 
 // Connection Test
 async function testConnection() {
-  if (typeof window === 'undefined') return;
   try {
     await getDocFromServer(doc(db, 'test', 'connection'));
   } catch (error) {
@@ -76,6 +96,4 @@ async function testConnection() {
     }
   }
 }
-if (typeof window !== 'undefined') {
-  testConnection();
-}
+testConnection();

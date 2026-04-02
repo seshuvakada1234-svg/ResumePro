@@ -1,0 +1,153 @@
+@import "tailwindcss";
+
+@theme {
+  /* Redefine colors using HEX to remove oklch for PDF compatibility */
+  --color-indigo-50: #eef2ff;
+  --color-indigo-100: #e0e7ff;
+  --color-indigo-200: #c7d2fe;
+  --color-indigo-300: #a5b4fc;
+  --color-indigo-400: #818cf8;
+  --color-indigo-500: #6366f1;
+  --color-indigo-600: #4f46e5;
+  --color-indigo-700: #4338ca;
+  --color-indigo-800: #3730a3;
+  --color-indigo-900: #1e1b4b;
+
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
+
+  --color-slate-50: #f8fafc;
+  --color-slate-100: #f1f5f9;
+  --color-slate-200: #e2e8f0;
+  --color-slate-300: #cbd5e1;
+  --color-slate-400: #94a3b8;
+  --color-slate-500: #64748b;
+  --color-slate-600: #475569;
+  --color-slate-700: #334155;
+  --color-slate-800: #1e293b;
+  --color-slate-900: #0f172a;
+
+  --color-purple-600: #9333ea;
+}
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+body {
+  color: #111827;
+  background: #f9fafb;
+}
+
+/* A4 Layout Styles */
+.a4-preview-container {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  overflow: auto;
+  padding: 40px;
+  background: #f3f4f6;
+}
+
+.a4-preview-scale {
+  transform-origin: top center;
+  transition: transform 0.3s ease;
+}
+
+.a4-page {
+  width: 210mm;
+  min-height: 297mm;
+  background: #ffffff;
+  margin: auto;
+  padding: 20mm;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  box-sizing: border-box;
+}
+
+@media (max-width: 1024px) {
+  .a4-preview-scale { transform: scale(0.8); }
+}
+
+@media (max-width: 768px) {
+  .a4-preview-scale { transform: scale(0.6); }
+}
+
+@media (max-width: 480px) {
+  .a4-preview-scale { transform: scale(0.4); }
+}
+
+/* PDF Safe Colors (Fixes oklch error in html2canvas) */
+.pdf-safe {
+  background-color: #ffffff !important;
+}
+
+.pdf-safe * {
+  /* Force HEX colors and avoid CSS variables for PDF compatibility */
+  color: #111827 !important;
+  background-color: white !important;
+  border-color: #e5e7eb !important;
+}
+
+/* Map common Tailwind colors to Hex for PDF compatibility */
+.pdf-safe .text-gray-900 { color: #111827 !important; }
+.pdf-safe .text-gray-800 { color: #1f2937 !important; }
+.pdf-safe .text-gray-700 { color: #374151 !important; }
+.pdf-safe .text-gray-600 { color: #4b5563 !important; }
+.pdf-safe .text-gray-500 { color: #6b7280 !important; }
+.pdf-safe .text-gray-400 { color: #9ca3af !important; }
+
+.pdf-safe .text-slate-900 { color: #0f172a !important; }
+.pdf-safe .text-slate-800 { color: #1e293b !important; }
+.pdf-safe .text-slate-700 { color: #334155 !important; }
+.pdf-safe .text-slate-600 { color: #475569 !important; }
+.pdf-safe .text-slate-500 { color: #64748b !important; }
+.pdf-safe .text-slate-400 { color: #94a3b8 !important; }
+.pdf-safe .text-slate-300 { color: #cbd5e1 !important; }
+.pdf-safe .text-slate-200 { color: #e2e8f0 !important; }
+
+.pdf-safe .text-indigo-900 { color: #1e1b4b !important; }
+.pdf-safe .text-indigo-800 { color: #3730a3 !important; }
+.pdf-safe .text-indigo-700 { color: #4338ca !important; }
+.pdf-safe .text-indigo-600 { color: #4f46e5 !important; }
+.pdf-safe .text-indigo-500 { color: #6366f1 !important; }
+.pdf-safe .text-indigo-400 { color: #818cf8 !important; }
+.pdf-safe .text-indigo-200 { color: #c7d2fe !important; }
+.pdf-safe .text-indigo-100 { color: #e0e7ff !important; }
+
+.pdf-safe .bg-indigo-900 { background-color: #1e1b4b !important; }
+.pdf-safe .bg-indigo-700 { background-color: #4338ca !important; }
+.pdf-safe .bg-indigo-600 { background-color: #4f46e5 !important; }
+.pdf-safe .bg-indigo-50 { background-color: #eef2ff !important; }
+
+.pdf-safe .bg-slate-900 { background-color: #0f172a !important; }
+.pdf-safe .bg-slate-800 { background-color: #1e293b !important; }
+.pdf-safe .bg-slate-700 { background-color: #334155 !important; }
+.pdf-safe .bg-slate-50 { background-color: #f8fafc !important; }
+
+.pdf-safe .bg-gray-100 { background-color: #f3f4f6 !important; }
+.pdf-safe .bg-gray-50 { background-color: #f9fafb !important; }
+
+.pdf-safe .bg-purple-600 { background-color: #9333ea !important; }
+
+.pdf-safe .border-gray-800 { border-color: #1f2937 !important; }
+.pdf-safe .border-gray-300 { border-color: #d1d5db !important; }
+.pdf-safe .border-gray-200 { border-color: #e5e7eb !important; }
+.pdf-safe .border-gray-100 { border-color: #f3f4f6 !important; }
+
+.pdf-safe .border-slate-700 { border-color: #334155 !important; }
+.pdf-safe .border-slate-100 { border-color: #f1f5f9 !important; }
+
+.pdf-safe .border-indigo-600 { border-color: #4f46e5 !important; }
+.pdf-safe .border-indigo-100 { border-color: #e0e7ff !important; }

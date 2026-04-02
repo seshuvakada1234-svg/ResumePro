@@ -2,21 +2,25 @@ import React from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { ResumeData, ResumeTemplate } from '../types/resume';
-import { Plus, Trash2, Save, Sparkles, Layout } from 'lucide-react';
+import { ResumeData, ResumeTemplate } from '@/types/resume';
+import { Plus, Trash2, Save, Sparkles, Layout, Upload, Image as ImageIcon } from 'lucide-react';
 import { AdUnit } from './AdUnit';
 
 const resumeSchema = z.object({
   id: z.string().optional(),
   uid: z.string(),
   title: z.string().min(1, 'Title is required'),
-  template: z.enum(['classic', 'modern', 'minimal', 'executive', 'fresher-india', 'two-column']),
+  template: z.enum(['classic', 'modern', 'minimal', 'executive', 'fresher-india', 'two-column', 'premium']),
   personalInfo: z.object({
     fullName: z.string().min(1, 'Full Name is required'),
     email: z.string().email('Invalid email'),
     phone: z.string().min(1, 'Phone is required'),
     location: z.string().min(1, 'Location is required'),
     summary: z.string().min(10, 'Summary should be at least 10 characters'),
+    profileImage: z.string().optional(),
+    linkedin: z.string().optional(),
+    github: z.string().optional(),
+    website: z.string().optional(),
   }),
   education: z.array(z.object({
     school: z.string().min(1, 'School is required'),
@@ -29,7 +33,14 @@ const resumeSchema = z.object({
     duration: z.string().min(1, 'Duration is required'),
     description: z.string().min(1, 'Description is required'),
   })),
-  skills: z.array(z.string()).min(1, 'At least one skill is required'),
+  skills: z.array(z.object({
+    name: z.string().min(1, 'Skill name is required'),
+    level: z.number().min(0).max(100),
+  })).min(1, 'At least one skill is required'),
+  languages: z.array(z.object({
+    name: z.string().min(1, 'Language name is required'),
+    level: z.number().min(0).max(100),
+  })),
   projects: z.array(z.object({
     name: z.string().min(1, 'Project name is required'),
     description: z.string().min(1, 'Description is required'),
@@ -47,6 +58,18 @@ interface ResumeFormProps {
 }
 
 export const ResumeForm: React.FC<ResumeFormProps> = ({ initialData, onChange, onSave, isSaving }) => {
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64String = reader.result as string;
+      setValue('personalInfo.profileImage', base64String);
+    };
+    reader.readAsDataURL(file);
+  };
+
   const { register, control, handleSubmit, watch, setValue, reset, formState: { errors } } = useForm<ResumeData>({
     resolver: zodResolver(resumeSchema),
     defaultValues: initialData,
@@ -55,6 +78,8 @@ export const ResumeForm: React.FC<ResumeFormProps> = ({ initialData, onChange, o
   const { fields: eduFields, append: appendEdu, remove: removeEdu } = useFieldArray({ control, name: 'education' });
   const { fields: expFields, append: appendExp, remove: removeExp } = useFieldArray({ control, name: 'experience' });
   const { fields: projFields, append: appendProj, remove: removeProj } = useFieldArray({ control, name: 'projects' });
+  const { fields: skillFields, append: appendSkill, remove: removeSkill } = useFieldArray({ control, name: 'skills' });
+  const { fields: langFields, append: appendLang, remove: removeLang } = useFieldArray({ control, name: 'languages' });
 
   const watchedData = watch();
   const currentTemplate = watchedData.template;
@@ -97,7 +122,7 @@ export const ResumeForm: React.FC<ResumeFormProps> = ({ initialData, onChange, o
           <div className="bg-indigo-100 p-1 rounded-md text-indigo-600"><Layout size={14} /></div> Choose Template
         </h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
-          {(['classic', 'modern', 'minimal', 'executive', 'fresher-india', 'two-column'] as ResumeTemplate[]).map((t) => (
+          {(['classic', 'modern', 'minimal', 'executive', 'fresher-india', 'two-column', 'premium'] as ResumeTemplate[]).map((t) => (
             <button
               key={t}
               type="button"
@@ -149,13 +174,61 @@ export const ResumeForm: React.FC<ResumeFormProps> = ({ initialData, onChange, o
             {errors.personalInfo?.location && <p className="text-xs text-red-500">{errors.personalInfo.location.message}</p>}
           </div>
           <div className="space-y-1 md:col-span-2">
+            <label className="text-sm font-medium text-gray-600">Profile Photo</label>
+            <div className="flex flex-col items-center gap-4 p-6 border-2 border-dashed border-gray-200 rounded-2xl bg-gray-50/30 hover:bg-gray-50/50 transition-all group relative">
+              <div className="relative w-32 h-32">
+                {/* Image Container */}
+                <div className="w-full h-full rounded-full overflow-hidden border-4 border-white shadow-xl transition-all duration-500 group-hover:scale-105">
+                  {watchedData.personalInfo.profileImage ? (
+                    <img 
+                      src={watchedData.personalInfo.profileImage} 
+                      alt="Profile" 
+                      className="w-full h-full object-cover" 
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-indigo-50 flex flex-col items-center justify-center text-indigo-300">
+                      <ImageIcon size={48} strokeWidth={1.5} />
+                    </div>
+                  )}
+                </div>
+
+                {/* Hover Overlay (Change Photo) */}
+                <label className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-all cursor-pointer backdrop-blur-[2px]">
+                  <div className="flex flex-col items-center gap-1 text-white">
+                    <Upload size={24} />
+                    <span className="text-[10px] font-bold uppercase tracking-wider">Change Photo</span>
+                  </div>
+                  <input 
+                    type="file" 
+                    className="hidden" 
+                    accept="image/*" 
+                    onChange={handleImageChange}
+                  />
+                </label>
+              </div>
+              
+              <div className="text-center space-y-1">
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest">Profile Picture</p>
+                <p className="text-[10px] text-gray-400">JPG or PNG, max 2MB. Professional photos recommended.</p>
+              </div>
+            </div>
+          </div>
+          <div className="space-y-1">
+            <label className="text-sm font-medium text-gray-600">LinkedIn URL</label>
+            <input {...register('personalInfo.linkedin')} className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="linkedin.com/in/username" />
+          </div>
+          <div className="space-y-1">
+            <label className="text-sm font-medium text-gray-600">GitHub URL</label>
+            <input {...register('personalInfo.github')} className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="github.com/username" />
+          </div>
+          <div className="space-y-1 md:col-span-2">
             <label className="text-sm font-medium text-gray-600 flex items-center justify-between">
               Professional Summary
               <button 
                 type="button" 
                 onClick={() => {
                   const name = watchedData.personalInfo.fullName || 'a Fresher';
-                  const skills = watchedData.skills?.join(', ') || 'various technologies';
+                  const skills = watchedData.skills?.map(s => s.name).join(', ') || 'various technologies';
                   const suggestion = `Dedicated and motivated ${name} with a strong foundation in ${skills}. Eager to leverage technical skills and problem-solving abilities to contribute to innovative projects and grow in a professional environment.`;
                   setValue('personalInfo.summary', suggestion);
                 }}
@@ -225,39 +298,55 @@ export const ResumeForm: React.FC<ResumeFormProps> = ({ initialData, onChange, o
 
       {/* Skills */}
       <section className="space-y-4">
-        <h3 className="text-lg font-medium text-gray-700 flex items-center gap-2">
-          <div className="w-1 h-6 bg-indigo-500 rounded-full" />
-          Skills
-        </h3>
-        <div className="space-y-2">
-          <input
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                e.preventDefault();
-                const val = e.currentTarget.value.trim();
-                if (val) {
-                  const currentSkills = watchedData.skills || [];
-                  setValue('skills', [...currentSkills, val]);
-                  e.currentTarget.value = '';
-                }
-              }
-            }}
-            placeholder="Type a skill and press Enter"
-            className="w-full px-3 py-2 border border-gray-200 rounded-lg outline-none"
-          />
-          <div className="flex flex-wrap gap-2">
-            {watchedData.skills?.map((skill, index) => (
-              <span key={index} className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-sm flex items-center gap-1">
-                {skill}
-                <button type="button" onClick={() => {
-                  const newSkills = watchedData.skills.filter((_, i) => i !== index);
-                  setValue('skills', newSkills);
-                }} className="hover:text-red-500">
-                  <Trash2 size={12} />
-                </button>
-              </span>
-            ))}
-          </div>
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-medium text-gray-700 flex items-center gap-2">
+            <div className="w-1 h-6 bg-indigo-500 rounded-full" />
+            Skills
+          </h3>
+          <button type="button" onClick={() => appendSkill({ name: '', level: 80 })} className="text-indigo-600 hover:text-indigo-700 flex items-center gap-1 text-sm font-medium">
+            <Plus size={16} /> Add Skill
+          </button>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {skillFields.map((field, index) => (
+            <div key={field.id} className="p-3 border border-gray-100 rounded-lg bg-gray-50/50 flex flex-col gap-2 relative group">
+              <button type="button" onClick={() => removeSkill(index)} className="absolute top-2 right-2 text-gray-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100">
+                <Trash2 size={14} />
+              </button>
+              <input {...register(`skills.${index}.name`)} placeholder="Skill Name" className="w-full px-2 py-1 bg-transparent border-b border-gray-200 outline-none text-sm" />
+              <div className="flex items-center gap-3">
+                <input type="range" {...register(`skills.${index}.level`, { valueAsNumber: true })} className="flex-1 h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-600" />
+                <span className="text-xs font-bold text-indigo-600 w-8">{watchedData.skills?.[index]?.level}%</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Languages */}
+      <section className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-medium text-gray-700 flex items-center gap-2">
+            <div className="w-1 h-6 bg-indigo-500 rounded-full" />
+            Languages
+          </h3>
+          <button type="button" onClick={() => appendLang({ name: '', level: 100 })} className="text-indigo-600 hover:text-indigo-700 flex items-center gap-1 text-sm font-medium">
+            <Plus size={16} /> Add Language
+          </button>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {langFields.map((field, index) => (
+            <div key={field.id} className="p-3 border border-gray-100 rounded-lg bg-gray-50/50 flex flex-col gap-2 relative group">
+              <button type="button" onClick={() => removeLang(index)} className="absolute top-2 right-2 text-gray-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100">
+                <Trash2 size={14} />
+              </button>
+              <input {...register(`languages.${index}.name`)} placeholder="Language Name" className="w-full px-2 py-1 bg-transparent border-b border-gray-200 outline-none text-sm" />
+              <div className="flex items-center gap-3">
+                <input type="range" {...register(`languages.${index}.level`, { valueAsNumber: true })} className="flex-1 h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-600" />
+                <span className="text-xs font-bold text-indigo-600 w-8">{watchedData.languages?.[index]?.level}%</span>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 

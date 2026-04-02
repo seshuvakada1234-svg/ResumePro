@@ -1,7 +1,5 @@
-"use client";
-
 import React from 'react';
-import { signInWithGoogle, logout, auth } from '../lib/firebase';
+import { signInWithGoogle, logout, auth } from '@/lib/firebase';
 import { User } from 'firebase/auth';
 import { LogIn, LogOut, User as UserIcon } from 'lucide-react';
 
