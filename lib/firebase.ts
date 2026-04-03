@@ -1,16 +1,21 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, User } from 'firebase/auth';
-import { initializeFirestore, collection, doc, getDoc, setDoc, updateDoc, deleteDoc, onSnapshot, query, where, getDocFromServer } from 'firebase/firestore';
+import { initializeFirestore, collection, doc, getDoc, setDoc, updateDoc, deleteDoc, onSnapshot, query, where, getDocFromServer, setLogLevel } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 import firebaseConfig from '../firebase-applet-config.json';
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Use initializeFirestore with experimentalForceLongPolling: true to prevent idle stream timeouts
-// in environments with strict connection limits (like Cloud Run or behind proxies).
+// Set log level to error to suppress noisy "CANCELLED: Disconnecting idle stream" warnings
+// which are benign but clutter the console.
+setLogLevel('error');
+
+// Use initializeFirestore with experimentalForceLongPolling: true and experimentalAutoDetectLongPolling: false
+// to strictly prevent idle stream timeouts in environments with connection limits (like Cloud Run).
 export const db = initializeFirestore(app, {
   experimentalForceLongPolling: true,
+  experimentalAutoDetectLongPolling: false,
 }, firebaseConfig.firestoreDatabaseId);
 
 export const auth = getAuth(app);

@@ -2,193 +2,351 @@
 
 import React from 'react';
 import { ResumeData } from '@/types/resume';
-import { Mail, Phone, MapPin, Globe, Linkedin, Github } from 'lucide-react';
+import { Mail, Phone, MapPin, Linkedin, Github, ExternalLink } from 'lucide-react';
 
 interface Props {
   data: ResumeData;
 }
 
-const ProgressBar = ({ label, level }: { label: string; level: number }) => (
-  <div className="space-y-1">
-    <div className="flex justify-between text-[10px] font-bold text-gray-500 uppercase tracking-wider">
+const A4_H = 1123;
+
+const SidebarProgressBar = ({ label, level }: { label: string; level: number }) => (
+  <div className="space-y-1.5">
+    <div
+      className="flex justify-between text-[10px] font-semibold uppercase tracking-wider"
+      style={{ color: '#ffffff' }}
+    >
       <span>{label}</span>
       <span>{level}%</span>
     </div>
-    <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
-      <div 
-        className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-1000 ease-out"
-        style={{ width: `${level}%` }}
-      />
+    <div
+      className="h-1.5 w-full rounded-full overflow-hidden"
+      style={{ backgroundColor: '#5c6bc0' }}
+    >
+      <div className="h-full rounded-full" style={{ width: `${level}%`, backgroundColor: '#ffffff' }} />
     </div>
   </div>
 );
 
-const SectionTitle = ({ title }: { title: string }) => (
-  <div className="space-y-2 mb-4">
-    <h2 className="text-base font-semibold text-indigo-600 flex items-center gap-2">
-      <span className="w-1.5 h-1.5 bg-indigo-600 rounded-full" />
-      {title}
-    </h2>
-    <div className="h-[1px] w-full bg-gray-100" />
+// SectionCard: NO h-full — html2canvas can't resolve flex heights
+const SectionCard = ({
+  title,
+  children,
+  padding = 'p-5',
+}: {
+  title: string;
+  children: React.ReactNode;
+  padding?: string;
+}) => (
+  <div
+    className={`rounded-xl ${padding}`}
+    style={{ border: '1px solid #f3f4f6', backgroundColor: '#ffffff' }}
+  >
+    <div className="flex items-center gap-2 mb-4">
+      <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#6366f1' }} />
+      <h2
+        className="text-sm font-bold uppercase tracking-wider"
+        style={{ color: '#4f46e5' }}
+      >
+        {title}
+      </h2>
+    </div>
+    {children}
   </div>
 );
 
 export default function PremiumTemplate({ data }: Props) {
   const { personalInfo, education, experience, skills, languages, projects } = data;
 
+  const validExperience = (experience ?? []).filter(
+    (exp) => exp?.company?.trim() || exp?.position?.trim() || exp?.description?.trim()
+  );
+  const validEducation = (education ?? []).filter(
+    (edu) => edu?.school?.trim() || edu?.degree?.trim() || edu?.year?.trim()
+  );
+  const validProjects = (projects ?? []).filter(
+    (proj) => proj?.name?.trim() || proj?.description?.trim() || proj?.link?.trim()
+  );
+
+  const sectionCount =
+    (personalInfo?.summary ? 1 : 0) +
+    (validExperience.length > 0 ? 1 : 0) +
+    (validEducation.length > 0 ? 1 : 0) +
+    (validProjects.length > 0 ? 1 : 0);
+
+  const cardPadding = sectionCount <= 2 ? 'p-6' : sectionCount >= 4 ? 'p-4' : 'p-5';
+
   return (
-    <div className="a4-page flex flex-col lg:flex-row p-0 overflow-hidden font-sans text-gray-800 bg-white shadow-xl hover:scale-[1.01] transition-all duration-300">
-      {/* Sidebar - 30% on Desktop, Full on Mobile */}
-      <div className="w-full lg:w-[30%] bg-gray-50 p-6 lg:p-8 flex flex-col gap-8 border-b lg:border-b-0 lg:border-r border-gray-100">
-        {/* Profile Section */}
-        <div className="flex flex-col items-center text-center gap-4">
-          <div className="relative group">
+    <div
+      className="font-sans"
+      style={{
+        width: '794px',
+        height: `${A4_H}px`,
+        minHeight: `${A4_H}px`,
+        display: 'flex',
+        flexDirection: 'row',
+        overflow: 'hidden',
+      }}
+    >
+      {/* ── Sidebar ── */}
+      <aside
+        className="flex flex-col gap-6 p-6 text-white"
+        style={{
+          width: '254px',
+          minWidth: '254px',
+          height: `${A4_H}px`,
+          minHeight: `${A4_H}px`,
+          // Inline gradient — survives html2canvas unlike Tailwind classes
+          background: 'linear-gradient(to bottom, #4338ca, #3730a3, #581c87)',
+          flexShrink: 0,
+          overflow: 'hidden',
+        }}
+      >
+        {/* Profile */}
+        <div className="flex flex-col items-start gap-4">
+          <div className="relative">
             {personalInfo?.profileImage ? (
-              <img 
-                src={personalInfo.profileImage} 
+              <img
+                src={personalInfo.profileImage}
                 alt={personalInfo?.fullName}
-                className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg transition-transform duration-300 group-hover:scale-105"
+                className="w-24 h-24 rounded-full object-cover"
+                style={{ border: '4px solid #7986cb' }}
               />
             ) : (
-              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-3xl font-bold shadow-lg transition-transform duration-300 group-hover:scale-105">
+              <div
+                className="w-24 h-24 rounded-full flex items-center justify-center text-white text-3xl font-bold"
+                style={{ background: '#5c6bc0', border: '4px solid #7986cb' }}
+              >
                 {personalInfo?.fullName?.charAt(0) || '?'}
               </div>
             )}
+            <div
+              className="absolute w-5 h-5 bg-green-400 rounded-full"
+              style={{ bottom: '-2px', right: '-2px', border: '3px solid #4338ca' }}
+            />
           </div>
-          
-          <div className="space-y-1">
-            <h1 className="text-2xl font-bold tracking-tight text-gray-900">{personalInfo?.fullName || 'Your Name'}</h1>
-            <p className="text-sm text-gray-500 font-medium">{experience?.[0]?.position || 'Professional Role'}</p>
-            <div className="h-[1px] w-12 bg-indigo-200 mx-auto mt-2" />
+          <div>
+            <h1 className="text-lg font-bold leading-tight" style={{ color: '#ffffff' }}>
+              {personalInfo?.fullName || 'Your Name'}
+            </h1>
+            <p
+              className="text-[10px] font-medium uppercase tracking-widest mt-1"
+              style={{ color: '#ffffff' }}
+            >
+              {experience?.[0]?.position || 'Professional Role'}
+            </p>
           </div>
         </div>
 
-        {/* Contact Info */}
-        <div className="space-y-4">
-          <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">Contact</h3>
-          <div className="space-y-3 text-sm">
-            <div className="flex items-center gap-3 text-gray-600 hover:text-indigo-600 transition-colors">
-              <Mail size={14} className="text-indigo-400" />
-              <span className="truncate">{personalInfo?.email || 'email@example.com'}</span>
-            </div>
-            <div className="flex items-center gap-3 text-gray-600">
-              <Phone size={14} className="text-indigo-400" />
-              <span>{personalInfo?.phone || '+91 0000000000'}</span>
-            </div>
-            <div className="flex items-center gap-3 text-gray-600">
-              <MapPin size={14} className="text-indigo-400" />
-              <span>{personalInfo?.location || 'City, Country'}</span>
-            </div>
-            {personalInfo?.website && (
-              <div className="flex items-center gap-3 text-gray-600">
-                <Globe size={14} className="text-indigo-400" />
-                <span className="truncate">{personalInfo.website}</span>
+        {/* Contact */}
+        <div className="space-y-3">
+          <h3
+            className="text-[10px] font-bold uppercase tracking-widest pb-2"
+            style={{ color: '#ffffff', borderBottom: '1px solid #5c6bc0' }}
+          >
+            Contact
+          </h3>
+          <div className="space-y-3 text-[11px]">
+            {[
+              { icon: <Mail size={12} />, value: personalInfo?.email || 'email@example.com' },
+              { icon: <Phone size={12} />, value: personalInfo?.phone || '+91 0000000000' },
+              { icon: <MapPin size={12} />, value: personalInfo?.location || 'City, Country' },
+            ].map(({ icon, value }, i) => (
+              <div key={i} className="flex items-center gap-2" style={{ color: '#ffffff' }}>
+                <div
+                  className="w-6 h-6 rounded-md flex items-center justify-center flex-shrink-0"
+                  style={{ background: '#5c6bc0' }}
+                >
+                  {icon}
+                </div>
+                <span className="break-words">{value}</span>
+              </div>
+            ))}
+            {(personalInfo?.linkedin || personalInfo?.github) && (
+              <div className="flex gap-2 pt-1">
+                {personalInfo.linkedin && (
+                  <a
+                    href={personalInfo.linkedin}
+                    className="w-7 h-7 rounded-md flex items-center justify-center"
+                    style={{ background: '#5c6bc0', color: '#ffffff' }}
+                  >
+                    <Linkedin size={14} />
+                  </a>
+                )}
+                {personalInfo.github && (
+                  <a
+                    href={personalInfo.github}
+                    className="w-7 h-7 rounded-md flex items-center justify-center"
+                    style={{ background: '#5c6bc0', color: '#ffffff' }}
+                  >
+                    <Github size={14} />
+                  </a>
+                )}
               </div>
             )}
           </div>
         </div>
 
         {/* Skills */}
-        <div className="space-y-4">
-          <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">Skills</h3>
+        <div className="space-y-3">
+          <h3
+            className="text-[10px] font-bold uppercase tracking-widest pb-2"
+            style={{ color: '#ffffff', borderBottom: '1px solid #5c6bc0' }}
+          >
+            Expertise
+          </h3>
           <div className="space-y-4">
             {skills?.length > 0 ? (
               skills.map((skill, idx) => (
-                <ProgressBar key={idx} label={skill.name} level={skill.level} />
+                <SidebarProgressBar key={idx} label={skill.name} level={skill.level} />
               ))
             ) : (
-              <p className="text-xs text-gray-400 italic">Add your skills</p>
+              <p className="text-[10px] italic" style={{ color: '#ffffff' }}>
+                Add your expertise
+              </p>
             )}
           </div>
         </div>
 
         {/* Languages */}
         {languages?.length > 0 && (
-          <div className="space-y-4">
-            <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">Languages</h3>
+          <div className="space-y-3">
+            <h3
+              className="text-[10px] font-bold uppercase tracking-widest pb-2"
+              style={{ color: '#ffffff', borderBottom: '1px solid #5c6bc0' }}
+            >
+              Languages
+            </h3>
             <div className="space-y-4">
               {languages.map((lang, idx) => (
-                <ProgressBar key={idx} label={lang.name} level={lang.level} />
+                <SidebarProgressBar key={idx} label={lang.name} level={lang.level} />
               ))}
             </div>
           </div>
         )}
-      </div>
+      </aside>
 
-      {/* Right Content - 70% on Desktop */}
-      <div className="flex-1 p-6 lg:p-10 space-y-8 bg-white">
-        {/* Summary */}
-        <section>
-          <SectionTitle title="Professional Summary" />
-          <p className="text-sm text-gray-600 leading-relaxed">
-            {personalInfo?.summary || 'Add your professional summary to highlight your key achievements and goals.'}
+      {/* ── Main Content ── */}
+      <main
+        className="flex flex-col gap-4 p-8"
+        style={{
+          flex: 1,
+          backgroundColor: '#ffffff',
+          height: `${A4_H}px`,
+          minHeight: `${A4_H}px`,
+          overflow: 'hidden',
+        }}
+      >
+        {/* Header */}
+        <div className="flex-shrink-0 mb-2">
+          <h1
+            className="text-3xl font-black tracking-tight uppercase"
+            style={{ color: '#111827' }}
+          >
+            {personalInfo?.fullName || 'Full Name'}
+          </h1>
+          <p
+            className="font-bold text-sm tracking-widest uppercase mt-1"
+            style={{ color: '#4f46e5' }}
+          >
+            {experience?.[0]?.position || 'Professional Title'}
           </p>
-        </section>
+          <div
+            className="mt-3 rounded-full"
+            style={{ height: '4px', width: '64px', backgroundColor: '#4f46e5' }}
+          />
+        </div>
+
+        {/* Summary */}
+        {personalInfo?.summary && (
+          <SectionCard title="Professional Profile" padding={cardPadding}>
+            <p className="text-sm leading-relaxed text-justify" style={{ color: '#4b5563' }}>
+              {personalInfo.summary}
+            </p>
+          </SectionCard>
+        )}
 
         {/* Experience */}
-        <section>
-          <SectionTitle title="Work Experience" />
-          <div className="space-y-6">
-            {experience?.length > 0 ? (
-              experience.map((exp, idx) => (
-                <div key={idx} className="relative pl-5 border-l border-gray-100 last:border-0 pb-1">
-                  <div className="absolute -left-[4.5px] top-1.5 w-2 h-2 rounded-full bg-indigo-500" />
-                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1 mb-2">
+        {validExperience.length > 0 && (
+          <SectionCard title="Work Experience" padding={cardPadding}>
+            <div className="space-y-5">
+              {validExperience.map((exp, idx) => (
+                <div key={idx}>
+                  <div className="flex justify-between items-start gap-2 mb-2">
                     <div>
-                      <h4 className="text-sm font-bold text-gray-900">{exp.position}</h4>
-                      <p className="text-indigo-600 font-semibold text-xs">{exp.company}</p>
+                      <h4 className="text-sm font-bold" style={{ color: '#111827' }}>{exp.position}</h4>
+                      <p className="font-bold text-xs mt-0.5" style={{ color: '#4f46e5' }}>{exp.company}</p>
                     </div>
-                    <span className="text-[10px] font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded uppercase tracking-wider">{exp.duration}</span>
+                    <span
+                      className="text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wide whitespace-nowrap flex-shrink-0"
+                      style={{ color: '#9ca3af', backgroundColor: '#f3f4f6' }}
+                    >
+                      {exp.duration}
+                    </span>
                   </div>
-                  <p className="text-xs text-gray-600 leading-relaxed whitespace-pre-line">{exp.description}</p>
-                </div>
-              ))
-            ) : (
-              <p className="text-sm text-gray-400 italic">Add your work experience</p>
-            )}
-          </div>
-        </section>
-
-        {/* Education */}
-        <section>
-          <SectionTitle title="Education" />
-          <div className="grid grid-cols-1 gap-4">
-            {education?.length > 0 ? (
-              education.map((edu, idx) => (
-                <div key={idx} className="flex justify-between items-start group">
-                  <div>
-                    <h4 className="text-sm font-bold text-gray-900 group-hover:text-indigo-600 transition-colors">{edu.degree}</h4>
-                    <p className="text-xs text-gray-500">{edu.school}</p>
-                  </div>
-                  <span className="text-[10px] font-bold text-gray-400 uppercase">{edu.year}</span>
-                </div>
-              ))
-            ) : (
-              <p className="text-sm text-gray-400 italic">Add your education</p>
-            )}
-          </div>
-        </section>
-
-        {/* Projects */}
-        {projects?.length > 0 && (
-          <section>
-            <SectionTitle title="Key Projects" />
-            <div className="grid grid-cols-1 gap-4">
-              {projects.map((proj, idx) => (
-                <div key={idx} className="p-4 rounded-xl bg-gray-50/50 border border-gray-100 hover:border-indigo-100 transition-all space-y-2 group">
-                  <div className="flex justify-between items-center">
-                    <h4 className="text-sm font-bold text-gray-900 group-hover:text-indigo-600 transition-colors">{proj.name}</h4>
-                    {proj.link && (
-                      <a href={proj.link} target="_blank" rel="noopener noreferrer" className="text-indigo-500 text-[10px] font-bold uppercase hover:underline">Link</a>
-                    )}
-                  </div>
-                  <p className="text-xs text-gray-600 leading-relaxed">{proj.description}</p>
+                  <p
+                    className="text-xs leading-relaxed pl-3"
+                    style={{ color: '#4b5563', borderLeft: '2px solid #e5e7eb' }}
+                  >
+                    {exp.description}
+                  </p>
                 </div>
               ))}
             </div>
-          </section>
+          </SectionCard>
         )}
-      </div>
+
+        {/* Education */}
+        {validEducation.length > 0 && (
+          <SectionCard title="Education" padding={cardPadding}>
+            <div className="grid grid-cols-2 gap-4">
+              {validEducation.map((edu, idx) => (
+                <div key={idx} className="p-3 rounded-lg" style={{ backgroundColor: '#f9fafb' }}>
+                  <div className="flex justify-between items-start gap-1">
+                    <h4 className="text-xs font-bold leading-tight" style={{ color: '#111827' }}>
+                      {edu.degree}
+                    </h4>
+                    <span className="text-[10px] font-bold whitespace-nowrap" style={{ color: '#6366f1' }}>
+                      {edu.year}
+                    </span>
+                  </div>
+                  <p className="text-[11px] mt-1" style={{ color: '#6b7280' }}>{edu.school}</p>
+                </div>
+              ))}
+            </div>
+          </SectionCard>
+        )}
+
+        {/* Projects */}
+        {validProjects.length > 0 && (
+          <SectionCard title="Key Projects" padding={cardPadding}>
+            <div className="space-y-3">
+              {validProjects.map((proj, idx) => (
+                <div
+                  key={idx}
+                  className="p-3 rounded-xl"
+                  style={{ backgroundColor: '#f9fafb', border: '1px solid #f3f4f6' }}
+                >
+                  <div className="flex justify-between items-center mb-1">
+                    <h4 className="text-sm font-bold" style={{ color: '#111827' }}>{proj.name}</h4>
+                    {proj.link && (
+                      <a
+                        href={proj.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ color: '#6366f1' }}
+                      >
+                        <ExternalLink size={12} />
+                      </a>
+                    )}
+                  </div>
+                  <p className="text-xs leading-relaxed" style={{ color: '#4b5563' }}>{proj.description}</p>
+                </div>
+              ))}
+            </div>
+          </SectionCard>
+        )}
+      </main>
     </div>
   );
 }

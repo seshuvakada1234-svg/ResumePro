@@ -1,52 +1,41 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { ResumeData } from '@/types/resume';
-import { ClassicTemplate } from './templates/ClassicTemplate';
-import { ModernTemplate } from './templates/ModernTemplate';
-import { MinimalTemplate } from './templates/MinimalTemplate';
-import { TwoColumnTemplate } from './templates/TwoColumnTemplate';
-import PremiumTemplate from './templates/PremiumTemplate';
-import { Download, FileText } from 'lucide-react';
+import { ClassicTemplate } from '@/components/templates/ClassicTemplate';
+import { ModernTemplate } from '@/components/templates/ModernTemplate';
+import { MinimalTemplate } from '@/components/templates/MinimalTemplate';
+import { TwoColumnTemplate } from '@/components/templates/TwoColumnTemplate';
+import PremiumTemplate from '@/components/templates/PremiumTemplate';
+
+const A4_WIDTH = 794;   // A4 in px at 96dpi
+const A4_HEIGHT = 1123; // A4 in px at 96dpi
 
 interface ResumePreviewProps {
   data: ResumeData;
-  scale?: number;
-  showDownload?: boolean;
 }
 
-export const ResumePreview: React.FC<ResumePreviewProps> = ({ data, showDownload = false }) => {
-  const resumeRef = useRef<HTMLDivElement>(null);
+export const ResumePreview: React.FC<ResumePreviewProps> = ({ data }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
 
-  const handleDownload = async () => {
-    const element = document.getElementById("resume-preview");
+  // Auto-scale the A4 page to always fit the container width
+  useEffect(() => {
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const containerWidth = entry.contentRect.width;
+        if (containerWidth > 0) {
+          setScale(containerWidth / A4_WIDTH);
+        }
+      }
+    });
 
-    if (!element) return;
-
-    // Apply PDF-safe class to override oklch colors
-    element.classList.add("pdf-safe");
-
-    try {
-      // @ts-ignore
-      const html2pdf = (await import("html2pdf.js")).default;
-
-      await html2pdf()
-        .set({
-          margin: 0,
-          filename: "resume.pdf",
-          image: { type: "jpeg", quality: 1 },
-          html2canvas: { scale: 2, useCORS: true },
-          jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
-        })
-        .from(element)
-        .save();
-    } catch (error) {
-      console.error("PDF generation failed:", error);
-    } finally {
-      // Remove PDF-safe class to restore original UI
-      element.classList.remove("pdf-safe");
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
     }
-  };
+
+    return () => observer.disconnect();
+  }, []);
 
   const renderTemplate = () => {
     switch (data.template) {
@@ -65,27 +54,24 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({ data, showDownload
   };
 
   return (
-    <div className="flex flex-col gap-4 w-full h-full">
-      {showDownload && (
-        <div className="flex justify-end px-4">
-          <button
-            onClick={handleDownload}
-            className="flex items-center gap-2 px-6 py-2.5 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-700 transition-all shadow-lg active:scale-95"
-          >
-            <Download size={18} />
-            Download PDF
-          </button>
-        </div>
-      )}
 
-      <div className="a4-preview-container">
-        <div 
-          id="resume-preview"
-          ref={resumeRef}
-          className="a4-preview-scale"
-        >
-          {renderTemplate()}
-        </div>
+    <div
+      ref={containerRef}
+      style={{ height: `${A4_HEIGHT * scale}px` }}
+      className="w-full overflow-hidden rounded-xl shadow-2xl"
+    >
+      {/* A4 page at full 794px, scaled down via transform to fit container */}
+      <div
+        id="resume-preview"
+        style={{
+          width: `${A4_WIDTH}px`,
+          minHeight: `${A4_HEIGHT}px`,
+          transform: `scale(${scale})`,
+          transformOrigin: 'top left',
+        }}
+        className="bg-white text-gray-900"
+      >
+        {renderTemplate()}
       </div>
     </div>
   );
