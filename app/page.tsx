@@ -1,14 +1,12 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { ResumeForm } from '@/components/ResumeForm';
 import { ResumePreview } from '@/components/ResumePreview';
-import PDFDownloadButton from "@/components/PDFDownloadButton";
+import PDFDownloadButton from '@/components/PDFDownloadButton';
 import { ATSScore } from '@/components/ATSScore';
 import { Auth } from '@/components/Auth';
 import { ResumeData, defaultResumeData, ResumeTemplate } from '@/types/resume';
-import { auth, db, handleFirestoreError, OperationType } from '@/lib/firebase';
-import { collection, addDoc, updateDoc, doc, onSnapshot, query, where } from 'firebase/firestore';
 import { Toaster, toast } from 'sonner';
 import { FileText, Sparkles, Zap, CheckCircle2, Plus, Share2, Home } from 'lucide-react';
 import { AdUnit } from '@/components/AdUnit';
@@ -19,53 +17,11 @@ import { dummyResumeData } from '@/constants/dummyData';
 export default function App() {
   const [currentView, setCurrentView] = useState<'builder' | 'templates' | 'ats-tips'>('builder');
   const [resumeData, setResumeData] = useState<ResumeData>(defaultResumeData);
-  const [isSaving, setIsSaving] = useState(false);
-  const [userResumes, setUserResumes] = useState<ResumeData[]>([]);
   const [activeResumeId, setActiveResumeId] = useState<string | null>(null);
-  const [user, setUser] = useState<any>(null);
 
-  // ✅ FIX: Wrap onChange in useCallback so it's stable across renders
-  // Without this, setResumeData reference changes every render →
-  // ResumeForm's useEffect fires → onChange called → parent re-renders → loop
   const handleResumeChange = useCallback((data: ResumeData) => {
     setResumeData(data);
-  }, []); // empty deps — setResumeData is stable from useState
-
-  // Auth listener
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((u) => {
-      setUser(u);
-      if (!u) {
-        setUserResumes([]);
-        setResumeData(defaultResumeData);
-        setActiveResumeId(null);
-      }
-    });
-    return () => unsubscribe();
   }, []);
-
-  // Resumes listener
-  useEffect(() => {
-    if (!user) return;
-    const q = query(collection(db, 'resumes'), where('uid', '==', user.uid));
-    const unsubscribe = onSnapshot(
-      q,
-      (snapshot) => {
-        const resumes = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as ResumeData));
-        setUserResumes(resumes);
-      },
-      (error) => handleFirestoreError(error, OperationType.LIST, 'resumes')
-    );
-    return () => unsubscribe();
-  }, [user]);
-
-  // Initial load logic
-  useEffect(() => {
-    if (user && userResumes.length > 0 && !activeResumeId) {
-      setResumeData(userResumes[0]);
-      setActiveResumeId(userResumes[0].id || null);
-    }
-  }, [user, userResumes, activeResumeId]);
 
   const loadDummyData = () => {
     setResumeData(dummyResumeData);
@@ -86,32 +42,8 @@ export default function App() {
     }
   };
 
-  const handleSave = async (data: ResumeData) => {
-    const user = auth.currentUser;
-    if (!user) {
-      toast.error('Please login to save your resume');
-      return;
-    }
-    setIsSaving(true);
-    try {
-      const payload = { ...data, uid: user.uid, updatedAt: new Date().toISOString() };
-      if (activeResumeId) {
-        await updateDoc(doc(db, 'resumes', activeResumeId), payload);
-        toast.success('Resume updated successfully!');
-      } else {
-        const docRef = await addDoc(collection(db, 'resumes'), {
-          ...payload,
-          createdAt: new Date().toISOString(),
-        });
-        setActiveResumeId(docRef.id);
-        toast.success('Resume created successfully!');
-      }
-    } catch (error) {
-      handleFirestoreError(error, OperationType.WRITE, 'resumes');
-      toast.error('Failed to save resume');
-    } finally {
-      setIsSaving(false);
-    }
+  const handleSave = async (_data: ResumeData) => {
+    toast.info('Sign in to save your resume to the cloud');
   };
 
   return (
@@ -165,7 +97,7 @@ export default function App() {
       {currentView === 'builder' ? (
         <>
           {/* Hero Section */}
-          {!activeResumeId && !auth.currentUser && (
+          {!activeResumeId && (
             <div className="bg-white border-b border-gray-100 py-16 md:py-24 overflow-hidden relative">
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full pointer-events-none">
                 <div className="absolute top-10 left-10 w-64 h-64 bg-indigo-50 rounded-full blur-3xl opacity-50" />
@@ -212,7 +144,10 @@ export default function App() {
                   <div className="flex items-center gap-3">
                     {activeResumeId && (
                       <button
-                        onClick={() => { setResumeData(defaultResumeData); setActiveResumeId(null); }}
+                        onClick={() => {
+                          setResumeData(defaultResumeData);
+                          setActiveResumeId(null);
+                        }}
                         className="text-xs font-bold text-gray-600 hover:text-indigo-600 flex items-center gap-1 px-3 py-1.5 bg-gray-100 rounded-lg transition-colors"
                       >
                         <Plus size={14} /> New
@@ -227,22 +162,15 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* ✅ Pass handleResumeChange (stable) instead of setResumeData (unstable) */}
-                <ResumeForm
-                  initialData={resumeData}
-                  onChange={handleResumeChange}
-                  onSave={handleSave}
-                  isSaving={isSaving}
-                />
+                <ResumeForm initialData={resumeData} onChange={handleResumeChange} onSave={handleSave} isSaving={false} />
                 <AdUnit slot="sidebar-bottom" className="mt-8" />
               </div>
 
               {/* Right: Preview */}
-              <div className="lg:col-span-7 space-y-6">
-                <div className="flex items-center justify-between sticky top-[64px] z-20 bg-gray-50/90 backdrop-blur-md py-4 border-b border-gray-200 mb-4">
-                  <h2 className="text-2xl font-bold text-gray-900">Live Preview</h2>
-                  <div className="flex items-center gap-3">
-                    <PDFDownloadButton />
+              <div className="lg:col-span-7 flex flex-col gap-6">
+                <div className="relative z-20 bg-white border-b border-gray-200">
+                  <div className="flex items-center justify-between py-4">
+                    <h2 className="text-2xl font-bold text-gray-900">Live Preview</h2>
                     <button
                       onClick={handleShare}
                       className="p-2.5 text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-all shadow-sm"
@@ -251,6 +179,10 @@ export default function App() {
                       <Share2 size={18} />
                     </button>
                   </div>
+                </div>
+
+                <div className="mt-6 p-4 bg-gray-100 rounded-xl flex justify-center">
+                  <PDFDownloadButton />
                 </div>
 
                 <ATSScore data={resumeData} />
@@ -265,10 +197,22 @@ export default function App() {
                   <h3 className="text-xl font-bold text-gray-900">Why use our ATS Resume Builder?</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {[
-                      { title: 'ATS-Optimized', desc: 'Our templates are tested against major ATS systems used by Indian companies like TCS, Infosys, and Wipro.' },
-                      { title: '100% Free', desc: 'No hidden subscriptions or "premium" templates. Everything is free for freshers in India.' },
-                      { title: 'Privacy First', desc: "Your data is secure with Firebase. We don't sell your information to third parties." },
-                      { title: 'Professional Design', desc: 'Clean, minimal, and modern layouts that impress human recruiters as well.' },
+                      {
+                        title: 'ATS-Optimized',
+                        desc: 'Our templates are tested against major ATS systems used by Indian companies like TCS, Infosys, and Wipro.',
+                      },
+                      {
+                        title: '100% Free',
+                        desc: 'No hidden subscriptions or "premium" templates. Everything is free for freshers in India.',
+                      },
+                      {
+                        title: 'Privacy First',
+                        desc: "Your data is secure. We don't sell your information to third parties.",
+                      },
+                      {
+                        title: 'Professional Design',
+                        desc: 'Clean, minimal, and modern layouts that impress human recruiters as well.',
+                      },
                     ].map(({ title, desc }) => (
                       <div key={title} className="space-y-2">
                         <h4 className="font-bold text-indigo-600 flex items-center gap-2">
@@ -326,16 +270,54 @@ export default function App() {
             <div className="md:col-span-2">
               <h4 className="font-bold text-gray-900 mb-6">Product</h4>
               <ul className="space-y-3 text-gray-500 text-sm font-medium">
-                <li><button onClick={() => { setCurrentView('templates'); window.scrollTo(0, 0); }} className="hover:text-indigo-600 transition-colors">Free Templates</button></li>
-                <li><button onClick={() => { setCurrentView('builder'); window.scrollTo(0, 0); }} className="hover:text-indigo-600 transition-colors">ATS Checker</button></li>
-                <li><button onClick={() => { setCurrentView('ats-tips'); window.scrollTo(0, 0); }} className="hover:text-indigo-600 transition-colors">Resume Tips</button></li>
+                <li>
+                  <button
+                    onClick={() => {
+                      setCurrentView('templates');
+                      window.scrollTo(0, 0);
+                    }}
+                    className="hover:text-indigo-600 transition-colors"
+                  >
+                    Free Templates
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => {
+                      setCurrentView('builder');
+                      window.scrollTo(0, 0);
+                    }}
+                    className="hover:text-indigo-600 transition-colors"
+                  >
+                    ATS Checker
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => {
+                      setCurrentView('ats-tips');
+                      window.scrollTo(0, 0);
+                    }}
+                    className="hover:text-indigo-600 transition-colors"
+                  >
+                    Resume Tips
+                  </button>
+                </li>
               </ul>
             </div>
             <div className="md:col-span-2">
               <h4 className="font-bold text-gray-900 mb-6">Support</h4>
               <ul className="space-y-3 text-gray-500 text-sm font-medium">
-                <li><a href="#" className="hover:text-indigo-600 transition-colors">Help Center</a></li>
-                <li><a href="#" className="hover:text-indigo-600 transition-colors">Contact Us</a></li>
+                <li>
+                  <a href="#" className="hover:text-indigo-600 transition-colors">
+                    Help Center
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-indigo-600 transition-colors">
+                    Contact Us
+                  </a>
+                </li>
               </ul>
             </div>
           </div>

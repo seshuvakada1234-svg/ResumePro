@@ -3,15 +3,39 @@
 import { useState } from "react";
 import { toast } from "sonner";
 
-function sanitizeCSS(css: string): string {
-  return css
-    .replace(/oklch\([^)]*\)/g, "#6366f1")
-    .replace(/oklab\([^)]*\)/g, "#6366f1")
-    .replace(/color-mix\([^)]*\)/g, "#6366f1");
-}
-
 const A4_W = 794;
 const A4_H = 1123;
+
+const spinnerStyle: React.CSSProperties = {
+  width: "16px",
+  height: "16px",
+  borderRadius: "50%",
+  border: "2px solid rgba(255,255,255,0.35)",
+  borderTopColor: "#ffffff",
+  animation: "pdf-spin 0.7s linear infinite",
+  flexShrink: 0,
+};
+
+function DownloadIcon() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      style={{ flexShrink: 0 }}
+      aria-hidden="true"
+    >
+      <path d="M12 3v13M7 11l5 5 5-5" />
+      <path d="M5 21h14" />
+    </svg>
+  );
+}
 
 export default function PDFDownloadButton() {
   const [loading, setLoading] = useState(false);
@@ -24,128 +48,117 @@ export default function PDFDownloadButton() {
       return;
     }
 
+    let clonedElement: HTMLElement | null = null;
+
     try {
       setLoading(true);
-      element.classList.add("pdf-safe");
       await new Promise((resolve) => setTimeout(resolve, 300));
 
-      // Import libraries
       const html2canvas = (await import("html2canvas")).default;
       const { jsPDF } = await import("jspdf");
 
-      // Inline all external stylesheets into the document before capture
-      const styleFixPromises = Array.from(
-        document.querySelectorAll('link[rel="stylesheet"]') as NodeListOf<HTMLLinkElement>
-      ).map(async (link) => {
-        try {
-          const cssText = sanitizeCSS(await (await fetch(link.href)).text());
-          const styleTag = document.createElement("style");
-          styleTag.textContent = cssText;
-          styleTag.setAttribute("data-pdf-injected", "true");
-          document.head.appendChild(styleTag);
-        } catch { /* ignore */ }
-      });
-      await Promise.all(styleFixPromises);
+      clonedElement = element.cloneNode(true) as HTMLElement;
+      clonedElement.style.position = "fixed";
+      clonedElement.style.top = "-9999px";
+      clonedElement.style.left = "0";
+      clonedElement.style.width = `${A4_W}px`;
+      clonedElement.style.height = `${A4_H}px`;
+      clonedElement.style.minHeight = `${A4_H}px`;
+      clonedElement.style.maxHeight = `${A4_H}px`;
+      clonedElement.style.background = "#ffffff";
+      clonedElement.style.overflow = "hidden";
+      clonedElement.style.transform = "none";
+      document.body.appendChild(clonedElement);
 
-      // Capture with html2canvas
-      const canvas = await html2canvas(element, {
+      await new Promise((resolve) => setTimeout(resolve, 300));
+
+      if (document.fonts?.ready) {
+        await document.fonts.ready;
+      }
+
+      const clonedImages = Array.from(clonedElement.querySelectorAll("img"));
+      await Promise.all(
+        clonedImages.map(
+          (img) =>
+            new Promise<void>((resolve) => {
+              if (img.complete) return resolve();
+              img.onload = () => resolve();
+              img.onerror = () => resolve();
+            })
+        )
+      );
+
+      if (clonedElement.offsetWidth === 0 || clonedElement.offsetHeight === 0) {
+        throw new Error("Cloned preview has invalid dimensions");
+      }
+
+      const canvas = await html2canvas(clonedElement, {
         scale: 2,
         useCORS: true,
-        allowTaint: true,
+        allowTaint: false,
+        imageTimeout: 15000,
         logging: false,
         width: A4_W,
-        height: A4_H,         // ← Force exact A4 height capture
+        height: A4_H,
         windowWidth: A4_W,
         windowHeight: A4_H,
         scrollX: 0,
         scrollY: 0,
         backgroundColor: "#ffffff",
+        onclone: (doc) => {
+          const root = doc.documentElement;
+          const body = doc.body;
 
-        onclone: async (clonedDoc: Document) => {
-          // Fix CSS
-          clonedDoc.querySelectorAll("style").forEach((tag) => {
-            if (tag.textContent) tag.textContent = sanitizeCSS(tag.textContent);
-          });
+          // Prevent html2canvas parse crash on modern CSS color functions (e.g., oklch)
+          // without changing visible layout/business logic.
+          root.style.setProperty("--tw-ring-color", "rgba(59,130,246,0.5)");
+          root.style.setProperty("--tw-ring-offset-color", "#ffffff");
+          root.style.setProperty("--tw-border-opacity", "1");
+          root.style.setProperty("--tw-text-opacity", "1");
+          root.style.setProperty("--tw-bg-opacity", "1");
 
-          // Fix inline oklch
-          clonedDoc.querySelectorAll("[style]").forEach((el) => {
-            const s = el.getAttribute("style") || "";
-            if (s.includes("oklch") || s.includes("oklab")) {
-              el.setAttribute("style",
-                s.replace(/oklch\([^)]*\)/g, "#6366f1").replace(/oklab\([^)]*\)/g, "#6366f1")
-              );
-            }
-          });
+          const unsafeColorFns = /(oklch|oklab|lab|lch|color-mix)\(/i;
+          const all = Array.from(body.querySelectorAll<HTMLElement>("*"));
 
-          // Lock resume-preview to exact A4
-          const cloned = clonedDoc.getElementById("resume-preview");
-          if (cloned) {
-            cloned.style.cssText = `
-              width: ${A4_W}px !important;
-              height: ${A4_H}px !important;
-              min-height: ${A4_H}px !important;
-              max-height: ${A4_H}px !important;
-              overflow: hidden !important;
-              transform: none !important;
-              position: relative !important;
-              display: block !important;
-              background: white !important;
-            `;
+          for (const node of all) {
+            const style = doc.defaultView?.getComputedStyle(node);
+            if (!style) continue;
+
+            if (unsafeColorFns.test(style.color)) node.style.color = "#111827";
+            if (unsafeColorFns.test(style.backgroundColor)) node.style.backgroundColor = "#ffffff";
+            if (unsafeColorFns.test(style.borderTopColor)) node.style.borderTopColor = "#d1d5db";
+            if (unsafeColorFns.test(style.borderRightColor)) node.style.borderRightColor = "#d1d5db";
+            if (unsafeColorFns.test(style.borderBottomColor)) node.style.borderBottomColor = "#d1d5db";
+            if (unsafeColorFns.test(style.borderLeftColor)) node.style.borderLeftColor = "#d1d5db";
+            if (unsafeColorFns.test(style.outlineColor)) node.style.outlineColor = "transparent";
+            if (unsafeColorFns.test(style.textDecorationColor)) node.style.textDecorationColor = "currentColor";
+            if (unsafeColorFns.test(style.caretColor)) node.style.caretColor = "currentColor";
           }
-
-          // Lock template root
-          const templateRoot = cloned?.firstElementChild as HTMLElement | null;
-          if (templateRoot) {
-            templateRoot.style.cssText = `
-              width: ${A4_W}px !important;
-              height: ${A4_H}px !important;
-              min-height: ${A4_H}px !important;
-              max-height: ${A4_H}px !important;
-              display: flex !important;
-              flex-direction: row !important;
-              overflow: hidden !important;
-            `;
-          }
-
-          // Force sidebar to full height
-          clonedDoc.querySelectorAll("aside").forEach((aside) => {
-            const el = aside as HTMLElement;
-            el.style.height = `${A4_H}px`;
-            el.style.minHeight = `${A4_H}px`;
-            el.style.maxHeight = `${A4_H}px`;
-            el.style.alignSelf = "stretch";
-            el.style.flexShrink = "0";
-            el.style.overflow = "hidden";
-          });
-
-          // Force main to fill remaining space
-          clonedDoc.querySelectorAll("main").forEach((main) => {
-            const el = main as HTMLElement;
-            el.style.height = `${A4_H}px`;
-            el.style.minHeight = `${A4_H}px`;
-            el.style.maxHeight = `${A4_H}px`;
-            el.style.flex = "1";
-            el.style.overflow = "hidden";
-            el.style.backgroundColor = "#ffffff";
-          });
         },
       });
 
-      // ── KEY FIX: draw canvas onto a NEW canvas that is exactly A4 size ──
-      // This ensures the PDF is always full A4, even if content is short.
-      const a4Canvas = document.createElement("canvas");
-      a4Canvas.width = A4_W * 2;   // scale: 2
-      a4Canvas.height = A4_H * 2;  // scale: 2
+      if (!canvas || canvas.width === 0 || canvas.height === 0) {
+        throw new Error("Canvas rendering failed");
+      }
 
-      const ctx = a4Canvas.getContext("2d")!;
-      // Fill white background first
+      const a4Canvas = document.createElement("canvas");
+      a4Canvas.width = A4_W * 2;
+      a4Canvas.height = A4_H * 2;
+
+      const ctx = a4Canvas.getContext("2d");
+      if (!ctx) {
+        throw new Error("Failed to create canvas context");
+      }
+
       ctx.fillStyle = "#ffffff";
       ctx.fillRect(0, 0, a4Canvas.width, a4Canvas.height);
-      // Draw the captured canvas on top (it may be shorter — white fills the rest)
-      ctx.drawImage(canvas, 0, 0);
+      ctx.drawImage(canvas, 0, 0, a4Canvas.width, a4Canvas.height);
 
-      // Create PDF from the guaranteed A4 canvas
-      const imgData = a4Canvas.toDataURL("image/jpeg", 1.0);
+      const imgData = a4Canvas.toDataURL("image/jpeg", 0.95);
+      if (!imgData || imgData === "data:,") {
+        throw new Error("Canvas export failed");
+      }
+
       const pdf = new jsPDF({
         orientation: "portrait",
         unit: "px",
@@ -161,20 +174,48 @@ export default function PDFDownloadButton() {
       console.error("PDF generation error:", err);
       toast.error("Download failed ❌");
     } finally {
-      // Clean up injected styles
-      document.querySelectorAll("style[data-pdf-injected]").forEach((el) => el.remove());
-      document.getElementById("resume-preview")?.classList.remove("pdf-safe");
+      if (clonedElement?.parentNode) {
+        clonedElement.parentNode.removeChild(clonedElement);
+      }
       setLoading(false);
     }
   };
 
   return (
-    <button
-      onClick={handleDownload}
-      disabled={loading}
-      className="px-6 py-3 bg-indigo-600 text-white rounded-lg shadow hover:bg-indigo-700 transition font-bold disabled:opacity-60 disabled:cursor-not-allowed"
-    >
-      {loading ? "Generating PDF..." : "Download PDF"}
-    </button>
+    <>
+      <style>{`
+        @keyframes pdf-spin {
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
+
+      <button
+        onClick={handleDownload}
+        disabled={loading}
+        aria-label={loading ? "Generating PDF, please wait" : "Download PDF"}
+        className={[
+          "relative inline-flex w-auto items-center justify-center gap-2",
+          "px-5 py-2",
+          "rounded-lg font-semibold text-sm text-white",
+          "select-none outline-none",
+          "transition-all duration-200 ease-in-out",
+          loading
+            ? "bg-indigo-600 cursor-not-allowed shadow-inner animate-pulse transition-none"
+            : "bg-indigo-600 hover:bg-indigo-700 active:scale-[0.97] shadow-md hover:shadow-indigo-300/40 hover:shadow-lg cursor-pointer",
+        ].join(" ")}
+      >
+        {loading ? (
+          <>
+            <span style={spinnerStyle} />
+            Generating...
+          </>
+        ) : (
+          <>
+            <DownloadIcon />
+            Download PDF
+          </>
+        )}
+      </button>
+    </>
   );
 }

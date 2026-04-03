@@ -53,8 +53,9 @@ body {
   width: 100%;
   min-height: 100vh;
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
   overflow: auto;
   padding: 40px;
   background: #f3f4f6;

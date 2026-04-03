@@ -2,9 +2,30 @@
 
 import React from 'react';
 import { ResumeTemplate } from '@/types/resume';
-import { Check, Eye, Layout } from 'lucide-react';
-import Image from 'next/image';
+import { Check, Eye } from 'lucide-react';
 import Link from 'next/link';
+import TemplateThumbnail from "@/components/TemplateThumbnail";
+import { ClassicTemplate } from "@/components/templates/ClassicTemplate";
+import { ModernTemplate } from "@/components/templates/ModernTemplate";
+import { MinimalTemplate } from "@/components/templates/MinimalTemplate";
+import { TwoColumnTemplate } from "@/components/templates/TwoColumnTemplate";
+import PremiumTemplate from "@/components/templates/PremiumTemplate";
+import { ExecutiveTemplate } from "@/components/templates/ExecutiveTemplate";
+import { RedlineTemplate } from "@/components/templates/RedlineTemplate";
+import { NavyTemplate } from "@/components/templates/NavyTemplate";
+import { SerifTemplate } from "@/components/templates/SerifTemplate";
+
+const templateComponents: Record<string, any> = {
+  'classic': ClassicTemplate,
+  'modern': ModernTemplate,
+  'minimal': MinimalTemplate,
+  'two-column': TwoColumnTemplate,
+  'premium': PremiumTemplate,
+  'executive': ExecutiveTemplate,
+  'redline': RedlineTemplate,
+  'navy': NavyTemplate,
+  'serif': SerifTemplate,
+};
 
 const templates = [
   {
@@ -37,6 +58,30 @@ const templates = [
     description: 'A professional two-column design with a bold indigo sidebar.',
     thumbnail: '/templates/premium.png',
   },
+  {
+    id: 'executive',
+    name: 'Executive Dark',
+    description: 'Dark sidebar with gold accents. Perfect for senior roles.',
+    thumbnail: '/templates/executive.png',
+  },
+  {
+    id: 'redline',
+    name: 'Redline Bold',
+    description: 'Dark sidebar with striking red accents and timeline layout.',
+    thumbnail: '/templates/redline.png',
+  },
+  {
+    id: 'navy',
+    name: 'Navy Pro',
+    description: 'Navy blue sidebar with photo support and clean typography.',
+    thumbnail: '/templates/navy.png',
+  },
+  {
+    id: 'serif',
+    name: 'Serif Classic',
+    description: 'Elegant serif fonts with a dark photo sidebar. Timeless design.',
+    thumbnail: '/templates/serif.png',
+  },
 ];
 
 interface TemplateSelectorProps {
@@ -48,18 +93,16 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({ selectedId, 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 py-8">
       {templates.map((template) => (
-        <div 
+        <div
           key={template.id}
           className={`group relative bg-white rounded-2xl border-2 transition-all duration-300 overflow-hidden hover:shadow-2xl hover:-translate-y-1 ${
             selectedId === template.id ? 'border-indigo-600 ring-4 ring-indigo-50' : 'border-gray-100'
           }`}
         >
-          {/* Thumbnail Placeholder (Real images would be in /public/templates/) */}
+          {/* Thumbnail */}
           <div className="aspect-[3/4] bg-gray-100 relative overflow-hidden">
-            <div className="absolute inset-0 flex items-center justify-center text-gray-300">
-              <Layout size={48} />
-            </div>
-            {/* Overlay */}
+            <TemplateThumbnail Template={templateComponents[template.id]} />
+            {/* Hover overlay */}
             <div className="absolute inset-0 bg-indigo-900/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-3 p-4">
               <button
                 onClick={() => onSelect(template.id as ResumeTemplate)}

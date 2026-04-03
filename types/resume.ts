@@ -39,7 +39,17 @@ export interface Project {
   link?: string;
 }
 
-export type ResumeTemplate = 'classic' | 'modern' | 'minimal' | 'executive' | 'fresher-india' | 'two-column' | 'premium';
+export type ResumeTemplate =
+  | 'classic'
+  | 'modern'
+  | 'minimal'
+  | 'two-column'
+  | 'premium'
+  | 'executive'
+  | 'redline'
+  | 'navy'
+  | 'serif'
+  | 'fresher-india';
 
 export interface ResumeData {
   id?: string;

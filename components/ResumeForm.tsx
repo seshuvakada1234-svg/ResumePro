@@ -10,7 +10,7 @@ const resumeSchema = z.object({
   id: z.string().optional(),
   uid: z.string(),
   title: z.string().min(1, 'Title is required'),
-  template: z.enum(['classic', 'modern', 'minimal', 'executive', 'fresher-india', 'two-column', 'premium']),
+  template: z.enum(['classic', 'modern', 'minimal', 'executive', 'fresher-india', 'two-column', 'premium', 'redline', 'navy', 'serif']),
   personalInfo: z.object({
     fullName: z.string().min(1, 'Full Name is required'),
     email: z.string().email('Invalid email'),
@@ -121,8 +121,8 @@ export const ResumeForm: React.FC<ResumeFormProps> = ({ initialData, onChange, o
         <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
           <div className="bg-indigo-100 p-1 rounded-md text-indigo-600"><Layout size={14} /></div> Choose Template
         </h3>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
-          {(['classic', 'modern', 'minimal', 'executive', 'fresher-india', 'two-column', 'premium'] as ResumeTemplate[]).map((t) => (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+          {(['classic', 'modern', 'minimal', 'executive', 'fresher-india', 'two-column', 'premium', 'redline', 'navy', 'serif'] as ResumeTemplate[]).map((t) => (
             <button
               key={t}
               type="button"

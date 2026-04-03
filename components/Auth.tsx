@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { signInWithGoogle, logout, auth } from '@/lib/firebase';
 import { User } from 'firebase/auth';
@@ -8,14 +10,19 @@ export const Auth: React.FC = () => {
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((u) => {
-      setUser(u);
-      setLoading(false);
-    });
-    return () => unsubscribe();
+    const timeout = setTimeout(() => setLoading(false), 5000); // failsafe
+
+    const unsubscribe = auth.onAuthStateChanged(
+      (u) => { clearTimeout(timeout); setUser(u); setLoading(false); },
+      (err) => { clearTimeout(timeout); console.error(err); setLoading(false); }
+    );
+
+    return () => { unsubscribe(); clearTimeout(timeout); };
   }, []);
 
-  if (loading) return <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />;
+  if (loading) return (
+    <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+  );
 
   if (user) {
     return (
