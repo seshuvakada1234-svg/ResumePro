@@ -99,10 +99,13 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({ selectedId, 
             selectedId === template.id ? 'border-indigo-600 ring-4 ring-indigo-50' : 'border-gray-100'
           }`}
         >
-          {/* Thumbnail */}
-          <div className="aspect-[3/4] bg-gray-100 relative overflow-hidden">
+          {/* FIX: removed aspect-[3/4] — it forced a fixed tall container that
+              left a blank gap below the 202px thumbnail. Now the wrapper is
+              sized naturally by TemplateThumbnail's own computed dimensions. */}
+          <div className="relative bg-gray-50 flex items-center justify-center">
             <TemplateThumbnail Template={templateComponents[template.id]} />
-            {/* Hover overlay */}
+
+            {/* Hover overlay — stretched to fill whatever height the thumbnail is */}
             <div className="absolute inset-0 bg-indigo-900/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-3 p-4">
               <button
                 onClick={() => onSelect(template.id as ResumeTemplate)}

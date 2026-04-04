@@ -65,23 +65,56 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({ data }) => {
   };
 
   return (
-    <div
-      ref={containerRef}
-      style={{ height: `${A4_HEIGHT * scale}px` }}
-      className="w-full overflow-hidden rounded-xl shadow-2xl"
-    >
+    <>
+      {/*
+        ── Visible preview ────────────────────────────────────────────────────
+        Scaled down to fit the container. overflow-hidden clips the scaled
+        content so it doesn't bleed outside its box. This div has NO id so
+        html2canvas never accidentally targets it.
+      */}
+      <div
+        ref={containerRef}
+        style={{ height: `${A4_HEIGHT * scale}px` }}
+        className="w-full overflow-hidden rounded-xl shadow-2xl"
+      >
+        <div
+          style={{
+            width: `${A4_WIDTH}px`,
+            minHeight: `${A4_HEIGHT}px`,
+            transform: `scale(${scale})`,
+            transformOrigin: 'top left',
+          }}
+          className="bg-white text-gray-900"
+        >
+          {renderTemplate()}
+        </div>
+      </div>
+
+      {/*
+        ── PDF capture target ─────────────────────────────────────────────────
+        Full A4 size, visually hidden (off-screen), NO scaling, NO clipping.
+        PDFDownloadButton targets id="resume-preview" — this is that element.
+        Rendering the template twice is intentional: the visible copy is scaled
+        for display; this copy is at true pixel dimensions for html2canvas so
+        the entire page is captured without any overflow clipping.
+      */}
       <div
         id="resume-preview"
+        aria-hidden="true"
         style={{
+          position: 'absolute',
+          top: '-9999px',
+          left: '0',
           width: `${A4_WIDTH}px`,
           minHeight: `${A4_HEIGHT}px`,
-          transform: `scale(${scale})`,
-          transformOrigin: 'top left',
+          background: '#ffffff',
+          zIndex: -1,
+          pointerEvents: 'none',
         }}
-        className="bg-white text-gray-900"
+        className="text-gray-900"
       >
         {renderTemplate()}
       </div>
-    </div>
+    </>
   );
 };

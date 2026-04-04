@@ -28,7 +28,6 @@ const SidebarProgressBar = ({ label, level }: { label: string; level: number }) 
   </div>
 );
 
-// SectionCard: NO h-full — html2canvas can't resolve flex heights
 const SectionCard = ({
   title,
   children,
@@ -76,6 +75,33 @@ export default function PremiumTemplate({ data }: Props) {
 
   const cardPadding = sectionCount <= 2 ? 'p-6' : sectionCount >= 4 ? 'p-4' : 'p-5';
 
+  const iconBadge: React.CSSProperties = {
+    width: '24px',
+    height: '24px',
+    minWidth: '24px',
+    borderRadius: '6px',
+    background: '#5c6bc0',
+    display: 'block',
+    padding: '6px',
+    boxSizing: 'border-box',
+    flexShrink: 0,
+    lineHeight: 0,
+  };
+
+  const socialBadge: React.CSSProperties = {
+    width: '28px',
+    height: '28px',
+    minWidth: '28px',
+    borderRadius: '6px',
+    background: '#5c6bc0',
+    display: 'block',
+    padding: '7px',
+    boxSizing: 'border-box',
+    color: '#ffffff',
+    flexShrink: 0,
+    lineHeight: 0,
+  };
+
   return (
     <div
       className="font-sans"
@@ -88,7 +114,6 @@ export default function PremiumTemplate({ data }: Props) {
         overflow: 'hidden',
       }}
     >
-      {/* ── Sidebar ── */}
       <aside
         className="flex flex-col gap-6 p-6 text-white"
         style={{
@@ -96,13 +121,11 @@ export default function PremiumTemplate({ data }: Props) {
           minWidth: '254px',
           height: `${A4_H}px`,
           minHeight: `${A4_H}px`,
-          // Inline gradient — survives html2canvas unlike Tailwind classes
           background: 'linear-gradient(to bottom, #4338ca, #3730a3, #581c87)',
           flexShrink: 0,
           overflow: 'hidden',
         }}
       >
-        {/* Profile */}
         <div className="flex flex-col items-start gap-4">
           <div className="relative">
             {personalInfo?.profileImage ? (
@@ -138,7 +161,6 @@ export default function PremiumTemplate({ data }: Props) {
           </div>
         </div>
 
-        {/* Contact */}
         <div className="space-y-3">
           <h3
             className="text-[10px] font-bold uppercase tracking-widest pb-2"
@@ -146,39 +168,62 @@ export default function PremiumTemplate({ data }: Props) {
           >
             Contact
           </h3>
-          <div className="space-y-3 text-[11px]">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '11px' }}>
             {[
               { icon: <Mail size={12} />, value: personalInfo?.email || 'email@example.com' },
               { icon: <Phone size={12} />, value: personalInfo?.phone || '+91 0000000000' },
               { icon: <MapPin size={12} />, value: personalInfo?.location || 'City, Country' },
             ].map(({ icon, value }, i) => (
-              <div key={i} className="flex items-center gap-2" style={{ color: '#ffffff' }}>
+              <div
+                key={i}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  lineHeight: 1
+                }}
+              >
                 <div
-                  className="w-6 h-6 rounded-md flex items-center justify-center flex-shrink-0"
-                  style={{ background: '#5c6bc0' }}
+                  style={{
+                    ...iconBadge,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transform: 'translateY(1px)'
+                  }}
                 >
-                  {icon}
+                  {React.cloneElement(icon, {
+                    style: {
+                      display: 'block',
+                      width: '12px',
+                      height: '12px'
+                    }
+                  })}
                 </div>
-                <span className="break-words">{value}</span>
+                <span
+                  style={{
+                    display: 'inline-block',
+                    lineHeight: '1',
+                    verticalAlign: 'middle',
+                    transform: 'translateY(-1.5px)',
+                    fontFeatureSettings: '"tnum"',
+                    wordBreak: 'break-word'
+                  }}
+                >
+                  {value}
+                </span>
               </div>
             ))}
+
             {(personalInfo?.linkedin || personalInfo?.github) && (
-              <div className="flex gap-2 pt-1">
+              <div style={{ display: 'flex', gap: '8px', paddingTop: '4px' }}>
                 {personalInfo.linkedin && (
-                  <a
-                    href={personalInfo.linkedin}
-                    className="w-7 h-7 rounded-md flex items-center justify-center"
-                    style={{ background: '#5c6bc0', color: '#ffffff' }}
-                  >
+                  <a href={personalInfo.linkedin} style={socialBadge}>
                     <Linkedin size={14} />
                   </a>
                 )}
                 {personalInfo.github && (
-                  <a
-                    href={personalInfo.github}
-                    className="w-7 h-7 rounded-md flex items-center justify-center"
-                    style={{ background: '#5c6bc0', color: '#ffffff' }}
-                  >
+                  <a href={personalInfo.github} style={socialBadge}>
                     <Github size={14} />
                   </a>
                 )}
@@ -187,7 +232,6 @@ export default function PremiumTemplate({ data }: Props) {
           </div>
         </div>
 
-        {/* Skills */}
         <div className="space-y-3">
           <h3
             className="text-[10px] font-bold uppercase tracking-widest pb-2"
@@ -208,7 +252,6 @@ export default function PremiumTemplate({ data }: Props) {
           </div>
         </div>
 
-        {/* Languages */}
         {languages?.length > 0 && (
           <div className="space-y-3">
             <h3
@@ -226,7 +269,6 @@ export default function PremiumTemplate({ data }: Props) {
         )}
       </aside>
 
-      {/* ── Main Content ── */}
       <main
         className="flex flex-col gap-4 p-8"
         style={{
@@ -237,7 +279,6 @@ export default function PremiumTemplate({ data }: Props) {
           overflow: 'hidden',
         }}
       >
-        {/* Header */}
         <div className="flex-shrink-0 mb-2">
           <h1
             className="text-3xl font-black tracking-tight uppercase"
@@ -257,7 +298,6 @@ export default function PremiumTemplate({ data }: Props) {
           />
         </div>
 
-        {/* Summary */}
         {personalInfo?.summary && (
           <SectionCard title="Professional Profile" padding={cardPadding}>
             <p className="text-sm leading-relaxed text-justify" style={{ color: '#4b5563' }}>
@@ -266,7 +306,6 @@ export default function PremiumTemplate({ data }: Props) {
           </SectionCard>
         )}
 
-        {/* Experience */}
         {validExperience.length > 0 && (
           <SectionCard title="Work Experience" padding={cardPadding}>
             <div className="space-y-5">
@@ -296,7 +335,6 @@ export default function PremiumTemplate({ data }: Props) {
           </SectionCard>
         )}
 
-        {/* Education */}
         {validEducation.length > 0 && (
           <SectionCard title="Education" padding={cardPadding}>
             <div className="grid grid-cols-2 gap-4">
@@ -317,7 +355,6 @@ export default function PremiumTemplate({ data }: Props) {
           </SectionCard>
         )}
 
-        {/* Projects */}
         {validProjects.length > 0 && (
           <SectionCard title="Key Projects" padding={cardPadding}>
             <div className="space-y-3">

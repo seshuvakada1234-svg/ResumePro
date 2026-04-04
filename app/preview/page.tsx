@@ -33,8 +33,10 @@ function PreviewContent() {
           </div>
         </div>
 
+        {/* FIX: pass templateId as ?template= query param so the main page
+            knows which template the user selected and can apply it directly. */}
         <Link
-          href="/"
+          href={`/?template=${templateId}`}
           className="px-6 py-2 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-700 transition-all shadow-md"
         >
           Use This Template

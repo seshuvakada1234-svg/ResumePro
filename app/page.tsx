@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect, Suspense } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { ResumeForm } from '@/components/ResumeForm';
 import { ResumePreview } from '@/components/ResumePreview';
 import PDFDownloadButton from '@/components/PDFDownloadButton';
@@ -14,10 +15,28 @@ import { ATSTips } from '@/components/ATSTips';
 import { TemplateSelector } from '@/components/TemplateSelector';
 import { dummyResumeData } from '@/constants/dummyData';
 
-export default function App() {
+function AppContent() {
   const [currentView, setCurrentView] = useState<'builder' | 'templates' | 'ats-tips'>('builder');
   const [resumeData, setResumeData] = useState<ResumeData>(defaultResumeData);
   const [activeResumeId, setActiveResumeId] = useState<string | null>(null);
+
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  // FIX: when arriving from the preview page via /?template=<id>,
+  // apply the selected template and switch to the builder view,
+  // then clean the URL so a refresh doesn't re-apply it.
+  useEffect(() => {
+    const templateId = searchParams.get('template') as ResumeTemplate | null;
+    if (templateId) {
+      setResumeData((prev) => ({ ...prev, template: templateId }));
+      setCurrentView('builder');
+      window.scrollTo(0, 0);
+      toast.success(`Template applied: ${templateId}`);
+      // Remove the ?template= param from the URL without a page reload
+      router.replace('/', { scroll: false });
+    }
+  }, [searchParams, router]);
 
   const handleResumeChange = useCallback((data: ResumeData) => {
     setResumeData(data);
@@ -327,5 +346,13 @@ export default function App() {
         </div>
       </footer>
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+      <AppContent />
+    </Suspense>
   );
 }
