@@ -15,7 +15,6 @@ export const RedlineTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
         minHeight: `${A4_H}px`,
         display: 'grid',
         gridTemplateColumns: '240px 1fr',
-        overflow: 'hidden',
         background: '#fff',
         fontFamily: "'Raleway', 'Helvetica Neue', sans-serif",
       }}
@@ -29,16 +28,16 @@ export const RedlineTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
           minHeight: `${A4_H}px`,
           display: 'flex',
           flexDirection: 'column',
-          overflow: 'hidden',
+          minWidth: 0,
           flexShrink: 0,
         }}
       >
         {/* Photo area */}
-        <div style={{ width: '100%', height: '200px', overflow: 'hidden', position: 'relative', background: '#111', flexShrink: 0 }}>
+        <div style={{ width: '100%', height: '200px', position: 'relative', background: '#111', flexShrink: 0 }}>
           {personalInfo?.profileImage ? (
             <img src={personalInfo.profileImage} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }} />
           ) : (
-            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: 0 }}>
               <div style={{ fontSize: '56px', fontWeight: 900, color: 'rgba(255,255,255,0.15)' }}>
                 {personalInfo?.fullName?.charAt(0) || '?'}
               </div>
@@ -50,22 +49,22 @@ export const RedlineTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
         </div>
 
         {/* Sidebar content */}
-        <div style={{ padding: '14px 22px 24px', flex: 1, overflow: 'hidden' }}>
+        <div style={{ padding: '14px 22px 24px', flex: 1, minWidth: 0 }}>
 
           {/* Skills */}
           {skills?.length > 0 && (
             <div style={{ marginBottom: '18px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                <div style={{ width: '18px', height: '18px', background: '#e8474a', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', minWidth: 0 }}>
+                <div style={{ width: '18px', height: '18px', background: '#e8474a', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, minWidth: 0 }}>
                   <svg width="9" height="9" viewBox="0 0 24 24" fill="white"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
                 </div>
                 <span style={{ fontSize: '10px', fontWeight: 700, color: '#e8474a', textTransform: 'uppercase', letterSpacing: '2px' }}>Work Skills</span>
               </div>
               <div style={{ height: '1px', background: 'rgba(255,255,255,0.1)', marginBottom: '10px' }} />
               {skills.map((skill, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', minWidth: 0 }}>
                   <span style={{ fontSize: '10px', color: '#ccc', width: '85px', flexShrink: 0 }}>{skill.name}</span>
-                  <div style={{ flex: 1, height: '4px', background: '#333', borderRadius: '2px' }}>
+                  <div style={{ flex: 1, minWidth: 0, height: '4px', background: '#333', borderRadius: '2px' }}>
                     <div style={{ height: '100%', background: '#e8474a', borderRadius: '2px', width: `${skill.level}%` }} />
                   </div>
                   <span style={{ fontSize: '9px', color: '#888', width: '26px', textAlign: 'right' }}>{skill.level}%</span>
@@ -77,15 +76,15 @@ export const RedlineTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
           {/* Languages */}
           {languages?.length > 0 && (
             <div style={{ marginBottom: '18px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                <div style={{ width: '18px', height: '18px', background: '#e8474a', borderRadius: '50%', flexShrink: 0 }} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', minWidth: 0 }}>
+                <div style={{ width: '18px', height: '18px', background: '#e8474a', borderRadius: '50%', flexShrink: 0, minWidth: 0 }} />
                 <span style={{ fontSize: '10px', fontWeight: 700, color: '#e8474a', textTransform: 'uppercase', letterSpacing: '2px' }}>Languages</span>
               </div>
               <div style={{ height: '1px', background: 'rgba(255,255,255,0.1)', marginBottom: '10px' }} />
               {languages.map((lang, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', minWidth: 0 }}>
                   <span style={{ fontSize: '10px', color: '#ccc', width: '85px', flexShrink: 0 }}>{lang.name}</span>
-                  <div style={{ flex: 1, height: '4px', background: '#333', borderRadius: '2px' }}>
+                  <div style={{ flex: 1, minWidth: 0, height: '4px', background: '#333', borderRadius: '2px' }}>
                     <div style={{ height: '100%', background: '#666', borderRadius: '2px', width: `${lang.level}%` }} />
                   </div>
                   <span style={{ fontSize: '9px', color: '#888', width: '26px', textAlign: 'right' }}>{lang.level}%</span>
@@ -96,8 +95,8 @@ export const RedlineTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
 
           {/* Contact */}
           <div style={{ marginBottom: '18px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-              <div style={{ width: '18px', height: '18px', background: '#e8474a', borderRadius: '50%', flexShrink: 0 }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', minWidth: 0 }}>
+              <div style={{ width: '18px', height: '18px', background: '#e8474a', borderRadius: '50%', flexShrink: 0, minWidth: 0 }} />
               <span style={{ fontSize: '10px', fontWeight: 700, color: '#e8474a', textTransform: 'uppercase', letterSpacing: '2px' }}>Contact</span>
             </div>
             <div style={{ height: '1px', background: 'rgba(255,255,255,0.1)', marginBottom: '10px' }} />
@@ -118,8 +117,8 @@ export const RedlineTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
           {/* Education */}
           {education?.length > 0 && education[0].school && (
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                <div style={{ width: '18px', height: '18px', background: '#e8474a', borderRadius: '50%', flexShrink: 0 }} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', minWidth: 0 }}>
+                <div style={{ width: '18px', height: '18px', background: '#e8474a', borderRadius: '50%', flexShrink: 0, minWidth: 0 }} />
                 <span style={{ fontSize: '10px', fontWeight: 700, color: '#e8474a', textTransform: 'uppercase', letterSpacing: '2px' }}>Education</span>
               </div>
               <div style={{ height: '1px', background: 'rgba(255,255,255,0.1)', marginBottom: '10px' }} />
@@ -141,8 +140,8 @@ export const RedlineTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
           background: '#fff',
           height: `${A4_H}px`,
           minHeight: `${A4_H}px`,
-          overflow: 'hidden',
           flex: 1,
+          minWidth: 0,
           padding: '32px 28px 32px',
         }}
       >
@@ -202,12 +201,12 @@ export const RedlineTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
 
 function SectionHdr({ label }: { label: string }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
-      <div style={{ width: '24px', height: '24px', background: '#e8474a', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px', minWidth: 0 }}>
+      <div style={{ width: '24px', height: '24px', background: '#e8474a', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, minWidth: 0 }}>
         <div style={{ width: '8px', height: '8px', background: '#fff', borderRadius: '50%' }} />
       </div>
       <span style={{ fontSize: '11px', fontWeight: 700, color: '#1a1a1a', letterSpacing: '3px', textTransform: 'uppercase' }}>{label}</span>
-      <div style={{ flex: 1, height: '1px', background: '#e8e8e8' }} />
+      <div style={{ flex: 1, minWidth: 0, height: '1px', background: '#e8e8e8' }} />
     </div>
   );
 }

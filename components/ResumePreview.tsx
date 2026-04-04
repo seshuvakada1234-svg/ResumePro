@@ -67,10 +67,9 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({ data }) => {
   return (
     <>
       {/*
-        ── Visible preview ────────────────────────────────────────────────────
-        Scaled down to fit the container. overflow-hidden clips the scaled
-        content so it doesn't bleed outside its box. This div has NO id so
-        html2canvas never accidentally targets it.
+        ── Visible preview ──────────────────────────────────────────────────
+        Scaled to fit the sidebar/panel width using ResizeObserver.
+        NO id here — html2canvas must never target this scaled copy.
       */}
       <div
         ref={containerRef}
@@ -80,38 +79,52 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({ data }) => {
         <div
           style={{
             width: `${A4_WIDTH}px`,
+            height: `${A4_HEIGHT}px`,
             minHeight: `${A4_HEIGHT}px`,
             transform: `scale(${scale})`,
             transformOrigin: 'top left',
+            // ── Preview sharpness ──
+            WebkitFontSmoothing: 'antialiased',
+            // @ts-ignore
+            MozOsxFontSmoothing: 'grayscale',
+            textRendering: 'optimizeLegibility',
+            // Prevent subpixel bleed on scaled preview
+            backfaceVisibility: 'hidden',
+            WebkitBackfaceVisibility: 'hidden',
           }}
-          className="bg-white text-gray-900"
         >
           {renderTemplate()}
         </div>
       </div>
 
       {/*
-        ── PDF capture target ─────────────────────────────────────────────────
-        Full A4 size, visually hidden (off-screen), NO scaling, NO clipping.
-        PDFDownloadButton targets id="resume-preview" — this is that element.
-        Rendering the template twice is intentional: the visible copy is scaled
-        for display; this copy is at true pixel dimensions for html2canvas so
-        the entire page is captured without any overflow clipping.
+        ── PDF capture target ───────────────────────────────────────────────
+        Rendered at true A4 pixel dimensions — no scaling, no clipping.
+        PDFDownloadButton targets id="resume-preview".
+        Kept off-screen with position:fixed so it never affects page layout
+        and html2canvas captures it at full resolution.
       */}
       <div
         id="resume-preview"
         aria-hidden="true"
         style={{
-          position: 'absolute',
+          position: 'fixed',           // fixed > absolute — never shifts with scroll
           top: '-9999px',
           left: '0',
           width: `${A4_WIDTH}px`,
+          height: `${A4_HEIGHT}px`,
           minHeight: `${A4_HEIGHT}px`,
+          maxHeight: `${A4_HEIGHT}px`,
           background: '#ffffff',
-          zIndex: -1,
+          overflow: 'hidden',          // clip anything that bleeds past A4
+          zIndex: -9999,
           pointerEvents: 'none',
+          // ── PDF font quality ──
+          WebkitFontSmoothing: 'antialiased',
+          // @ts-ignore
+          MozOsxFontSmoothing: 'grayscale',
+          textRendering: 'optimizeLegibility',
         }}
-        className="text-gray-900"
       >
         {renderTemplate()}
       </div>

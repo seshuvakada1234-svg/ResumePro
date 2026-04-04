@@ -1,20 +1,21 @@
 import React from 'react';
 import { ResumeData } from '@/types/resume';
 import { Mail, Phone, MapPin, Linkedin, Github } from 'lucide-react';
+import IconText from '@/components/IconText';
 
 export const ModernTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
   const { personalInfo, education, experience, skills, projects } = data;
 
   return (
-    <div className="a4-page font-sans text-gray-800 flex flex-col p-0 overflow-hidden">
+    <div className="a4-page font-sans text-gray-800 flex flex-col p-0 min-w-0">
       <div className="bg-indigo-700 p-10 text-white">
         <h1 className="text-4xl font-bold mb-4">{personalInfo.fullName || 'Your Name'}</h1>
-        <div className="flex flex-wrap gap-6 text-sm text-indigo-100">
-          {personalInfo.email && <span className="flex items-center gap-1.5"><Mail size={14} /> {personalInfo.email}</span>}
-          {personalInfo.phone && <span className="flex items-center gap-1.5"><Phone size={14} /> {personalInfo.phone}</span>}
-          {personalInfo.location && <span className="flex items-center gap-1.5"><MapPin size={14} /> {personalInfo.location}</span>}
+        <div className="flex flex-wrap gap-6 text-sm text-indigo-100 min-w-0">
+          {personalInfo.email && <IconText icon={<Mail size={14} />} text={personalInfo.email} />}
+          {personalInfo.phone && <IconText icon={<Phone size={14} />} text={personalInfo.phone} />}
+          {personalInfo.location && <IconText icon={<MapPin size={14} />} text={personalInfo.location} />}
         </div>
-        <div className="flex gap-4 mt-4">
+        <div className="flex gap-4 mt-4 min-w-0">
           {personalInfo.linkedin && <a href={personalInfo.linkedin} className="text-indigo-200 hover:text-white transition-colors"><Linkedin size={16} /></a>}
           {personalInfo.github && <a href={personalInfo.github} className="text-indigo-200 hover:text-white transition-colors"><Github size={16} /></a>}
         </div>
@@ -35,7 +36,7 @@ export const ModernTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
               <div className="space-y-6">
                 {experience.map((exp, i) => (
                   <div key={i} className="border-l-2 border-indigo-100 pl-4">
-                    <div className="flex justify-between items-baseline mb-1">
+                    <div className="flex justify-between items-baseline mb-1 min-w-0">
                       <h3 className="font-bold text-base text-gray-900">{exp.position}</h3>
                       <span className="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded">{exp.duration}</span>
                     </div>
@@ -52,7 +53,7 @@ export const ModernTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
           {skills.length > 0 && (
             <section>
               <h2 className="text-lg font-bold text-indigo-700 mb-4 uppercase tracking-wider">Skills</h2>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 min-w-0">
                 {skills.map((skill, i) => (
                   <span key={i} className="px-3 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full">
                     {typeof skill === 'string' ? skill : skill.name}

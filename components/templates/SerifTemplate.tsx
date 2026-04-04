@@ -28,12 +28,12 @@ export const SerifTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
           minHeight: `${A4_H}px`,
           display: 'flex',
           flexDirection: 'column',
-          overflow: 'hidden',
           flexShrink: 0,
+          minWidth: 0,
         }}
       >
         {/* Photo area */}
-        <div style={{ width: '100%', height: '240px', overflow: 'hidden', flexShrink: 0, background: '#1a1a1a', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ width: '100%', height: '240px', flexShrink: 0, background: '#1a1a1a', display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: 0 }}>
           {personalInfo?.profileImage ? (
             <img src={personalInfo.profileImage} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top', filter: 'grayscale(100%)' }} />
           ) : (
@@ -44,7 +44,7 @@ export const SerifTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
         </div>
 
         {/* Sidebar content */}
-        <div style={{ padding: '24px 24px 28px', overflow: 'hidden', flex: 1 }}>
+        <div style={{ padding: '24px 24px 28px', flex: 1, minWidth: 0 }}>
           {/* Name */}
           <div style={{ marginBottom: '14px' }}>
             <h1 style={{ fontFamily: 'Georgia, serif', fontSize: '26px', fontWeight: 900, lineHeight: 1.1, color: '#fff' }}>
@@ -58,7 +58,7 @@ export const SerifTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
 
           {/* Social links */}
           {(personalInfo?.linkedin || personalInfo?.github) && (
-            <div style={{ display: 'flex', gap: '8px', marginBottom: '22px' }}>
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '22px', minWidth: 0 }}>
               {personalInfo?.linkedin && (
                 <div style={{ width: '24px', height: '24px', background: '#fff', borderRadius: '3px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="#2b2b2b"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
@@ -102,9 +102,9 @@ export const SerifTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
               <h2 style={{ fontFamily: 'Georgia, serif', fontSize: '15px', fontWeight: 700, color: '#fff', marginBottom: '6px' }}>Languages</h2>
               <div style={{ width: '24px', height: '2px', background: '#fff', marginBottom: '12px' }} />
               {languages.map((lang, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px', minWidth: 0 }}>
                   <span style={{ fontSize: '11px', color: '#ccc', width: '55px', flexShrink: 0 }}>{lang.name}</span>
-                  <div style={{ flex: 1, height: '5px', background: '#555', borderRadius: '3px' }}>
+                  <div style={{ flex: 1, minWidth: 0, height: '5px', background: '#555', borderRadius: '3px' }}>
                     <div style={{ height: '100%', background: '#fff', borderRadius: '3px', width: `${lang.level}%` }} />
                   </div>
                 </div>
@@ -118,9 +118,9 @@ export const SerifTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
               <h2 style={{ fontFamily: 'Georgia, serif', fontSize: '15px', fontWeight: 700, color: '#fff', marginBottom: '6px' }}>Skills</h2>
               <div style={{ width: '24px', height: '2px', background: '#fff', marginBottom: '12px' }} />
               {skills.map((skill, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px', minWidth: 0 }}>
                   <span style={{ fontSize: '11px', color: '#ccc', width: '75px', flexShrink: 0 }}>{skill.name}</span>
-                  <div style={{ flex: 1, height: '5px', background: '#555', borderRadius: '3px' }}>
+                  <div style={{ flex: 1, minWidth: 0, height: '5px', background: '#555', borderRadius: '3px' }}>
                     <div style={{ height: '100%', background: '#fff', borderRadius: '3px', width: `${skill.level}%` }} />
                   </div>
                   <span style={{ fontSize: '10px', color: '#888', width: '28px', textAlign: 'right' }}>{skill.level}%</span>
@@ -137,8 +137,8 @@ export const SerifTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
           background: '#fff',
           height: `${A4_H}px`,
           minHeight: `${A4_H}px`,
-          overflow: 'hidden',
           flex: 1,
+          minWidth: 0,
           padding: '36px 32px',
           fontFamily: "'Open Sans', 'Helvetica Neue', sans-serif",
         }}
@@ -194,9 +194,9 @@ export const SerifTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
             <div style={{ width: '28px', height: '3px', background: '#2b2b2b', marginBottom: '14px' }} />
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 20px' }}>
               {skills.map((skill, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px', minWidth: 0 }}>
                   <span style={{ fontSize: '11px', color: '#444', width: '85px', flexShrink: 0 }}>{skill.name}</span>
-                  <div style={{ flex: 1, height: '6px', background: '#e0e0e0', borderRadius: '3px' }}>
+                  <div style={{ flex: 1, minWidth: 0, height: '6px', background: '#e0e0e0', borderRadius: '3px' }}>
                     <div style={{ height: '100%', background: '#2b2b2b', borderRadius: '3px', width: `${skill.level}%` }} />
                   </div>
                   <span style={{ fontSize: '10px', color: '#888', width: '28px', textAlign: 'right' }}>{skill.level}%</span>

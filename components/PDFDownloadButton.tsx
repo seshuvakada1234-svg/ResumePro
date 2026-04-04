@@ -5,6 +5,7 @@ import { toast } from "sonner";
 
 const A4_W = 794;
 const A4_H = 1123;
+const SCALE = 3; // 216 DPI — crisp on all screens/printers
 
 const spinnerStyle: React.CSSProperties = {
   width: "16px",
@@ -57,9 +58,10 @@ export default function PDFDownloadButton() {
       const html2canvas = (await import("html2canvas")).default;
       const { jsPDF } = await import("jspdf");
 
+      // ── Clone & position off-screen at exact A4 size ──
       clonedElement = element.cloneNode(true) as HTMLElement;
       clonedElement.style.position = "fixed";
-      clonedElement.style.top = "-9999px";
+      clonedElement.style.top = "-99999px";
       clonedElement.style.left = "0";
       clonedElement.style.width = `${A4_W}px`;
       clonedElement.style.height = `${A4_H}px`;
@@ -68,14 +70,18 @@ export default function PDFDownloadButton() {
       clonedElement.style.background = "#ffffff";
       clonedElement.style.overflow = "hidden";
       clonedElement.style.transform = "none";
+      clonedElement.style.zoom = "1";
+      // ── Font quality ──
+      (clonedElement.style as any).webkitFontSmoothing = "antialiased";
+      (clonedElement.style as any).mozOsxFontSmoothing = "grayscale";
+      clonedElement.style.textRendering = "optimizeLegibility";
       document.body.appendChild(clonedElement);
 
-      await new Promise((resolve) => setTimeout(resolve, 300));
+      // ── Wait for layout + fonts ──
+      await new Promise((resolve) => setTimeout(resolve, 400));
+      if (document.fonts?.ready) await document.fonts.ready;
 
-      if (document.fonts?.ready) {
-        await document.fonts.ready;
-      }
-
+      // ── Wait for all images ──
       const clonedImages = Array.from(clonedElement.querySelectorAll("img"));
       await Promise.all(
         clonedImages.map(
@@ -92,8 +98,9 @@ export default function PDFDownloadButton() {
         throw new Error("Cloned preview has invalid dimensions");
       }
 
+      // ── Capture at 3x scale ──
       const canvas = await html2canvas(clonedElement, {
-        scale: 2,
+        scale: SCALE,           // KEY: 3x = 216 DPI
         useCORS: true,
         allowTaint: false,
         imageTimeout: 15000,
@@ -109,8 +116,7 @@ export default function PDFDownloadButton() {
           const root = doc.documentElement;
           const body = doc.body;
 
-          // Prevent html2canvas parse crash on modern CSS color functions (e.g., oklch)
-          // without changing visible layout/business logic.
+          // Fix modern CSS color functions unsupported by html2canvas
           root.style.setProperty("--tw-ring-color", "rgba(59,130,246,0.5)");
           root.style.setProperty("--tw-ring-offset-color", "#ffffff");
           root.style.setProperty("--tw-border-opacity", "1");
@@ -121,18 +127,31 @@ export default function PDFDownloadButton() {
           const all = Array.from(body.querySelectorAll<HTMLElement>("*"));
 
           for (const node of all) {
+            // Apply font smoothing to every node in clone
+            (node.style as any).webkitFontSmoothing = "antialiased";
+            (node.style as any).mozOsxFontSmoothing = "grayscale";
+
             const style = doc.defaultView?.getComputedStyle(node);
             if (!style) continue;
 
-            if (unsafeColorFns.test(style.color)) node.style.color = "#111827";
-            if (unsafeColorFns.test(style.backgroundColor)) node.style.backgroundColor = "#ffffff";
-            if (unsafeColorFns.test(style.borderTopColor)) node.style.borderTopColor = "#d1d5db";
-            if (unsafeColorFns.test(style.borderRightColor)) node.style.borderRightColor = "#d1d5db";
-            if (unsafeColorFns.test(style.borderBottomColor)) node.style.borderBottomColor = "#d1d5db";
-            if (unsafeColorFns.test(style.borderLeftColor)) node.style.borderLeftColor = "#d1d5db";
-            if (unsafeColorFns.test(style.outlineColor)) node.style.outlineColor = "transparent";
-            if (unsafeColorFns.test(style.textDecorationColor)) node.style.textDecorationColor = "currentColor";
-            if (unsafeColorFns.test(style.caretColor)) node.style.caretColor = "currentColor";
+            if (unsafeColorFns.test(style.color))
+              node.style.color = "#111827";
+            if (unsafeColorFns.test(style.backgroundColor))
+              node.style.backgroundColor = "#ffffff";
+            if (unsafeColorFns.test(style.borderTopColor))
+              node.style.borderTopColor = "#d1d5db";
+            if (unsafeColorFns.test(style.borderRightColor))
+              node.style.borderRightColor = "#d1d5db";
+            if (unsafeColorFns.test(style.borderBottomColor))
+              node.style.borderBottomColor = "#d1d5db";
+            if (unsafeColorFns.test(style.borderLeftColor))
+              node.style.borderLeftColor = "#d1d5db";
+            if (unsafeColorFns.test(style.outlineColor))
+              node.style.outlineColor = "transparent";
+            if (unsafeColorFns.test(style.textDecorationColor))
+              node.style.textDecorationColor = "currentColor";
+            if (unsafeColorFns.test(style.caretColor))
+              node.style.caretColor = "currentColor";
           }
         },
       });
@@ -141,35 +160,49 @@ export default function PDFDownloadButton() {
         throw new Error("Canvas rendering failed");
       }
 
+      // ── Composite onto final A4 canvas at 3x resolution ──
       const a4Canvas = document.createElement("canvas");
-      a4Canvas.width = A4_W * 2;
-      a4Canvas.height = A4_H * 2;
+      a4Canvas.width = A4_W * SCALE;
+      a4Canvas.height = A4_H * SCALE;
 
       const ctx = a4Canvas.getContext("2d");
-      if (!ctx) {
-        throw new Error("Failed to create canvas context");
-      }
+      if (!ctx) throw new Error("Failed to create canvas context");
 
       ctx.fillStyle = "#ffffff";
       ctx.fillRect(0, 0, a4Canvas.width, a4Canvas.height);
       ctx.drawImage(canvas, 0, 0, a4Canvas.width, a4Canvas.height);
 
-      const imgData = a4Canvas.toDataURL("image/jpeg", 0.95);
+      // ── Export as PNG (lossless) instead of JPEG ──
+      const imgData = a4Canvas.toDataURL("image/png", 1.0);
       if (!imgData || imgData === "data:,") {
         throw new Error("Canvas export failed");
       }
 
+      // ── Create PDF at exact A4 mm dimensions ──
       const pdf = new jsPDF({
         orientation: "portrait",
-        unit: "px",
-        format: [A4_W, A4_H],
-        hotfixes: ["px_scaling"],
+        unit: "mm",
+        format: "a4",          // 210 x 297 mm
+        compress: false,        // no lossy compression
       });
 
-      pdf.addImage(imgData, "JPEG", 0, 0, A4_W, A4_H);
-      pdf.save("resume.pdf");
+      const pdfW = pdf.internal.pageSize.getWidth();   // 210mm
+      const pdfH = pdf.internal.pageSize.getHeight();  // 297mm
 
+      pdf.addImage(
+        imgData,
+        "PNG",
+        0,
+        0,
+        pdfW,
+        pdfH,
+        "",
+        "FAST",                 // no extra canvas compression
+      );
+
+      pdf.save("resume.pdf");
       toast.success("Resume downloaded! ✅");
+
     } catch (err) {
       console.error("PDF generation error:", err);
       toast.error("Download failed ❌");

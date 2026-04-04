@@ -6,10 +6,10 @@ export const MinimalTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
   const { personalInfo, education, experience, skills, projects } = data;
 
   return (
-    <div className="a4-page font-sans text-slate-900 p-12 overflow-hidden">
+    <div className="a4-page font-sans text-slate-900 p-12">
       <header className="mb-10">
         <h1 className="text-4xl font-light tracking-tight mb-4">{personalInfo.fullName || 'Your Name'}</h1>
-        <div className="flex flex-wrap gap-4 text-xs text-slate-500 uppercase tracking-widest font-medium">
+        <div className="flex flex-wrap gap-4 text-xs text-slate-500 uppercase tracking-widest font-medium min-w-0">
           {personalInfo.email && <span>{personalInfo.email}</span>}
           {personalInfo.phone && <span>{personalInfo.phone}</span>}
           {personalInfo.location && <span>{personalInfo.location}</span>}
@@ -60,7 +60,7 @@ export const MinimalTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
           {skills.length > 0 && (
             <section>
               <h2 className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] mb-6">Skills</h2>
-              <div className="flex flex-wrap gap-x-4 gap-y-2">
+              <div className="flex flex-wrap gap-x-4 gap-y-2 min-w-0">
                 {skills.map((skill, i) => (
                   <span key={i} className="text-xs text-slate-600">{typeof skill === 'string' ? skill : skill.name}</span>
                 ))}

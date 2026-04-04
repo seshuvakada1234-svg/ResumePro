@@ -3,6 +3,7 @@
 import React from 'react';
 import { ResumeData } from '@/types/resume';
 import { Mail, Phone, MapPin, Linkedin, Github, ExternalLink } from 'lucide-react';
+import IconText from '@/components/IconText';
 
 interface Props {
   data: ResumeData;
@@ -13,14 +14,14 @@ const A4_H = 1123;
 const SidebarProgressBar = ({ label, level }: { label: string; level: number }) => (
   <div className="space-y-1.5">
     <div
-      className="flex justify-between text-[10px] font-semibold uppercase tracking-wider"
+      className="flex justify-between min-w-0 text-[10px] font-semibold uppercase tracking-wider"
       style={{ color: '#ffffff' }}
     >
       <span>{label}</span>
       <span>{level}%</span>
     </div>
     <div
-      className="h-1.5 w-full rounded-full overflow-hidden"
+      className="h-1.5 w-full rounded-full"
       style={{ backgroundColor: '#5c6bc0' }}
     >
       <div className="h-full rounded-full" style={{ width: `${level}%`, backgroundColor: '#ffffff' }} />
@@ -41,7 +42,7 @@ const SectionCard = ({
     className={`rounded-xl ${padding}`}
     style={{ border: '1px solid #f3f4f6', backgroundColor: '#ffffff' }}
   >
-    <div className="flex items-center gap-2 mb-4">
+    <div className="flex items-center gap-2 mb-4 min-w-0">
       <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#6366f1' }} />
       <h2
         className="text-sm font-bold uppercase tracking-wider"
@@ -115,7 +116,7 @@ export default function PremiumTemplate({ data }: Props) {
       }}
     >
       <aside
-        className="flex flex-col gap-6 p-6 text-white"
+        className="flex flex-col gap-6 p-6 text-white min-w-0"
         style={{
           width: '254px',
           minWidth: '254px',
@@ -123,10 +124,9 @@ export default function PremiumTemplate({ data }: Props) {
           minHeight: `${A4_H}px`,
           background: 'linear-gradient(to bottom, #4338ca, #3730a3, #581c87)',
           flexShrink: 0,
-          overflow: 'hidden',
         }}
       >
-        <div className="flex flex-col items-start gap-4">
+        <div className="flex flex-col items-start gap-4 min-w-0">
           <div className="relative">
             {personalInfo?.profileImage ? (
               <img
@@ -137,7 +137,7 @@ export default function PremiumTemplate({ data }: Props) {
               />
             ) : (
               <div
-                className="w-24 h-24 rounded-full flex items-center justify-center text-white text-3xl font-bold"
+                className="w-24 h-24 rounded-full flex items-center justify-center text-white text-3xl font-bold min-w-0"
                 style={{ background: '#5c6bc0', border: '4px solid #7986cb' }}
               >
                 {personalInfo?.fullName?.charAt(0) || '?'}
@@ -169,51 +169,9 @@ export default function PremiumTemplate({ data }: Props) {
             Contact
           </h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '11px' }}>
-            {[
-              { icon: <Mail size={12} />, value: personalInfo?.email || 'email@example.com' },
-              { icon: <Phone size={12} />, value: personalInfo?.phone || '+91 0000000000' },
-              { icon: <MapPin size={12} />, value: personalInfo?.location || 'City, Country' },
-            ].map(({ icon, value }, i) => (
-              <div
-                key={i}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  lineHeight: 1
-                }}
-              >
-                <div
-                  style={{
-                    ...iconBadge,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    transform: 'translateY(1px)'
-                  }}
-                >
-                  {React.cloneElement(icon, {
-                    style: {
-                      display: 'block',
-                      width: '12px',
-                      height: '12px'
-                    }
-                  })}
-                </div>
-                <span
-                  style={{
-                    display: 'inline-block',
-                    lineHeight: '1',
-                    verticalAlign: 'middle',
-                    transform: 'translateY(-1.5px)',
-                    fontFeatureSettings: '"tnum"',
-                    wordBreak: 'break-word'
-                  }}
-                >
-                  {value}
-                </span>
-              </div>
-            ))}
+            <IconText icon={<Mail size={12} />} text={personalInfo?.email || 'email@example.com'} iconBadge={iconBadge} />
+            <IconText icon={<Phone size={12} />} text={personalInfo?.phone || '+91 0000000000'} iconBadge={iconBadge} />
+            <IconText icon={<MapPin size={12} />} text={personalInfo?.location || 'City, Country'} iconBadge={iconBadge} />
 
             {(personalInfo?.linkedin || personalInfo?.github) && (
               <div style={{ display: 'flex', gap: '8px', paddingTop: '4px' }}>
@@ -270,13 +228,12 @@ export default function PremiumTemplate({ data }: Props) {
       </aside>
 
       <main
-        className="flex flex-col gap-4 p-8"
+        className="flex flex-col gap-4 p-8 min-w-0"
         style={{
           flex: 1,
           backgroundColor: '#ffffff',
           height: `${A4_H}px`,
           minHeight: `${A4_H}px`,
-          overflow: 'hidden',
         }}
       >
         <div className="flex-shrink-0 mb-2">
@@ -311,13 +268,13 @@ export default function PremiumTemplate({ data }: Props) {
             <div className="space-y-5">
               {validExperience.map((exp, idx) => (
                 <div key={idx}>
-                  <div className="flex justify-between items-start gap-2 mb-2">
+                  <div className="flex justify-between items-start gap-2 mb-2 min-w-0">
                     <div>
                       <h4 className="text-sm font-bold" style={{ color: '#111827' }}>{exp.position}</h4>
                       <p className="font-bold text-xs mt-0.5" style={{ color: '#4f46e5' }}>{exp.company}</p>
                     </div>
                     <span
-                      className="text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wide whitespace-nowrap flex-shrink-0"
+                      className="text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wide flex-shrink-0"
                       style={{ color: '#9ca3af', backgroundColor: '#f3f4f6' }}
                     >
                       {exp.duration}
@@ -340,11 +297,11 @@ export default function PremiumTemplate({ data }: Props) {
             <div className="grid grid-cols-2 gap-4">
               {validEducation.map((edu, idx) => (
                 <div key={idx} className="p-3 rounded-lg" style={{ backgroundColor: '#f9fafb' }}>
-                  <div className="flex justify-between items-start gap-1">
+                  <div className="flex justify-between items-start gap-1 min-w-0">
                     <h4 className="text-xs font-bold leading-tight" style={{ color: '#111827' }}>
                       {edu.degree}
                     </h4>
-                    <span className="text-[10px] font-bold whitespace-nowrap" style={{ color: '#6366f1' }}>
+                    <span className="text-[10px] font-bold" style={{ color: '#6366f1' }}>
                       {edu.year}
                     </span>
                   </div>
@@ -364,7 +321,7 @@ export default function PremiumTemplate({ data }: Props) {
                   className="p-3 rounded-xl"
                   style={{ backgroundColor: '#f9fafb', border: '1px solid #f3f4f6' }}
                 >
-                  <div className="flex justify-between items-center mb-1">
+                  <div className="flex justify-between items-center mb-1 min-w-0">
                     <h4 className="text-sm font-bold" style={{ color: '#111827' }}>{proj.name}</h4>
                     {proj.link && (
                       <a
