@@ -1,5 +1,15 @@
 @import "tailwindcss";
 
+/* Hide scrollbars globally - all browsers */
+* {
+  scrollbar-width: none;        /* Firefox */
+  -ms-overflow-style: none;     /* IE / Edge */
+}
+
+*::-webkit-scrollbar {
+  display: none;                /* Chrome / Safari / Opera */
+}
+
 @theme {
   --color-indigo-50: #eef2ff;
   --color-indigo-100: #e0e7ff;
@@ -156,3 +166,12 @@ body {
 
 .pdf-safe .border-indigo-600   { border-color: #4f46e5 !important; }
 .pdf-safe .border-indigo-100   { border-color: #e0e7ff !important; }
+
+/* ── Utilities ─────────────────────────────────────────────── */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

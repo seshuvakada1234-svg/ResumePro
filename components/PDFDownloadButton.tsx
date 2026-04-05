@@ -1,7 +1,9 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
+import { AdBanner } from "./AdBanner";
+import { X, Loader2 } from "lucide-react";
 
 const A4_W = 794;
 const A4_H = 1123;
@@ -40,21 +42,22 @@ function DownloadIcon() {
 
 export default function PDFDownloadButton() {
   const [loading, setLoading] = useState(false);
+  const [showAdOverlay, setShowAdOverlay] = useState(false);
+  const [countdown, setCountdown] = useState(3);
 
-  const handleDownload = async () => {
+  const startDownload = async () => {
     const element = document.getElementById("resume-preview");
 
     if (!element) {
       toast.error("Preview not found ❌");
+      setLoading(false);
+      setShowAdOverlay(false);
       return;
     }
 
     let clonedElement: HTMLElement | null = null;
 
     try {
-      setLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 300));
-
       const html2canvas = (await import("html2canvas")).default;
       const { jsPDF } = await import("jspdf");
 
@@ -211,8 +214,25 @@ export default function PDFDownloadButton() {
         clonedElement.parentNode.removeChild(clonedElement);
       }
       setLoading(false);
+      setShowAdOverlay(false);
     }
   };
+
+  const handleDownloadClick = () => {
+    setLoading(true);
+    setShowAdOverlay(true);
+    setCountdown(3);
+  };
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (showAdOverlay && countdown > 0) {
+      timer = setTimeout(() => setCountdown(prev => prev - 1), 1000);
+    } else if (showAdOverlay && countdown === 0) {
+      startDownload();
+    }
+    return () => clearTimeout(timer);
+  }, [showAdOverlay, countdown]);
 
   return (
     <>
@@ -223,7 +243,7 @@ export default function PDFDownloadButton() {
       `}</style>
 
       <button
-        onClick={handleDownload}
+        onClick={handleDownloadClick}
         disabled={loading}
         aria-label={loading ? "Generating PDF, please wait" : "Download PDF"}
         className={[
@@ -240,7 +260,7 @@ export default function PDFDownloadButton() {
         {loading ? (
           <>
             <span style={spinnerStyle} />
-            Generating...
+            Preparing...
           </>
         ) : (
           <>
@@ -249,6 +269,42 @@ export default function PDFDownloadButton() {
           </>
         )}
       </button>
+
+      {showAdOverlay && (
+        <div className="fixed inset-0 z-[9999] bg-white/95 backdrop-blur-sm flex flex-col items-center justify-center p-6 animate-in fade-in duration-300">
+          <div className="max-w-md w-full space-y-8 text-center">
+            <div className="flex flex-col items-center gap-4">
+              <div className="relative">
+                <Loader2 className="w-12 h-12 text-indigo-600 animate-spin" />
+                <div className="absolute inset-0 flex items-center justify-center text-xs font-bold text-indigo-600">
+                  {countdown > 0 ? countdown : ""}
+                </div>
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900">Preparing Your Resume</h3>
+              <p className="text-gray-500">Your professional ATS-friendly resume is being generated. Please wait a moment.</p>
+            </div>
+
+            <div className="bg-gray-50 rounded-2xl p-4 border border-gray-100 shadow-inner">
+              <AdBanner adSlot="download-loading-ad" className="min-h-[250px]" />
+            </div>
+
+            <div className="flex items-center justify-center gap-2 text-xs text-gray-400">
+              <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
+              Processing high-quality PDF export...
+            </div>
+
+            <button 
+              onClick={() => {
+                setShowAdOverlay(false);
+                setLoading(false);
+              }}
+              className="absolute top-6 right-6 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-all"
+            >
+              <X size={24} />
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
 }

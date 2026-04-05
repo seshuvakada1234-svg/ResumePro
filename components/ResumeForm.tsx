@@ -4,13 +4,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { ResumeData, ResumeTemplate } from '@/types/resume';
 import { Plus, Trash2, Save, Sparkles, Layout, Upload, Image as ImageIcon } from 'lucide-react';
-import { AdUnit } from './AdUnit';
+import { AdBanner } from './AdBanner';
 
 const resumeSchema = z.object({
   id: z.string().optional(),
   uid: z.string(),
   title: z.string().min(1, 'Title is required'),
-  template: z.enum(['classic', 'modern', 'minimal', 'executive', 'fresher-india', 'two-column', 'premium', 'redline', 'navy', 'serif']),
+  template: z.enum(['classic', 'modern', 'minimal', 'executive', 'fresher-india', 'two-column', 'premium', 'redline', 'navy', 'serif', 'tech-modern', 'business-classic', 'fresher-minimal', 'photo-sidebar', 'photo-circle', 'lawyer-classic', 'minimal-pro', 'pink-header', 'dark-navy', 'crimson']),
   personalInfo: z.object({
     fullName: z.string().min(1, 'Full Name is required'),
     email: z.string().email('Invalid email'),
@@ -58,6 +58,9 @@ interface ResumeFormProps {
 }
 
 export const ResumeForm: React.FC<ResumeFormProps> = ({ initialData, onChange, onSave, isSaving }) => {
+  const inputClass = "w-full px-3 py-2 md:py-2.5 min-h-[44px] md:min-h-0 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-all";
+  const labelClass = "text-sm font-semibold text-gray-600 mb-1 block";
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -106,14 +109,17 @@ export const ResumeForm: React.FC<ResumeFormProps> = ({ initialData, onChange, o
     <form onSubmit={handleSubmit(onSave)} className="space-y-8 p-6 bg-white rounded-xl shadow-sm border border-gray-100">
       <div className="flex items-center justify-between sticky top-0 bg-white/80 backdrop-blur-sm py-4 z-10 border-b border-gray-100 mb-6">
         <h2 className="text-xl font-semibold text-gray-800">Resume Details</h2>
-        <button
-          type="submit"
-          disabled={isSaving}
-          className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50"
-        >
-          {isSaving ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <Save size={18} />}
-          Save Resume
-        </button>
+        <div className="flex items-center gap-4">
+          <AdBanner adSlot="save-top" className="my-0 p-0 shadow-none bg-transparent" />
+          <button
+            type="submit"
+            disabled={isSaving}
+            className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50 shrink-0"
+          >
+            {isSaving ? <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> : <Save size={18} />}
+            Save Resume
+          </button>
+        </div>
       </div>
 
       {/* Template Selector */}
@@ -122,7 +128,7 @@ export const ResumeForm: React.FC<ResumeFormProps> = ({ initialData, onChange, o
           <div className="bg-indigo-100 p-1 rounded-md text-indigo-600"><Layout size={14} /></div> Choose Template
         </h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
-          {(['classic', 'modern', 'minimal', 'executive', 'fresher-india', 'two-column', 'premium', 'redline', 'navy', 'serif'] as ResumeTemplate[]).map((t) => (
+          {(['classic', 'modern', 'minimal', 'executive', 'fresher-india', 'two-column', 'premium', 'redline', 'navy', 'serif', 'photo-sidebar', 'photo-circle', 'lawyer-classic', 'minimal-pro', 'pink-header'] as ResumeTemplate[]).map((t) => (
             <button
               key={t}
               type="button"
@@ -139,7 +145,7 @@ export const ResumeForm: React.FC<ResumeFormProps> = ({ initialData, onChange, o
         </div>
       </section>
 
-      <AdUnit slot="form-top" className="my-6" />
+      <AdBanner adSlot="form-top" className="my-6" />
 
       {/* Basic Info */}
       <section className="space-y-4">
@@ -149,32 +155,32 @@ export const ResumeForm: React.FC<ResumeFormProps> = ({ initialData, onChange, o
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-1">
-            <label className="text-sm font-medium text-gray-600">Resume Title</label>
-            <input {...register('title')} className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="e.g. Software Engineer Resume" />
+            <label className={labelClass}>Resume Title</label>
+            <input {...register('title')} className={inputClass} placeholder="e.g. Software Engineer Resume" />
             {errors.title && <p className="text-xs text-red-500">{errors.title.message}</p>}
           </div>
           <div className="space-y-1">
-            <label className="text-sm font-medium text-gray-600">Full Name</label>
-            <input {...register('personalInfo.fullName')} className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" />
+            <label className={labelClass}>Full Name</label>
+            <input {...register('personalInfo.fullName')} className={inputClass} />
             {errors.personalInfo?.fullName && <p className="text-xs text-red-500">{errors.personalInfo.fullName.message}</p>}
           </div>
           <div className="space-y-1">
-            <label className="text-sm font-medium text-gray-600">Email</label>
-            <input {...register('personalInfo.email')} className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" />
+            <label className={labelClass}>Email</label>
+            <input {...register('personalInfo.email')} className={inputClass} />
             {errors.personalInfo?.email && <p className="text-xs text-red-500">{errors.personalInfo.email.message}</p>}
           </div>
           <div className="space-y-1">
-            <label className="text-sm font-medium text-gray-600">Phone</label>
-            <input {...register('personalInfo.phone')} className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" />
+            <label className={labelClass}>Phone</label>
+            <input {...register('personalInfo.phone')} className={inputClass} />
             {errors.personalInfo?.phone && <p className="text-xs text-red-500">{errors.personalInfo.phone.message}</p>}
           </div>
           <div className="space-y-1 md:col-span-2">
-            <label className="text-sm font-medium text-gray-600">Location</label>
-            <input {...register('personalInfo.location')} className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="e.g. Mumbai, India" />
+            <label className={labelClass}>Location</label>
+            <input {...register('personalInfo.location')} className={inputClass} placeholder="e.g. Mumbai, India" />
             {errors.personalInfo?.location && <p className="text-xs text-red-500">{errors.personalInfo.location.message}</p>}
           </div>
           <div className="space-y-1 md:col-span-2">
-            <label className="text-sm font-medium text-gray-600">Profile Photo</label>
+            <label className={labelClass}>Profile Photo</label>
             <div className="flex flex-col items-center gap-4 p-6 border-2 border-dashed border-gray-200 rounded-2xl bg-gray-50/30 hover:bg-gray-50/50 transition-all group relative">
               <div className="relative w-32 h-32">
                 {/* Image Container */}
@@ -214,15 +220,15 @@ export const ResumeForm: React.FC<ResumeFormProps> = ({ initialData, onChange, o
             </div>
           </div>
           <div className="space-y-1">
-            <label className="text-sm font-medium text-gray-600">LinkedIn URL</label>
-            <input {...register('personalInfo.linkedin')} className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="linkedin.com/in/username" />
+            <label className={labelClass}>LinkedIn URL</label>
+            <input {...register('personalInfo.linkedin')} className={inputClass} placeholder="linkedin.com/in/username" />
           </div>
           <div className="space-y-1">
-            <label className="text-sm font-medium text-gray-600">GitHub URL</label>
-            <input {...register('personalInfo.github')} className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="github.com/username" />
+            <label className={labelClass}>GitHub URL</label>
+            <input {...register('personalInfo.github')} className={inputClass} placeholder="github.com/username" />
           </div>
           <div className="space-y-1 md:col-span-2">
-            <label className="text-sm font-medium text-gray-600 flex items-center justify-between">
+            <label className={`${labelClass} flex items-center justify-between`}>
               Professional Summary
               <button 
                 type="button" 
@@ -237,13 +243,13 @@ export const ResumeForm: React.FC<ResumeFormProps> = ({ initialData, onChange, o
                 <Sparkles size={12} /> AI Suggest
               </button>
             </label>
-            <textarea {...register('personalInfo.summary')} rows={4} className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none resize-none" />
+            <textarea {...register('personalInfo.summary')} rows={4} className={`${inputClass} resize-none`} />
             {errors.personalInfo?.summary && <p className="text-xs text-red-500">{errors.personalInfo.summary.message}</p>}
           </div>
         </div>
       </section>
 
-      <AdUnit slot="form-middle" className="my-6" />
+      <AdBanner adSlot="form-middle" className="my-6" />
 
       {/* Education */}
       <section className="space-y-4">
@@ -262,9 +268,9 @@ export const ResumeForm: React.FC<ResumeFormProps> = ({ initialData, onChange, o
               <Trash2 size={18} />
             </button>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <input {...register(`education.${index}.school`)} placeholder="School/University" className="w-full px-3 py-2 border border-gray-200 rounded-lg outline-none" />
-              <input {...register(`education.${index}.degree`)} placeholder="Degree" className="w-full px-3 py-2 border border-gray-200 rounded-lg outline-none" />
-              <input {...register(`education.${index}.year`)} placeholder="Year (e.g. 2020 - 2024)" className="w-full px-3 py-2 border border-gray-200 rounded-lg outline-none" />
+              <input {...register(`education.${index}.school`)} placeholder="School/University" className={inputClass} />
+              <input {...register(`education.${index}.degree`)} placeholder="Degree" className={inputClass} />
+              <input {...register(`education.${index}.year`)} placeholder="Year (e.g. 2020 - 2024)" className={inputClass} />
             </div>
           </div>
         ))}
@@ -287,14 +293,16 @@ export const ResumeForm: React.FC<ResumeFormProps> = ({ initialData, onChange, o
               <Trash2 size={18} />
             </button>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <input {...register(`experience.${index}.company`)} placeholder="Company" className="w-full px-3 py-2 border border-gray-200 rounded-lg outline-none" />
-              <input {...register(`experience.${index}.position`)} placeholder="Position" className="w-full px-3 py-2 border border-gray-200 rounded-lg outline-none" />
-              <input {...register(`experience.${index}.duration`)} placeholder="Duration" className="w-full px-3 py-2 border border-gray-200 rounded-lg outline-none" />
-              <textarea {...register(`experience.${index}.description`)} placeholder="Description" rows={3} className="w-full px-3 py-2 border border-gray-200 rounded-lg outline-none md:col-span-2 resize-none" />
+              <input {...register(`experience.${index}.company`)} placeholder="Company" className={inputClass} />
+              <input {...register(`experience.${index}.position`)} placeholder="Position" className={inputClass} />
+              <input {...register(`experience.${index}.duration`)} placeholder="Duration" className={inputClass} />
+              <textarea {...register(`experience.${index}.description`)} placeholder="Description" rows={3} className={`${inputClass} md:col-span-2 resize-none`} />
             </div>
           </div>
         ))}
       </section>
+
+      <AdBanner adSlot="form-experience-bottom" className="my-6" />
 
       {/* Skills */}
       <section className="space-y-4">
@@ -322,6 +330,8 @@ export const ResumeForm: React.FC<ResumeFormProps> = ({ initialData, onChange, o
           ))}
         </div>
       </section>
+
+      <AdBanner adSlot="form-skills-bottom" className="my-6" />
 
       {/* Languages */}
       <section className="space-y-4">
@@ -367,9 +377,9 @@ export const ResumeForm: React.FC<ResumeFormProps> = ({ initialData, onChange, o
               <Trash2 size={18} />
             </button>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <input {...register(`projects.${index}.name`)} placeholder="Project Name" className="w-full px-3 py-2 border border-gray-200 rounded-lg outline-none" />
-              <input {...register(`projects.${index}.link`)} placeholder="Link (Optional)" className="w-full px-3 py-2 border border-gray-200 rounded-lg outline-none" />
-              <textarea {...register(`projects.${index}.description`)} placeholder="Description" rows={2} className="w-full px-3 py-2 border border-gray-200 rounded-lg outline-none md:col-span-2 resize-none" />
+              <input {...register(`projects.${index}.name`)} placeholder="Project Name" className={inputClass} />
+              <input {...register(`projects.${index}.link`)} placeholder="Link (Optional)" className={inputClass} />
+              <textarea {...register(`projects.${index}.description`)} placeholder="Description" rows={2} className={`${inputClass} md:col-span-2 resize-none`} />
             </div>
           </div>
         ))}

@@ -3,6 +3,7 @@
 import React from 'react';
 import { ResumeData } from '@/types/resume';
 import { CheckCircle2, AlertCircle, Info } from 'lucide-react';
+import { AdBanner } from './AdBanner';
 
 interface Props {
   data: ResumeData;

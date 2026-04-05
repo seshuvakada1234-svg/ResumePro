@@ -11,6 +11,13 @@ import { ExecutiveTemplate } from '@/components/templates/ExecutiveTemplate';
 import { RedlineTemplate } from '@/components/templates/RedlineTemplate';
 import { NavyTemplate } from '@/components/templates/NavyTemplate';
 import { SerifTemplate } from '@/components/templates/SerifTemplate';
+import PhotoSidebarTemplate from '@/components/templates/PhotoSidebarTemplate';
+import PhotoCircleTemplate from '@/components/templates/PhotoCircleTemplate';
+import LawyerClassicTemplate from '@/components/templates/LawyerClassicTemplate';
+import MinimalProTemplate from '@/components/templates/MinimalProTemplate';
+import PinkHeaderTemplate from '@/components/templates/PinkHeaderTemplate';
+import DarkNavyTemplate from '@/components/templates/DarkNavyTemplate';
+import CrimsonTemplate from '@/components/templates/CrimsonTemplate';
 
 const A4_WIDTH = 794;
 const A4_HEIGHT = 1123;
@@ -58,6 +65,20 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({ data }) => {
         return <NavyTemplate data={data} />;
       case 'serif':
         return <SerifTemplate data={data} />;
+      case 'photo-sidebar':
+        return <PhotoSidebarTemplate data={data} />;
+      case 'photo-circle':
+        return <PhotoCircleTemplate data={data} />;
+      case 'lawyer-classic':
+        return <LawyerClassicTemplate data={data} />;
+      case 'minimal-pro':
+        return <MinimalProTemplate data={data} />;
+      case 'pink-header':
+        return <PinkHeaderTemplate data={data} />;
+      case 'dark-navy':
+        return <DarkNavyTemplate data={data} />;
+      case 'crimson':
+        return <CrimsonTemplate data={data} />;
       case 'classic':
       default:
         return <ClassicTemplate data={data} />;

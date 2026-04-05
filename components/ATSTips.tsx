@@ -1,5 +1,6 @@
 import React from 'react';
 import { CheckCircle2, AlertCircle, FileText, Search, Zap, Layout, Target, Sparkles } from 'lucide-react';
+import { AdBanner } from './AdBanner';
 
 const tips = [
   {
@@ -48,15 +49,23 @@ export const ATSTips: React.FC = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {tips.map((tip, i) => (
-          <div key={i} className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all space-y-4">
-            <div className="bg-gray-50 w-12 h-12 rounded-xl flex items-center justify-center">
-              {tip.icon}
+          <React.Fragment key={i}>
+            <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all space-y-4">
+              <div className="bg-gray-50 w-12 h-12 rounded-xl flex items-center justify-center">
+                {tip.icon}
+              </div>
+              <h3 className="text-xl font-bold text-gray-900">{tip.title}</h3>
+              <p className="text-gray-600 text-sm leading-relaxed">
+                {tip.description}
+              </p>
             </div>
-            <h3 className="text-xl font-bold text-gray-900">{tip.title}</h3>
-            <p className="text-gray-600 text-sm leading-relaxed">
-              {tip.description}
-            </p>
-          </div>
+            {/* Ad insertion: after 2nd and 5th tips */}
+            {(i === 1 || i === 4) && (
+              <div className="col-span-1 md:col-span-2 lg:col-span-3">
+                <AdBanner adSlot={`ats-tips-middle-${i}`} className="my-4" />
+              </div>
+            )}
+          </React.Fragment>
         ))}
       </div>
 

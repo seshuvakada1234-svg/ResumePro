@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useCallback, useEffect, Suspense } from 'react';
+import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { ResumeForm } from '@/components/ResumeForm';
 import { ResumePreview } from '@/components/ResumePreview';
@@ -9,8 +10,8 @@ import { ATSScore } from '@/components/ATSScore';
 import { Auth } from '@/components/Auth';
 import { ResumeData, defaultResumeData, ResumeTemplate } from '@/types/resume';
 import { Toaster, toast } from 'sonner';
-import { FileText, Sparkles, Zap, CheckCircle2, Plus, Share2, Home } from 'lucide-react';
-import { AdUnit } from '@/components/AdUnit';
+import { FileText, Sparkles, Zap, CheckCircle2, Plus, Share2, Home, Menu, X, Mail, Layout } from 'lucide-react';
+import { AdBanner } from '@/components/AdBanner';
 import { ATSTips } from '@/components/ATSTips';
 import { TemplateSelector } from '@/components/TemplateSelector';
 import { dummyResumeData } from '@/constants/dummyData';
@@ -19,6 +20,7 @@ function AppContent() {
   const [currentView, setCurrentView] = useState<'builder' | 'templates' | 'ats-tips'>('builder');
   const [resumeData, setResumeData] = useState<ResumeData>(defaultResumeData);
   const [activeResumeId, setActiveResumeId] = useState<string | null>(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -51,7 +53,7 @@ function AppContent() {
   const handleShare = () => {
     if (typeof navigator !== 'undefined' && navigator.share) {
       navigator.share({
-        title: 'ResumePro India',
+        title: 'FreeResume',
         text: 'Build your professional ATS resume for free!',
         url: window.location.href,
       });
@@ -70,48 +72,116 @@ function AppContent() {
       <Toaster position="top-center" richColors />
 
       {/* Navigation */}
-      <nav className="bg-white border-b border-gray-100 sticky top-0 z-50 shadow-sm">
+      <nav className="bg-white/90 backdrop-blur-md border-b border-gray-100 sticky top-0 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center gap-2 group cursor-pointer" onClick={() => setCurrentView('builder')}>
-              <div className="bg-indigo-600 p-2 rounded-lg group-hover:rotate-12 transition-transform">
-                <FileText className="text-white" size={24} />
+          <div className="flex justify-between items-center h-14 md:h-16">
+            <div 
+              className="flex items-center gap-2 group cursor-pointer" 
+              onClick={() => {
+                setCurrentView('builder');
+                setIsMobileMenuOpen(false);
+              }}
+            >
+              <div className="bg-indigo-600 p-1.5 md:p-2 rounded-lg group-hover:rotate-12 transition-transform">
+                <FileText className="text-white" size={20} />
               </div>
-              <span className="text-xl font-bold tracking-tight text-gray-900">
-                Resume<span className="text-indigo-600">Pro</span>
+              <span className="text-lg md:text-xl font-bold tracking-tight text-gray-900">
+                Free<span className="text-indigo-600">Resume</span>
               </span>
             </div>
-            <div className="flex items-center gap-4 md:gap-6">
-              <div className="hidden lg:flex items-center gap-6 text-sm font-semibold text-gray-500">
-                <button
-                  onClick={() => setCurrentView('builder')}
-                  className={`flex items-center gap-1.5 hover:text-indigo-600 transition-colors ${currentView === 'builder' ? 'text-indigo-600' : ''}`}
-                >
-                  <Home size={16} /> Home
-                </button>
-                <button
-                  onClick={() => setCurrentView('templates')}
-                  className={`hover:text-indigo-600 transition-colors ${currentView === 'templates' ? 'text-indigo-600' : ''}`}
-                >
-                  Templates
-                </button>
-                <button
-                  onClick={() => setCurrentView('ats-tips')}
-                  className={`hover:text-indigo-600 transition-colors ${currentView === 'ats-tips' ? 'text-indigo-600' : ''}`}
-                >
-                  ATS Tips
-                </button>
-                <button onClick={handleShare} className="flex items-center gap-1.5 hover:text-indigo-600 transition-colors">
-                  <Share2 size={16} /> Share
-                </button>
-              </div>
+
+            {/* Desktop Navigation */}
+            <div className="hidden lg:flex items-center gap-6 text-sm font-semibold text-gray-500">
+              <button
+                onClick={() => setCurrentView('builder')}
+                className={`flex items-center gap-1.5 hover:text-indigo-600 transition-colors ${currentView === 'builder' ? 'text-indigo-600' : ''}`}
+              >
+                <Home size={16} /> Home
+              </button>
+              <button
+                onClick={() => setCurrentView('templates')}
+                className={`hover:text-indigo-600 transition-colors ${currentView === 'templates' ? 'text-indigo-600' : ''}`}
+              >
+                Templates
+              </button>
+              <button
+                onClick={() => setCurrentView('ats-tips')}
+                className={`hover:text-indigo-600 transition-colors ${currentView === 'ats-tips' ? 'text-indigo-600' : ''}`}
+              >
+                ATS Tips
+              </button>
+              <Link
+                href="/contact"
+                className="hover:text-indigo-600 transition-colors"
+              >
+                Contact
+              </Link>
+              <button onClick={handleShare} className="flex items-center gap-1.5 hover:text-indigo-600 transition-colors">
+                <Share2 size={16} /> Share
+              </button>
               <Auth />
+            </div>
+
+            {/* Mobile Menu Toggle */}
+            <div className="flex lg:hidden items-center gap-3">
+              <Auth />
+              <button 
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                aria-label="Toggle Menu"
+              >
+                {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              </button>
             </div>
           </div>
         </div>
+
+        {/* Mobile Navigation Menu */}
+        {isMobileMenuOpen && (
+          <div className="lg:hidden bg-white border-t border-gray-100 py-4 px-4 shadow-xl animate-in slide-in-from-top duration-200">
+            <div className="flex flex-col gap-2">
+              {[
+                { id: 'builder', label: 'Home', icon: <Home size={18} /> },
+                { id: 'templates', label: 'Templates', icon: <Layout size={18} /> },
+                { id: 'ats-tips', label: 'ATS Tips', icon: <Zap size={18} /> },
+              ].map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => {
+                    setCurrentView(item.id as any);
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className={`flex items-center gap-3 p-3 rounded-xl font-bold text-sm transition-all ${
+                    currentView === item.id 
+                      ? 'bg-indigo-50 text-indigo-600' 
+                      : 'text-gray-600 hover:bg-gray-50'
+                  }`}
+                >
+                  {item.icon} {item.label}
+                </button>
+              ))}
+              <Link
+                href="/contact"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="flex items-center gap-3 p-3 rounded-xl font-bold text-sm text-gray-600 hover:bg-gray-50 transition-all"
+              >
+                <Mail size={18} /> Contact Us
+              </Link>
+              <button 
+                onClick={() => {
+                  handleShare();
+                  setIsMobileMenuOpen(false);
+                }}
+                className="flex items-center gap-3 p-3 rounded-xl font-bold text-sm text-gray-600 hover:bg-gray-50 transition-all"
+              >
+                <Share2 size={18} /> Share App
+              </button>
+            </div>
+          </div>
+        )}
       </nav>
 
-      <AdUnit slot="header-bottom" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-4" />
+      <AdBanner adSlot="header-bottom" className="max-w-7xl mx-auto px-2 md:px-4 sm:px-6 lg:px-8 my-4" />
 
       {currentView === 'builder' ? (
         <>
@@ -127,18 +197,24 @@ function AppContent() {
                   <Zap size={12} /> #1 Free Resume Builder in India
                 </div>
                 <h1 className="text-4xl md:text-6xl font-extrabold text-gray-900 mb-6 tracking-tight leading-tight">
-                  Build a Professional ATS Resume <br className="hidden md:block" />
-                  for{' '}
-                  <span className="text-indigo-600 relative">
-                    Freshers India
-                    <svg className="absolute -bottom-2 left-0 w-full h-2 text-indigo-200" viewBox="0 0 100 10" preserveAspectRatio="none">
-                      <path d="M0 5 Q 25 0, 50 5 T 100 5" fill="none" stroke="currentColor" strokeWidth="4" />
-                    </svg>
-                  </span>
+                  Build a Free ATS Resume <br className="hidden md:block" />
+                  That Gets You Hired
                 </h1>
                 <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto mb-10">
-                  Land your dream job with our ATS-optimized templates. Designed specifically for the Indian job market. 100% Free. No Watermark.
+                  Create job-ready resumes in minutes with ATS-optimized templates for freshers in India.
                 </p>
+                <div className="flex justify-center mb-10">
+                  <button 
+                    onClick={() => {
+                      const builderSection = document.getElementById('builder-section');
+                      builderSection?.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                    className="inline-flex items-center gap-2 px-8 py-4 bg-indigo-600 text-white rounded-xl font-bold text-lg hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 hover:-translate-y-1"
+                  >
+                    Create Free Resume 🚀
+                  </button>
+                </div>
+                <AdBanner adSlot="hero-bottom" className="max-w-2xl mx-auto mb-10" />
                 <div className="flex flex-wrap justify-center gap-8">
                   {['No Hidden Costs', 'ATS Optimized', 'PDF Download'].map((text) => (
                     <div key={text} className="flex items-center gap-2 text-sm font-bold text-gray-700">
@@ -155,9 +231,9 @@ function AppContent() {
 
           {/* Main Content */}
           <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <div className="flex flex-col lg:grid lg:grid-cols-12 xl:grid-cols-13 gap-8">
               {/* Left: Form */}
-              <div className="lg:col-span-5 space-y-6">
+              <div className="lg:col-span-5 xl:col-span-5 space-y-6 order-1" id="builder-section">
                 <div className="flex items-center justify-between">
                   <h2 className="text-2xl font-bold text-gray-900">Builder</h2>
                   <div className="flex items-center gap-3">
@@ -182,11 +258,13 @@ function AppContent() {
                 </div>
 
                 <ResumeForm initialData={resumeData} onChange={handleResumeChange} onSave={handleSave} isSaving={false} />
-                <AdUnit slot="sidebar-bottom" className="mt-8" />
+                <div className="hidden lg:block">
+                  <AdBanner adSlot="sidebar-bottom" className="mt-8" />
+                </div>
               </div>
 
               {/* Right: Preview */}
-              <div className="lg:col-span-7 flex flex-col gap-6">
+              <div className="lg:col-span-7 xl:col-span-7 flex flex-col gap-6 order-2">
                 <div className="relative z-20 bg-white border-b border-gray-200">
                   <div className="flex items-center justify-between py-4">
                     <h2 className="text-2xl font-bold text-gray-900">Live Preview</h2>
@@ -200,17 +278,24 @@ function AppContent() {
                   </div>
                 </div>
 
-                <div className="mt-6 p-4 bg-gray-100 rounded-xl flex justify-center">
+                <div className="p-4 bg-gray-100 rounded-xl flex flex-col items-center gap-4">
                   <PDFDownloadButton />
+                  <AdBanner adSlot="download-bottom" className="w-full" minHeight={{ mobile: '100px', desktop: '100px' }} />
                 </div>
 
                 <ATSScore data={resumeData} />
+
+                <div className="hidden lg:block">
+                  <AdBanner adSlot="preview-top" className="mb-6" />
+                </div>
 
                 <div className="relative group min-h-[600px]">
                   <ResumePreview data={resumeData} />
                 </div>
 
-                <AdUnit slot="preview-bottom" className="mt-8" />
+                <div className="hidden lg:block">
+                  <AdBanner adSlot="preview-bottom" className="mt-8" />
+                </div>
 
                 <section className="p-8 bg-white rounded-2xl border border-gray-100 shadow-sm space-y-6">
                   <h3 className="text-xl font-bold text-gray-900">Why use our ATS Resume Builder?</h3>
@@ -242,6 +327,14 @@ function AppContent() {
                     ))}
                   </div>
                 </section>
+                <AdBanner adSlot="builder-bottom" className="mt-12" />
+              </div>
+
+              {/* Right Sidebar: Desktop Only */}
+              <div className="hidden xl:block xl:col-span-1">
+                <div className="sticky top-24">
+                  <AdBanner adSlot="sidebar-sticky" adFormat="rectangle" className="h-[600px]" />
+                </div>
               </div>
             </div>
           </main>
@@ -264,87 +357,14 @@ function AppContent() {
               window.scrollTo(0, 0);
             }}
           />
+          <AdBanner adSlot="templates-bottom" className="mt-12" />
         </main>
       ) : (
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <ATSTips />
+          <AdBanner adSlot="ats-tips-bottom" className="mt-12" />
         </main>
       )}
-
-      {/* Footer */}
-      <footer className="bg-white border-t border-gray-100 py-16 mt-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-16">
-            <div className="md:col-span-5">
-              <div className="flex items-center gap-2 mb-6">
-                <div className="bg-indigo-600 p-1.5 rounded-lg">
-                  <FileText className="text-white" size={20} />
-                </div>
-                <span className="text-xl font-bold tracking-tight text-gray-900">ResumePro India</span>
-              </div>
-              <p className="text-gray-500 max-w-sm mb-6">
-                Empowering Indian freshers to land their first job with professional, ATS-optimized resumes. Built with passion for the Indian student community.
-              </p>
-            </div>
-            <div className="md:col-span-2">
-              <h4 className="font-bold text-gray-900 mb-6">Product</h4>
-              <ul className="space-y-3 text-gray-500 text-sm font-medium">
-                <li>
-                  <button
-                    onClick={() => {
-                      setCurrentView('templates');
-                      window.scrollTo(0, 0);
-                    }}
-                    className="hover:text-indigo-600 transition-colors"
-                  >
-                    Free Templates
-                  </button>
-                </li>
-                <li>
-                  <button
-                    onClick={() => {
-                      setCurrentView('builder');
-                      window.scrollTo(0, 0);
-                    }}
-                    className="hover:text-indigo-600 transition-colors"
-                  >
-                    ATS Checker
-                  </button>
-                </li>
-                <li>
-                  <button
-                    onClick={() => {
-                      setCurrentView('ats-tips');
-                      window.scrollTo(0, 0);
-                    }}
-                    className="hover:text-indigo-600 transition-colors"
-                  >
-                    Resume Tips
-                  </button>
-                </li>
-              </ul>
-            </div>
-            <div className="md:col-span-2">
-              <h4 className="font-bold text-gray-900 mb-6">Support</h4>
-              <ul className="space-y-3 text-gray-500 text-sm font-medium">
-                <li>
-                  <a href="#" className="hover:text-indigo-600 transition-colors">
-                    Help Center
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-indigo-600 transition-colors">
-                    Contact Us
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t border-gray-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-6">
-            <p className="text-gray-400 text-sm font-medium">© 2026 ResumePro India. Built for the community.</p>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }
