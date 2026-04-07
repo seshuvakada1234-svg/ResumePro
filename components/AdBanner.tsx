@@ -98,15 +98,18 @@ export const AdBanner: React.FC<AdBannerProps> = ({
       className={`w-full overflow-hidden flex justify-center items-center bg-gray-50/50 rounded-xl border border-dashed border-gray-200 transition-all relative ${className}`}
       style={{
         minHeight: `var(--ad-min-height, ${minHeight.mobile})`,
+        maxHeight: 'var(--ad-max-height, 120px)',
       }}
     >
       <style jsx>{`
         div {
           --ad-min-height: ${minHeight.mobile};
+          --ad-max-height: 120px;
         }
         @media (min-width: 768px) {
           div {
             --ad-min-height: ${minHeight.desktop};
+            --ad-max-height: none;
           }
         }
       `}</style>

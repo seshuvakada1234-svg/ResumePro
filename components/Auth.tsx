@@ -49,7 +49,7 @@ export const Auth: React.FC = () => {
   return (
     <button
       onClick={signInWithGoogle}
-      className="flex items-center gap-2 px-6 py-2.5 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-all shadow-md hover:shadow-lg active:scale-95"
+      className="flex items-center gap-2 px-3 py-2 md:px-6 md:py-2.5 bg-indigo-600 text-white text-sm md:text-base font-semibold rounded-lg hover:bg-indigo-700 transition-all shadow-md hover:shadow-lg active:scale-95 whitespace-nowrap"
     >
       <LogIn size={18} />
       Login with Google
