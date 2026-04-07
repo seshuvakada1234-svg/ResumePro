@@ -1,35 +1,49 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Script from "next/script";
 import Footer from "@/components/Footer";
 import { ResumeFunnelProvider } from "@/context/ResumeFunnelContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "FreeResume – Free ATS Resume Builder for Freshers in India",
-  description: "Build professional ATS-friendly resumes for free. Designed for freshers and job seekers in India.",
+  title: "Free Resume Builder for Freshers in India | ATS Resume Maker",
+  description:
+    "Create professional ATS resumes for free. Best resume builder for freshers in India. Download instantly and get hired faster.",
+  keywords: [
+    "resume builder free",
+    "ATS resume India",
+    "resume for freshers",
+    "CV maker free",
+  ],
+  metadataBase: new URL("https://freeresume.dev"),
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
       <head>
+        {/* Google Fonts */}
         <link
           href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap"
           rel="stylesheet"
         />
-        <Script
+
+        {/* ✅ FIXED AdSense Script (NO next/script) */}
+        <script
+          async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6397085715997255"
           crossOrigin="anonymous"
-          strategy="afterInteractive"
-        />
+        ></script>
+
+        {/* ✅ Canonical URL */}
+        <link rel="canonical" href="https://freeresume.dev/" />
       </head>
+
       <body className={`${inter.className} overflow-x-hidden`}>
         <ResumeFunnelProvider>
           {children}
