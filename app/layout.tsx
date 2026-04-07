@@ -3,7 +3,6 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Footer from "@/components/Footer";
 import { ResumeFunnelProvider } from "@/context/ResumeFunnelContext";
-import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,7 +18,7 @@ export const metadata: Metadata = {
   ],
   metadataBase: new URL("https://freeresume.dev"),
   alternates: {
-    canonical: "/",
+    canonical: "https://freeresume.dev",
   },
 };
 
@@ -30,21 +29,26 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} overflow-x-hidden`}>
-        
-        {/* ✅ AdSense Script (safe for Next.js) */}
-        <Script
-          id="adsense-script"
+      <head>
+        {/* ✅ AdSense Script (CRITICAL - RAW) */}
+        <script
           async
-          strategy="afterInteractive"
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6397085715997255"
           crossOrigin="anonymous"
+        ></script>
+
+        {/* ✅ Extra AdSense verification meta (optional boost) */}
+        <meta
+          name="google-adsense-account"
+          content="ca-pub-6397085715997255"
         />
 
-        <ResumeFunnelProvider>
-          {children}
-        </ResumeFunnelProvider>
+        {/* ✅ Canonical */}
+        <link rel="canonical" href="https://freeresume.dev" />
+      </head>
 
+      <body className={`${inter.className} overflow-x-hidden`}>
+        <ResumeFunnelProvider>{children}</ResumeFunnelProvider>
         <Footer />
       </body>
     </html>
