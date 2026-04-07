@@ -2,13 +2,16 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  const url = request.nextUrl.clone();
-  const host = request.headers.get('host');
+  const url = request.nextUrl;
 
-  // Redirect www to non-www
-  if (host && host.startsWith('www.')) {
-    url.host = host.replace('www.', '');
-    return NextResponse.redirect(url, 301);
+  // ✅ Redirect www → non-www safely
+  if (url.hostname.startsWith('www.')) {
+    const newUrl = new URL(request.url);
+
+    newUrl.hostname = url.hostname.replace('www.', '');
+    newUrl.protocol = 'https:'; // ensure HTTPS
+
+    return NextResponse.redirect(newUrl, 301);
   }
 
   return NextResponse.next();
@@ -16,13 +19,6 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     */
     '/((?!api|_next/static|_next/image|favicon.ico).*)',
   ],
 };
