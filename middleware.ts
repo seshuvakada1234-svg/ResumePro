@@ -2,23 +2,26 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  const url = request.nextUrl;
+  const { nextUrl } = request;
+  const hostname = nextUrl.hostname;
 
-  // ✅ Redirect www → non-www safely
-  if (url.hostname.startsWith('www.')) {
-    const newUrl = new URL(request.url);
+  // ✅ Only redirect EXACT www → non-www (no startsWith)
+  if (hostname === 'www.freeresume.dev') {
+    const url = new URL(request.url);
 
-    newUrl.hostname = url.hostname.replace('www.', '');
-    newUrl.protocol = 'https:'; // ensure HTTPS
+    url.hostname = 'freeresume.dev';
+    url.protocol = 'https:'; // enforce HTTPS
 
-    return NextResponse.redirect(newUrl, 301);
+    return NextResponse.redirect(url, 301);
   }
 
+  // ✅ Prevent any accidental loops
   return NextResponse.next();
 }
 
 export const config = {
   matcher: [
+    // Apply to all pages except static files
     '/((?!api|_next/static|_next/image|favicon.ico).*)',
   ],
 };
