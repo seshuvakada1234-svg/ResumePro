@@ -180,6 +180,26 @@ function AppContent() {
                     ))}
                   </div>
                 </section>
+
+                {/* Internal Links for SEO */}
+                <section className="p-8 bg-indigo-50 rounded-2xl border border-indigo-100 space-y-6">
+                  <h3 className="text-xl font-bold text-indigo-900">Career Resources</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <Link href="/resume-for-freshers" className="p-4 bg-white rounded-xl border border-indigo-100 hover:shadow-md transition-all group">
+                      <h4 className="font-bold text-indigo-600 group-hover:underline">Resume for Freshers</h4>
+                      <p className="text-xs text-gray-500 mt-1">Expert guide for Indian students.</p>
+                    </Link>
+                    <Link href="/ats-resume-format" className="p-4 bg-white rounded-xl border border-indigo-100 hover:shadow-md transition-all group">
+                      <h4 className="font-bold text-indigo-600 group-hover:underline">ATS Resume Format</h4>
+                      <p className="text-xs text-gray-500 mt-1">Best templates for 2026.</p>
+                    </Link>
+                    <Link href="/resume-examples" className="p-4 bg-white rounded-xl border border-indigo-100 hover:shadow-md transition-all group">
+                      <h4 className="font-bold text-indigo-600 group-hover:underline">Resume Examples</h4>
+                      <p className="text-xs text-gray-500 mt-1">50+ professional samples.</p>
+                    </Link>
+                  </div>
+                </section>
+
                 <AdBanner adSlot="builder-bottom" className="mt-12" />
               </div>
 
