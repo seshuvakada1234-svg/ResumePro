@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Footer from "@/components/Footer";
 import { ResumeFunnelProvider } from "@/context/ResumeFunnelContext";
+import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,6 +18,9 @@ export const metadata: Metadata = {
     "CV maker free",
   ],
   metadataBase: new URL("https://freeresume.dev"),
+  alternates: {
+    canonical: "/",
+  },
 };
 
 export default function RootLayout({
@@ -26,28 +30,21 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <head>
-        {/* Google Fonts */}
-        <link
-          href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap"
-          rel="stylesheet"
-        />
-
-        {/* ✅ FIXED AdSense Script (NO next/script) */}
-        <script
+      <body className={`${inter.className} overflow-x-hidden`}>
+        
+        {/* ✅ AdSense Script (safe for Next.js) */}
+        <Script
+          id="adsense-script"
           async
+          strategy="afterInteractive"
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6397085715997255"
           crossOrigin="anonymous"
-        ></script>
+        />
 
-        {/* ✅ Canonical URL */}
-        <link rel="canonical" href="https://freeresume.dev/" />
-      </head>
-
-      <body className={`${inter.className} overflow-x-hidden`}>
         <ResumeFunnelProvider>
           {children}
         </ResumeFunnelProvider>
+
         <Footer />
       </body>
     </html>
