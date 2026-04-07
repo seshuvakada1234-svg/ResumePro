@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { AdBanner } from "./AdBanner";
-import { X, Loader2 } from "lucide-react";
+import { X, Loader2, Zap, ChevronRight, Briefcase } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
 
 const A4_W = 794;
 const A4_H = 1123;
@@ -248,13 +249,13 @@ export default function PDFDownloadButton() {
         aria-label={loading ? "Generating PDF, please wait" : "Download PDF"}
         className={[
           "relative inline-flex w-auto items-center justify-center gap-2",
-          "px-5 py-2",
-          "rounded-lg font-semibold text-sm text-white",
+          "px-8 py-4",
+          "rounded-xl font-bold text-lg text-white",
           "select-none outline-none",
           "transition-all duration-200 ease-in-out",
           loading
             ? "bg-indigo-600 cursor-not-allowed shadow-inner animate-pulse transition-none"
-            : "bg-indigo-600 hover:bg-indigo-700 active:scale-[0.97] shadow-md hover:shadow-indigo-300/40 hover:shadow-lg cursor-pointer",
+            : "bg-indigo-600 hover:bg-indigo-700 active:scale-[0.97] shadow-lg shadow-indigo-200 hover:shadow-xl cursor-pointer",
         ].join(" ")}
       >
         {loading ? (
@@ -265,7 +266,7 @@ export default function PDFDownloadButton() {
         ) : (
           <>
             <DownloadIcon />
-            Download PDF
+            Download PDF 🚀
           </>
         )}
       </button>

@@ -37,20 +37,29 @@ export const AdBanner: React.FC<AdBannerProps> = ({
       }
 
       // Check for available width to prevent "No slot size" errors
-      const width = containerRef.current?.offsetWidth || 0;
+      const width = containerRef.current?.getBoundingClientRect().width || 0;
       
       // AdSense typically needs at least 120px for responsive ads, 
       // but we'll be safe and wait for at least 100px.
       // Also ensure the element is visible in the viewport or at least has a height.
-      if (width < 100) {
+      // And check document visibility to avoid errors in background tabs.
+      if (width < 100 || document.visibilityState !== 'visible') {
         return;
       }
 
       try {
         // @ts-ignore
         const adsbygoogle = window.adsbygoogle || [];
-        adsbygoogle.push({});
-        isInitialized.current = true;
+        
+        // Final check: ensure the element is actually in the DOM and has width
+        // We use offsetWidth and offsetHeight to ensure it's not hidden
+        if (adRef.current && adRef.current.offsetWidth > 0 && adRef.current.offsetHeight > 0) {
+          // Check if it's already been pushed to avoid duplicate pushes
+          if (!isInitialized.current) {
+            adsbygoogle.push({});
+            isInitialized.current = true;
+          }
+        }
       } catch (err) {
         console.error('AdSense error:', err);
       }

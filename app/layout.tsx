@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Script from "next/script";
 import Footer from "@/components/Footer";
+import { ResumeFunnelProvider } from "@/context/ResumeFunnelContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,15 +20,20 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap"
+          rel="stylesheet"
+        />
         <Script
-          async
-          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID || "ca-pub-XXXXXXXXXXXXXXXX"}`}
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6397085715997255"
           crossOrigin="anonymous"
           strategy="afterInteractive"
         />
       </head>
       <body className={`${inter.className} overflow-x-hidden`}>
-        {children}
+        <ResumeFunnelProvider>
+          {children}
+        </ResumeFunnelProvider>
         <Footer />
       </body>
     </html>
