@@ -11,13 +11,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1,
     },
     {
-      url: `${baseUrl}/resume-for-freshers`,
+      url: `${baseUrl}/resume-guide`,
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/ats-resume-format`,
+      url: `${baseUrl}/ats-format`,
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.8,

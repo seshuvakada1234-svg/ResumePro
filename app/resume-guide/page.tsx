@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description: "Download the best resume for freshers in India. 100% free ATS-friendly resume templates designed for students and job seekers. Create your professional CV now.",
   keywords: ["resume for freshers in India", "fresher resume format", "ATS resume for students", "first job resume India"],
   alternates: {
-    canonical: 'https://freeresume.dev/resume-for-freshers',
+    canonical: 'https://freeresume.dev/resume-guide',
   },
 };
 
@@ -129,7 +129,7 @@ export default function ResumeForFreshersPage() {
 
           <div className="bg-indigo-600 text-white p-12 rounded-[3rem] text-center space-y-6 mb-16">
             <h2 className="text-3xl md:text-4xl font-black">Ready to Build Your Winning Resume?</h2>
-            <p className="text-xl text-indigo-100">Join 50,000+ Indian freshers who have used our tool to land their first job.</p>
+            <p className="text-xl text-indigo-100">Build a job-ready resume in minutes. No design skills needed.</p>
             <Link 
               href="/builder" 
               className="inline-block bg-white text-indigo-600 px-10 py-5 rounded-2xl font-bold text-2xl hover:bg-indigo-50 transition-all shadow-xl"

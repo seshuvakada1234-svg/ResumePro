@@ -6,7 +6,7 @@ import { Metadata } from 'next';
 export const metadata: Metadata = {
   title: "ATS Resume Format 2026 | Free Download for Indian Job Seekers",
   description: "Get the most effective ATS resume format for 2026. Optimized for Indian companies like TCS, Infosys, and startups. 100% free download.",
-  alternates: { canonical: 'https://freeresume.dev/ats-resume-format' },
+  alternates: { canonical: 'https://freeresume.dev/ats-format' },
 };
 
 export default function ATSResumeFormatPage() {

@@ -21,21 +21,21 @@ const Footer: React.FC = () => {
             </p>
           </div>
           <div className="md:col-span-2">
-            <h4 className="font-bold text-gray-900 mb-6">Product</h4>
+            <h4 className="font-bold text-gray-900 mb-6">Resources</h4>
             <ul className="space-y-3 text-gray-500 text-sm font-medium">
               <li>
-                <Link href="/templates" className="hover:text-indigo-600 transition-colors">
-                  Free Templates
+                <Link href="/resume-guide" className="hover:text-indigo-600 transition-colors">
+                  Resume for Freshers
                 </Link>
               </li>
               <li>
-                <Link href="/ats-checker" className="hover:text-indigo-600 transition-colors">
-                  ATS Checker
+                <Link href="/ats-format" className="hover:text-indigo-600 transition-colors">
+                  ATS Resume Format
                 </Link>
               </li>
               <li>
-                <Link href="/tips" className="hover:text-indigo-600 transition-colors">
-                  Resume Tips
+                <Link href="/resume-examples" className="hover:text-indigo-600 transition-colors">
+                  Resume Examples
                 </Link>
               </li>
             </ul>

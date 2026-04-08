@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 interface AdBannerProps {
   adSlot: string;
@@ -23,36 +23,62 @@ export const AdBanner: React.FC<AdBannerProps> = ({
   minHeight = { mobile: '100px', desktop: '250px' },
 }) => {
   const adRef = useRef<HTMLModElement>(null);
-  const isInitialized = useRef(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [ready, setReady] = useState(false);
+  const pushed = useRef(false);
 
+  // ✅ Wait until width exists
   useEffect(() => {
-    try {
-      if (!adRef.current || isInitialized.current) return;
+    const check = () => {
+      if (!containerRef.current) return;
 
-      // Prevent duplicate initialization
-      if (adRef.current.getAttribute('data-adsbygoogle-status') === 'done') {
-        isInitialized.current = true;
-        return;
+      const width = containerRef.current.offsetWidth;
+
+      // AdSense typically needs at least 120px for responsive ads.
+      // We'll wait for at least 120px to be safe.
+      if (width >= 120) {
+        setReady(true);
       }
+    };
 
-      // Push ad safely
-      // @ts-ignore
-      (window.adsbygoogle = window.adsbygoogle || []).push({});
+    check();
 
-      isInitialized.current = true;
-    } catch (err) {
-      console.error('AdSense error:', err);
-    }
-  }, [adSlot]);
+    const observer = new ResizeObserver(check);
+    if (containerRef.current) observer.observe(containerRef.current);
+
+    return () => observer.disconnect();
+  }, []);
+
+  // ✅ Push ad only when ready
+  useEffect(() => {
+    if (!ready || pushed.current) return;
+
+    // Small delay for layout stability
+    const timer = setTimeout(() => {
+      try {
+        if (
+          adRef.current &&
+          adRef.current.getAttribute('data-adsbygoogle-status') !== 'done'
+        ) {
+          // @ts-ignore
+          (window.adsbygoogle = window.adsbygoogle || []).push({});
+          pushed.current = true;
+        }
+      } catch (err) {
+        console.error('AdSense error:', err);
+      }
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [ready]);
 
   return (
     <div
-      className={`w-full overflow-hidden flex justify-center items-center bg-gray-50/50 rounded-xl border border-dashed border-gray-200 transition-all relative ${className}`}
-      style={{
-        minHeight: minHeight.mobile,
-      }}
+      ref={containerRef}
+      className={`w-full flex justify-center ${className}`}
+      style={{ minHeight: minHeight.mobile }}
     >
-      {/* Responsive height styling */}
+      {/* Responsive height */}
       <style jsx>{`
         div {
           min-height: ${minHeight.mobile};
@@ -64,24 +90,21 @@ export const AdBanner: React.FC<AdBannerProps> = ({
         }
       `}</style>
 
-      <ins
-        ref={adRef}
-        className="adsbygoogle"
-        style={{
-          display: 'block',
-          width: '100%',
-          minHeight: minHeight.mobile,
-        }}
-        data-ad-client={ADS_CLIENT}
-        data-ad-slot={adSlot}
-        data-ad-format={adFormat}
-        data-full-width-responsive={fullWidthResponsive ? 'true' : 'false'}
-      />
-
-      {/* Optional label */}
-      <div className="absolute text-[10px] text-gray-300 pointer-events-none uppercase tracking-widest font-bold">
-        Advertisement
-      </div>
+      {ready && (
+        <ins
+          ref={adRef}
+          className="adsbygoogle"
+          style={{
+            display: 'block',
+            width: '100%',
+            minHeight: minHeight.mobile,
+          }}
+          data-ad-client={ADS_CLIENT}
+          data-ad-slot={adSlot}
+          data-ad-format={adFormat}
+          data-full-width-responsive={fullWidthResponsive ? 'true' : 'false'}
+        />
+      )}
     </div>
   );
 };

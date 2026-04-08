@@ -9,7 +9,7 @@ import PDFDownloadButton from '@/components/PDFDownloadButton';
 import { Auth } from '@/components/Auth';
 import { ResumeData, defaultResumeData, ResumeTemplate } from '@/types/resume';
 import { Toaster, toast } from 'sonner';
-import { FileText, Sparkles, Zap, CheckCircle2, Plus, Share2, Home, Menu, X, Mail, Layout } from 'lucide-react';
+import { FileText, Sparkles, Zap, CheckCircle2, Plus, Share2, Home, Menu, X, Mail, Layout, ArrowRight } from 'lucide-react';
 import { AdBanner } from '@/components/AdBanner';
 import { ATSTips } from '@/components/ATSTips';
 import { TemplateSelector } from '@/components/TemplateSelector';
@@ -181,21 +181,36 @@ function AppContent() {
                   </div>
                 </section>
 
-                {/* Internal Links for SEO */}
-                <section className="p-8 bg-indigo-50 rounded-2xl border border-indigo-100 space-y-6">
-                  <h3 className="text-xl font-bold text-indigo-900">Career Resources</h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <Link href="/resume-for-freshers" className="p-4 bg-white rounded-xl border border-indigo-100 hover:shadow-md transition-all group">
-                      <h4 className="font-bold text-indigo-600 group-hover:underline">Resume for Freshers</h4>
-                      <p className="text-xs text-gray-500 mt-1">Expert guide for Indian students.</p>
+                {/* Career Resources Section */}
+                <section className="py-12 space-y-8 border-t border-gray-100">
+                  <div className="text-left space-y-1">
+                    <h3 className="text-2xl font-bold text-gray-900">Career Resources</h3>
+                    <p className="text-gray-500 text-sm">Learn, improve, and land your first job faster</p>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <Link href="/resume-guide" className="group p-6 bg-white border border-gray-200 rounded-xl hover:border-indigo-300 hover:-translate-y-0.5 transition-all duration-200">
+                      <h4 className="font-semibold text-indigo-600 group-hover:text-indigo-800 transition-colors">Resume for Freshers</h4>
+                      <p className="text-sm text-gray-500 mt-2 mb-4">Expert guide for Indian students.</p>
+                      <span className="text-xs font-bold text-indigo-600 group-hover:underline flex items-center gap-1">
+                        Read Guide <ArrowRight size={12} />
+                      </span>
                     </Link>
-                    <Link href="/ats-resume-format" className="p-4 bg-white rounded-xl border border-indigo-100 hover:shadow-md transition-all group">
-                      <h4 className="font-bold text-indigo-600 group-hover:underline">ATS Resume Format</h4>
-                      <p className="text-xs text-gray-500 mt-1">Best templates for 2026.</p>
+
+                    <Link href="/ats-format" className="group p-6 bg-white border border-gray-200 rounded-xl hover:border-indigo-300 hover:-translate-y-0.5 transition-all duration-200">
+                      <h4 className="font-semibold text-indigo-600 group-hover:text-indigo-800 transition-colors">ATS Resume Format</h4>
+                      <p className="text-sm text-gray-500 mt-2 mb-4">Best ATS-friendly structure for 2026.</p>
+                      <span className="text-xs font-bold text-indigo-600 group-hover:underline flex items-center gap-1">
+                        View Format <ArrowRight size={12} />
+                      </span>
                     </Link>
-                    <Link href="/resume-examples" className="p-4 bg-white rounded-xl border border-indigo-100 hover:shadow-md transition-all group">
-                      <h4 className="font-bold text-indigo-600 group-hover:underline">Resume Examples</h4>
-                      <p className="text-xs text-gray-500 mt-1">50+ professional samples.</p>
+
+                    <Link href="/resume-examples" className="group p-6 bg-white border border-gray-200 rounded-xl hover:border-indigo-300 hover:-translate-y-0.5 transition-all duration-200">
+                      <h4 className="font-semibold text-indigo-600 group-hover:text-indigo-800 transition-colors">Resume Examples</h4>
+                      <p className="text-sm text-gray-500 mt-2 mb-4">50+ real fresher resume samples.</p>
+                      <span className="text-xs font-bold text-indigo-600 group-hover:underline flex items-center gap-1">
+                        Browse Examples <ArrowRight size={12} />
+                      </span>
                     </Link>
                   </div>
                 </section>
