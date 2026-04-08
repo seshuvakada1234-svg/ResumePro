@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Navbar } from '@/components/Navbar';
 import { UploadZone } from '@/components/ATSFlow/UploadZone';
 import { LoadingScreen } from '@/components/ATSFlow/LoadingScreen';
 import { ScoreDisplay } from '@/components/ATSFlow/ScoreDisplay';
@@ -161,7 +160,6 @@ export default function ATSScorePage() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      <Navbar />
       <main className="flex-1">
         <AnimatePresence mode="wait">
 

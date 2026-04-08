@@ -9,8 +9,6 @@ import { FileText, Home, Layout, Zap, Menu, X, Mail, Share2 } from 'lucide-react
 import Link from 'next/link';
 import { Auth } from '@/components/Auth';
 
-import { Navbar } from '@/components/Navbar';
-import Footer from '@/components/Footer';
 import { TemplatesSidebarATSCard } from '@/components/TemplatesSidebarATSCard';
 
 export default function TemplatesPage() {
@@ -49,7 +47,6 @@ export default function TemplatesPage() {
         
         <AdBanner adSlot="templates-bottom" className="mt-16" />
       </main>
-      <Footer />
     </div>
   );
 }

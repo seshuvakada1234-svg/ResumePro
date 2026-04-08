@@ -1,6 +1,5 @@
 import React from 'react';
 import Link from 'next/link';
-import { Navbar } from '@/components/Navbar';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -12,7 +11,6 @@ export const metadata: Metadata = {
 export default function ATSResumeFormatPage() {
   return (
     <div className="min-h-screen bg-white">
-      <Navbar />
       <main className="max-w-4xl mx-auto px-4 py-20">
         <h1 className="text-4xl md:text-6xl font-black mb-8">ATS Resume Format 2026</h1>
         <div className="prose prose-indigo lg:prose-xl">

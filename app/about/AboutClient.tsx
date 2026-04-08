@@ -19,28 +19,6 @@ import { motion } from 'motion/react';
 export default function AboutClient() {
   return (
     <div className="min-h-screen bg-white font-sans selection:bg-indigo-100 selection:text-indigo-900">
-      {/* Navigation (Simplified for About Page) */}
-      <nav className="bg-white/80 backdrop-blur-md border-b border-gray-100 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href="/" className="flex items-center gap-2 group">
-              <div className="bg-indigo-600 p-1.5 rounded-lg group-hover:rotate-12 transition-transform">
-                <FileText className="text-white" size={20} />
-              </div>
-              <span className="text-xl font-bold tracking-tight text-gray-900">
-                Free<span className="text-indigo-600">Resume</span>
-              </span>
-            </Link>
-            <Link 
-              href="/" 
-              className="text-sm font-semibold text-gray-600 hover:text-indigo-600 transition-colors"
-            >
-              Back to Builder
-            </Link>
-          </div>
-        </div>
-      </nav>
-
       <main>
         {/* Hero Section */}
         <section className="relative py-20 md:py-32 overflow-hidden">

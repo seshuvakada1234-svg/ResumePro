@@ -1,6 +1,5 @@
 import React from 'react';
 import Link from 'next/link';
-import { Navbar } from '@/components/Navbar';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -12,7 +11,6 @@ export const metadata: Metadata = {
 export default function ResumeExamplesPage() {
   return (
     <div className="min-h-screen bg-white">
-      <Navbar />
       <main className="max-w-4xl mx-auto px-4 py-20">
         <h1 className="text-4xl md:text-6xl font-black mb-8">Resume Examples</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

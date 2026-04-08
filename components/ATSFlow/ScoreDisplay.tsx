@@ -2,7 +2,8 @@
 
 import React from 'react';
 import { motion } from 'motion/react';
-import { CheckCircle2, AlertCircle, Zap, RefreshCw } from 'lucide-react';
+import { CheckCircle2, AlertCircle, Zap, RefreshCw, ArrowRight, FileText } from 'lucide-react';
+import Link from 'next/link';
 
 interface ScoreDisplayProps {
   score: number;
@@ -102,6 +103,16 @@ export const ScoreDisplay: React.FC<ScoreDisplayProps> = ({ score, breakdown, ti
                 {score >= 80 ? 'Excellent Match' : score >= 60 ? 'Good Potential' : 'Needs Improvement'}
               </div>
 
+              {score < 60 && (
+                <Link
+                  href="/ats-score-guide"
+                  className="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-full text-sm font-bold flex items-center gap-2 hover:bg-indigo-100 transition-colors"
+                >
+                  <FileText size={16} />
+                  Why is my score low?
+                </Link>
+              )}
+
               <button
                 onClick={onReupload}
                 className="px-4 py-2 bg-gray-100 text-gray-600 rounded-full text-sm font-bold flex items-center gap-2 hover:bg-gray-200"
@@ -110,6 +121,17 @@ export const ScoreDisplay: React.FC<ScoreDisplayProps> = ({ score, breakdown, ti
                 Re-upload Resume
               </button>
             </div>
+
+            {score < 60 && (
+              <div className="pt-4">
+                <Link
+                  href="/builder"
+                  className="inline-flex items-center gap-2 bg-indigo-600 text-white px-6 py-3 rounded-2xl font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100"
+                >
+                  Build ATS-Friendly Resume <ArrowRight size={18} />
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </motion.div>

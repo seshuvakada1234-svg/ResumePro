@@ -15,9 +15,7 @@ import { ATSTips } from '@/components/ATSTips';
 import { TemplateSelector } from '@/components/TemplateSelector';
 import { dummyResumeData } from '@/constants/dummyData';
 
-import { Navbar } from '@/components/Navbar';
 import { HeroSection } from '@/components/HeroSection';
-import Footer from '@/components/Footer';
 
 function AppContent() {
   const [currentView, setCurrentView] = useState<'builder' | 'templates' | 'ats-tips'>('builder');
@@ -72,8 +70,6 @@ function AppContent() {
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 font-sans selection:bg-indigo-100 selection:text-indigo-900">
       <Toaster position="top-center" richColors />
-
-      <Navbar />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <AdBanner adSlot="header-bottom" className="my-4 md:my-6" />

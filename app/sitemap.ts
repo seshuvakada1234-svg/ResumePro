@@ -66,7 +66,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 0.8,
     },
-
+    {
+      url: `${baseUrl}/ats-score-guide`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
     {
       url: `${baseUrl}/resume-examples`,
       lastModified: new Date(),

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Footer from "@/components/Footer";
+import { Navbar } from "@/components/Navbar";
 import { ResumeFunnelProvider } from "@/context/ResumeFunnelContext";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -48,7 +49,10 @@ export default function RootLayout({
       </head>
 
       <body className={`${inter.className} overflow-x-hidden`}>
-        <ResumeFunnelProvider>{children}</ResumeFunnelProvider>
+        <ResumeFunnelProvider>
+          <Navbar />
+          {children}
+        </ResumeFunnelProvider>
         <Footer />
       </body>
     </html>

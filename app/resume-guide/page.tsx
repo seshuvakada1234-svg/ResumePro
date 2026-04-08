@@ -1,6 +1,5 @@
 import React from 'react';
 import Link from 'next/link';
-import { Navbar } from '@/components/Navbar';
 import { CheckCircle2, Zap, ArrowRight, FileText, Star, Target, Award, Briefcase } from 'lucide-react';
 import { Metadata } from 'next';
 
@@ -16,8 +15,6 @@ export const metadata: Metadata = {
 export default function ResumeForFreshersPage() {
   return (
     <div className="min-h-screen bg-white">
-      <Navbar />
-      
       <main>
         {/* Hero Section */}
         <section className="bg-indigo-600 py-20 px-4 text-center text-white">
@@ -155,17 +152,6 @@ export default function ResumeForFreshersPage() {
           </div>
         </section>
       </main>
-
-      <footer className="bg-gray-50 py-12 border-t border-gray-100">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <p className="text-gray-500 font-medium mb-4">© 2026 FreeResume.dev - Made for India</p>
-          <div className="flex justify-center gap-6 text-sm font-bold text-indigo-600">
-            <Link href="/" className="hover:underline">Free Resume Builder</Link>
-            <Link href="/templates" className="hover:underline">ATS Templates</Link>
-            <Link href="/contact" className="hover:underline">Contact Us</Link>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }

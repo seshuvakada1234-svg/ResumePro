@@ -122,25 +122,6 @@ export default function ResumeScorePage() {
     <div className="min-h-screen bg-gray-50 text-gray-900 font-sans selection:bg-indigo-100 selection:text-indigo-900">
       <Toaster position="top-center" richColors />
       
-      {/* Navigation */}
-      <nav className="bg-white/90 backdrop-blur-md border-b border-gray-100 sticky top-0 z-50 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-14 md:h-16">
-            <Link href="/" className="flex items-center gap-2 group">
-              <div className="bg-indigo-600 p-1.5 md:p-2 rounded-lg group-hover:rotate-12 transition-transform">
-                <FileText className="text-white" size={20} />
-              </div>
-              <span className="text-lg md:text-xl font-bold tracking-tight text-gray-900">
-                Free<span className="text-indigo-600">Resume</span>
-              </span>
-            </Link>
-            <Link href="/builder" className="text-sm font-bold text-gray-500 hover:text-indigo-600 transition-colors">
-              Builder
-            </Link>
-          </div>
-        </div>
-      </nav>
-
       <main className="max-w-4xl mx-auto px-4 py-12 md:py-20">
         <AnimatePresence mode="wait">
           {step === 'upload' && (
