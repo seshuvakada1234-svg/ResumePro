@@ -14,6 +14,7 @@ import MinimalProTemplate from "@/components/templates/MinimalProTemplate";
 import PinkHeaderTemplate from "@/components/templates/PinkHeaderTemplate";
 import DarkNavyTemplate from "@/components/templates/DarkNavyTemplate";
 import CrimsonTemplate from "@/components/templates/CrimsonTemplate";
+import BlackYellowTemplate from "@/components/templates/BlackYellowTemplate";
 
 export const templateComponents: Record<string, any> = {
   'classic': ClassicTemplate,
@@ -32,6 +33,7 @@ export const templateComponents: Record<string, any> = {
   'pink-header': PinkHeaderTemplate,
   'dark-navy': DarkNavyTemplate,
   'crimson': CrimsonTemplate,
+  'black-yellow': BlackYellowTemplate,
 };
 
 export const categories = [
@@ -47,7 +49,7 @@ export const categories = [
   'Fresher',
 ];
 
-export const templates = [ 
+export const templates = [
   {
     id: 'photo-sidebar',
     name: 'Photo Classic',
@@ -174,34 +176,6 @@ export const templates = [
     thumbnail: '/templates/serif.png',
     component: SerifTemplate,
   },
-  // Adding some variations to fill categories as requested
-  {
-    id: 'tech-modern',
-    name: 'Tech Modern V2',
-    category: 'Tech',
-    ats: true,
-    description: 'Optimized for software engineers and developers.',
-    thumbnail: '/templates/modern.png',
-    component: ModernTemplate,
-  },
-  {
-    id: 'business-classic',
-    name: 'Corporate Elite',
-    category: 'Business',
-    ats: true,
-    description: 'High-impact design for corporate professionals.',
-    thumbnail: '/templates/classic.png',
-    component: ClassicTemplate,
-  },
-  {
-    id: 'fresher-minimal',
-    name: 'Entry Level',
-    category: 'Fresher',
-    ats: true,
-    description: 'Clean and simple for those starting their career.',
-    thumbnail: '/templates/minimal.png',
-    component: MinimalTemplate,
-  },
   {
     id: 'dark-navy',
     name: 'Dark Navy',
@@ -219,5 +193,14 @@ export const templates = [
     description: 'Crimson sidebar with diagonal cut, circular photo and references section.',
     thumbnail: '/templates/crimson.png',
     component: CrimsonTemplate,
+  },
+  {
+    id: 'black-yellow',
+    name: 'Black & Yellow Pro',
+    category: 'Creative',
+    ats: false,
+    description: 'Bold black sidebar with yellow accents. Perfect for designers and creatives.',
+    thumbnail: '/templates/modern.png',
+    component: BlackYellowTemplate,
   },
 ];

@@ -73,6 +73,7 @@ export type ResumeTemplate =
   | 'pink-header'
   | 'dark-navy'
   | 'crimson'
+  | 'black-yellow'
   | 'fresher-india'
   | 'tech-modern'
   | 'business-classic'

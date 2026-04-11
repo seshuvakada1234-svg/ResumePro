@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { Zap, CheckCircle2, FileText, ArrowRight } from 'lucide-react';
+import { Zap, CheckCircle2 } from 'lucide-react';
 import { motion } from 'motion/react';
 
 export const HeroSection: React.FC = () => {
@@ -22,24 +22,32 @@ export const HeroSection: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
+          {/* Badge */}
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-xs font-bold uppercase tracking-widest mb-6 md:mb-8">
             <Zap size={12} /> #1 Free Resume Builder in India
           </div>
+
+          {/* Heading */}
           <h1 className="text-3xl md:text-7xl font-extrabold text-gray-900 mb-6 md:mb-8 tracking-tight leading-tight">
             Build a Free ATS Resume <br className="hidden md:block" />
             That Gets You Hired
           </h1>
+
+          {/* ✅ IMPROVED DESCRIPTION */}
           <p className="text-lg md:text-2xl text-gray-600 max-w-3xl mx-auto mb-10 md:mb-12 leading-relaxed">
-            Create job-ready resumes in minutes with ATS-optimized templates for freshers in India.
+            Create job-ready resumes in minutes with ATS-optimized templates for freshers in India. 
+            Get instant ATS scores and discover matching job opportunities.
           </p>
 
-          <div className="flex flex-col md:flex-row justify-center gap-4 md:gap-6 mb-12 md:mb-16">
+          {/* CTA Buttons */}
+          <div className="flex flex-col md:flex-row justify-center gap-4 md:gap-6 mb-10 md:mb-12">
             <button 
               onClick={() => router.push('/builder')}
               className="inline-flex items-center justify-center gap-2 px-6 py-4 md:px-10 md:py-5 bg-indigo-600 text-white rounded-2xl font-bold text-lg md:text-xl hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-200 hover:-translate-y-1"
             >
               Build Resume Now 🚀
             </button>
+
             <button 
               onClick={() => router.push('/ats-score')}
               className="inline-flex items-center justify-center gap-2 px-6 py-4 md:px-10 md:py-5 bg-white border-2 border-indigo-600 text-indigo-600 rounded-2xl font-bold text-lg md:text-xl hover:bg-indigo-50 transition-all hover:-translate-y-1"
@@ -48,6 +56,17 @@ export const HeroSection: React.FC = () => {
             </button>
           </div>
 
+          {/* ✅ NEW: JOB MATCH CTA */}
+          <div className="mb-12">
+            <button
+              onClick={() => router.push('/ats-score')}
+              className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-semibold shadow-md hover:opacity-90 transition"
+            >
+              Get Job Matches 🔥
+            </button>
+          </div>
+
+          {/* Features */}
           <div className="flex flex-wrap justify-center gap-10">
             {['No Hidden Costs', 'ATS Optimized', 'PDF Download'].map((text) => (
               <div key={text} className="flex items-center gap-2.5 text-base font-bold text-gray-700">

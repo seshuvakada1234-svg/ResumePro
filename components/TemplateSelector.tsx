@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { ResumeTemplate } from '@/types/resume';
-import { Check, Eye } from 'lucide-react';
+import { Check, Eye, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 import TemplateThumbnail from "@/components/TemplateThumbnail";
 import { templates, categories } from "@/constants/templates";
@@ -68,10 +68,11 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({ selectedId, 
                   </Link>
                 </div>
                 
-                {/* ATS Badge */}
+                {/* ✅ UPDATED ATS Badge */}
                 {template.ats && (
-                  <div className="absolute top-3 left-3 bg-green-500 text-white text-[10px] font-black px-2 py-1 rounded uppercase tracking-wider shadow-sm">
-                    ATS Ready
+                  <div className="absolute top-3 left-3 flex items-center gap-1 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-[10px] font-semibold px-3 py-1 rounded-full shadow-md">
+                    <CheckCircle size={12} />
+                    ATS FRIENDLY
                   </div>
                 )}
               </div>
@@ -83,7 +84,9 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({ selectedId, 
                     {template.category}
                   </span>
                 </div>
-                <p className="text-xs text-gray-500 leading-relaxed line-clamp-2">{template.description}</p>
+                <p className="text-xs text-gray-500 leading-relaxed line-clamp-2">
+                  {template.description}
+                </p>
               </div>
 
               {selectedId === template.id && (
@@ -92,7 +95,8 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({ selectedId, 
                 </div>
               )}
             </div>
-            {/* Ad insertion logic: after every 6 templates on mobile, or 8 on desktop */}
+
+            {/* Ad insertion */}
             {(index + 1) % 6 === 0 && (
               <div className="col-span-1 md:col-span-2 lg:col-span-3 xl:col-span-4 w-full">
                 <AdBanner adSlot="template-grid-middle" className="my-8 px-0" />
@@ -104,7 +108,9 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({ selectedId, 
       
       {filteredTemplates.length === 0 && (
         <div className="text-center py-20 bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200">
-          <p className="text-gray-500 font-medium">No templates found in this category yet.</p>
+          <p className="text-gray-500 font-medium">
+            No templates found in this category yet.
+          </p>
           <button 
             onClick={() => setSelectedCategory('All')}
             className="mt-4 text-indigo-600 font-bold hover:underline"

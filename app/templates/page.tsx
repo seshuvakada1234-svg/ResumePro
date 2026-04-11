@@ -32,7 +32,9 @@ export default function TemplatesPage() {
             <TemplateSelector
               selectedId="modern"
               onSelect={(id: ResumeTemplate) => {
-                router.push(`/?template=${id}`);
+                console.log('Template selected:', id);
+                localStorage.setItem('selectedTemplate', id);
+                router.push('/builder');
               }}
             />
           </div>

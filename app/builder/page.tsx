@@ -4,6 +4,7 @@ import React, { useState, useCallback, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { ResumeForm } from '@/components/ResumeForm';
 import { ResumePreview } from '@/components/ResumePreview';
+import { PreviewFeatures } from '@/components/PreviewFeatures';
 import PDFDownloadButton from '@/components/PDFDownloadButton';
 import { ResumeData, defaultResumeData, ResumeTemplate } from '@/types/resume';
 import { Toaster, toast } from 'sonner';
@@ -19,8 +20,19 @@ function BuilderContent() {
   const router = useRouter();
 
   useEffect(() => {
+    // 1. Check search params (legacy/direct link)
     const templateId = searchParams.get('template') as ResumeTemplate | null;
-    if (templateId) {
+    
+    // 2. Check localStorage (from /templates page)
+    const storedTemplate = localStorage.getItem('selectedTemplate') as ResumeTemplate | null;
+
+    if (storedTemplate) {
+      console.log('Template loaded from localStorage:', storedTemplate);
+      setResumeData((prev) => ({ ...prev, template: storedTemplate }));
+      toast.success(`Template applied: ${storedTemplate}`);
+      localStorage.removeItem('selectedTemplate'); // Clear after applying
+    } else if (templateId) {
+      console.log('Template loaded from URL:', templateId);
       setResumeData((prev) => ({ ...prev, template: templateId }));
       toast.success(`Template applied: ${templateId}`);
       router.replace('/builder', { scroll: false });
@@ -117,6 +129,8 @@ function BuilderContent() {
             <div className="min-h-[600px]">
               <ResumePreview data={resumeData} />
             </div>
+
+            <PreviewFeatures />
 
           </div>
         </div>
