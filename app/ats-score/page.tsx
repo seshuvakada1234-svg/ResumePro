@@ -12,60 +12,81 @@ import { motion, AnimatePresence } from 'motion/react';
 import { createWorker } from 'tesseract.js';
 
 async function extractTextFromPDF(file: File, onProgress?: (msg: string) => void): Promise<string> {
-  await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');
+  try {
+    // Use a more stable version of pdf.js
+    const PDFJS_VERSION = '3.11.174';
+    await loadScript(`https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${PDFJS_VERSION}/pdf.min.js`);
 
-  const pdfjsLib = (window as any).pdfjsLib;
-  pdfjsLib.GlobalWorkerOptions.workerSrc =
-    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-
-  const arrayBuffer = await file.arrayBuffer();
-  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-
-  let fullText = '';
-  let isScanned = true;
-
-  onProgress?.('Extracting text layers...');
-
-  for (let i = 1; i <= pdf.numPages; i++) {
-    const page = await pdf.getPage(i);
-    const content = await page.getTextContent();
-    const pageText = content.items.map((item: any) => item.str).join(' ');
-
-    if (pageText.trim().length > 20) {
-      isScanned = false;
+    const pdfjsLib = (window as any).pdfjsLib;
+    if (!pdfjsLib) {
+      throw new Error('PDF.js failed to load. Please check your internet connection.');
     }
 
-    fullText += pageText + '\n';
-  }
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${PDFJS_VERSION}/pdf.worker.min.js`;
 
-  if (isScanned || fullText.trim().length < 100) {
-    onProgress?.('⚡ Scanned resume detected — running OCR...');
+    const arrayBuffer = await file.arrayBuffer();
+    const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+    
+    // Add timeout for loading task
+    const pdf = await Promise.race([
+      loadingTask.promise,
+      new Promise((_, reject) => setTimeout(() => reject(new Error('PDF loading timed out')), 15000))
+    ]) as any;
 
-    fullText = '';
-    const worker = await createWorker('eng');
+    let fullText = '';
+    let isScanned = true;
+
+    onProgress?.('Extracting text layers...');
 
     for (let i = 1; i <= pdf.numPages; i++) {
-      onProgress?.(`OCR: Processing page ${i} of ${pdf.numPages}...`);
-
       const page = await pdf.getPage(i);
-      const viewport = page.getViewport({ scale: 2.0 });
+      const content = await page.getTextContent();
+      const pageText = content.items.map((item: any) => item.str).join(' ');
 
-      const canvas = document.createElement('canvas');
-      const context = canvas.getContext('2d');
+      // If we find a significant amount of text, it's likely not a scanned PDF
+      if (pageText.trim().length > 50) {
+        isScanned = false;
+      }
 
-      canvas.height = viewport.height;
-      canvas.width = viewport.width;
-
-      await page.render({ canvasContext: context!, viewport }).promise;
-
-      const { data: { text } } = await worker.recognize(canvas);
-      fullText += text + '\n';
+      fullText += pageText + '\n';
     }
 
-    await worker.terminate();
-  }
+    // If text is too short or looks scanned, run OCR
+    if (isScanned || fullText.trim().length < 100) {
+      onProgress?.('⚡ Scanned resume detected — running OCR...');
 
-  return fullText;
+      fullText = '';
+      const worker = await createWorker('eng');
+
+      for (let i = 1; i <= pdf.numPages; i++) {
+        onProgress?.(`OCR: Processing page ${i} of ${pdf.numPages}...`);
+
+        const page = await pdf.getPage(i);
+        const viewport = page.getViewport({ scale: 2.5 }); // Increased scale for better OCR
+
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+
+        if (!context) continue;
+
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+
+        await page.render({ canvasContext: context, viewport }).promise;
+
+        const { data: { text } } = await worker.recognize(canvas);
+        fullText += text + '\n';
+      }
+
+      await worker.terminate();
+    }
+
+    return fullText;
+  } catch (error: any) {
+    console.error('PDF extraction error:', error);
+    throw new Error(`Failed to extract text from PDF: ${error.message}`);
+  }
 }
 
 function loadScript(src: string): Promise<void> {
@@ -116,8 +137,11 @@ export default function ATSScorePage() {
 
       setAnalyzingStep('Analyzing content...');
 
-      if (!extractedText.trim() || extractedText.length < 100) {
-        throw new Error("We couldn't read your resume clearly. Please upload a better file.");
+      console.log('Extracted text length:', extractedText.length);
+      console.log('Extracted text preview:', extractedText.substring(0, 100));
+
+      if (!extractedText.trim() || extractedText.length < 50) {
+        throw new Error("We couldn't read your resume clearly. The file might be empty, corrupted, or too small. Please upload a better file.");
       }
 
       const scored = calculateATSScore(extractedText);

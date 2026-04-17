@@ -4,6 +4,7 @@ import "./globals.css";
 import Footer from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
 import { ResumeFunnelProvider } from "@/context/ResumeFunnelContext";
+import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -31,14 +32,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* ✅ AdSense Script (CRITICAL - RAW) */}
-        <script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6397085715997255"
-          crossOrigin="anonymous"
-        ></script>
-
-        {/* ✅ Extra AdSense verification meta (optional boost) */}
+        {/* ✅ AdSense Account Verification */}
         <meta
           name="google-adsense-account"
           content="ca-pub-6397085715997255"
@@ -49,6 +43,14 @@ export default function RootLayout({
       </head>
 
       <body className={`${inter.className} overflow-x-hidden`}>
+        {/* ✅ Google AdSense Auto Ads */}
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6397085715997255"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
+
         <ResumeFunnelProvider>
           <Navbar />
           {children}
