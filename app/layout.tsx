@@ -9,14 +9,15 @@ import Script from "next/script";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Free Resume Builder for Freshers in India | ATS Resume Maker",
+  title: "FreeResume | Official Free ATS Resume Builder for Freshers",
   description:
-    "Create professional ATS resumes for free. Best resume builder for freshers in India. Download instantly and get hired faster.",
+    "Build your professional CV on the official FreeResume.dev. The #1 free ATS resume builder for freshers in India. No hidden fees, download PDF instantly.",
   keywords: [
+    "FreeResume",
+    "FreeResume.dev",
     "resume builder free",
     "ATS resume India",
     "resume for freshers",
-    "CV maker free",
   ],
   metadataBase: new URL("https://freeresume.dev"),
   alternates: {
@@ -38,19 +39,18 @@ export default function RootLayout({
           content="ca-pub-6397085715997255"
         />
 
+        {/* ✅ Google AdSense Auto Ads (Raw tag to avoid data-nscript warning) */}
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6397085715997255"
+          crossOrigin="anonymous"
+        ></script>
+
         {/* ✅ Canonical */}
         <link rel="canonical" href="https://freeresume.dev" />
       </head>
 
       <body className={`${inter.className} overflow-x-hidden`}>
-        {/* ✅ Google AdSense Auto Ads */}
-        <Script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6397085715997255"
-          crossOrigin="anonymous"
-          strategy="afterInteractive"
-        />
-
         <ResumeFunnelProvider>
           <Navbar />
           {children}

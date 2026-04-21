@@ -29,14 +29,14 @@ export const HeroSection: React.FC = () => {
 
           {/* Heading */}
           <h1 className="text-3xl md:text-7xl font-extrabold text-gray-900 mb-6 md:mb-8 tracking-tight leading-tight">
-            Build a Free ATS Resume <br className="hidden md:block" />
+            FreeResume: Build a Free ATS Resume <br className="hidden md:block" />
             That Gets You Hired
           </h1>
 
           {/* ✅ IMPROVED DESCRIPTION */}
           <p className="text-lg md:text-2xl text-gray-600 max-w-3xl mx-auto mb-10 md:mb-12 leading-relaxed">
-            Create job-ready resumes in minutes with ATS-optimized templates for freshers in India. 
-            Get instant ATS scores and discover matching job opportunities.
+            Welcome to the official <strong>FreeResume.dev</strong>. Create job-ready resumes in minutes with ATS-optimized templates for freshers in India. 
+            Get instant ATS scores and land your dream job faster.
           </p>
 
           {/* CTA Buttons */}

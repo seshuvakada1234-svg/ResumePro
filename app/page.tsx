@@ -147,24 +147,24 @@ function AppContent() {
                 </div>
 
                 <section className="p-8 bg-white rounded-2xl border border-gray-100 shadow-sm space-y-6">
-                  <h3 className="text-xl font-bold text-gray-900">Why use our ATS Resume Builder?</h3>
+                  <h3 className="text-xl font-bold text-gray-900">Why use the official FreeResume.dev?</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {[
                       {
                         title: 'ATS-Optimized',
-                        desc: 'Our templates are tested against major ATS systems used by Indian companies like TCS, Infosys, and Wipro.',
+                        desc: 'Every FreeResume template is tested against ATS systems used by companies like TCS, Infosys, and Wipro.',
                       },
                       {
                         title: '100% Free',
-                        desc: 'No hidden subscriptions or "premium" templates. Everything is free for freshers in India.',
+                        desc: 'No "Premium" locks. FreeResume.dev is a completely free builder for Indian students.',
                       },
                       {
                         title: 'Privacy First',
-                        desc: "Your data is secure. We don't sell your information to third parties.",
+                        desc: "Your data stays on the official FreeResume platform. We don't sell your info.",
                       },
                       {
                         title: 'Professional Design',
-                        desc: 'Clean, minimal, and modern layouts that impress human recruiters as well.',
+                        desc: 'Clean layouts by FreeResume designers that impress human recruiters as well.',
                       },
                     ].map(({ title, desc }) => (
                       <div key={title} className="space-y-2">

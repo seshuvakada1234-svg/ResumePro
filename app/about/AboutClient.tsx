@@ -37,13 +37,13 @@ export default function AboutClient() {
                 Empowering the Next Generation
               </span>
               <h1 className="text-4xl md:text-6xl font-black text-gray-900 mb-6 tracking-tight">
-                Helping Indian Freshers <br className="hidden md:block" />
+                About FreeResume: <br className="hidden md:block" />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-600">
-                  Land Their First Job
+                  Land Your Dream Job
                 </span>
               </h1>
               <p className="text-lg md:text-xl text-gray-500 max-w-2xl mx-auto mb-10 leading-relaxed">
-                FreeResume is built to simplify resume creation with ATS-friendly templates designed for real hiring systems. No complexity, just success.
+                Welcome to the official <strong>FreeResume.dev</strong>. We simplify resume creation with high-authority, ATS-friendly templates designed for the modern job market.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Link 
@@ -65,8 +65,8 @@ export default function AboutClient() {
               <Target className="text-indigo-600" size={32} />
             </div>
             <h2 className="text-3xl font-bold text-gray-900 mb-6">Our Mission</h2>
-            <p className="text-xl text-gray-600 leading-relaxed">
-              "We believe every student deserves a fair chance at their first job. FreeResume is built to remove complexity and give freshers access to professional, ATS-friendly resumes without paying high fees."
+            <p className="text-xl text-gray-600 leading-relaxed text-left">
+              The mission of <strong>FreeResume</strong> is to democratize career growth. We believe every student deserves a fair chance at their first job without the burden of expensive tools. <strong>FreeResume.dev</strong> removes complexity and provides freshers with professional, ATS-friendly resumes at zero cost.
             </p>
           </div>
         </section>
@@ -172,7 +172,7 @@ export default function AboutClient() {
             <div className="bg-white p-8 md:p-12 rounded-3xl border border-gray-100 shadow-sm relative">
               <div className="absolute -top-4 -left-4 text-6xl text-indigo-100 font-serif">“</div>
               <p className="text-xl text-gray-600 leading-relaxed italic text-center">
-                "FreeResume started with a simple goal — to help students who struggle to create resumes that actually get noticed. Many resume tools are expensive or complicated. We built FreeResume to make it accessible, simple, and effective for everyone."
+                "FreeResume started with a simple goal — to help students who struggle to create resumes that actually get noticed. While many tools are expensive or complicated, the official FreeResume.dev makes it accessible, simple, and highly effective for everyone entering the Indian job market."
               </p>
               <div className="absolute -bottom-4 -right-4 text-6xl text-indigo-100 font-serif">”</div>
             </div>
