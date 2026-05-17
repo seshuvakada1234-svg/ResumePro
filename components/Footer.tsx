@@ -38,6 +38,21 @@ const Footer: React.FC = () => {
                   Resume Examples
                 </Link>
               </li>
+              <li>
+                <Link href="/tips" className="hover:text-indigo-600 transition-colors font-bold text-indigo-600">
+                  ATS Tips & Tricks
+                </Link>
+              </li>
+              <li>
+                <Link href="/tips/tcs-resume" className="hover:text-indigo-600 transition-colors">
+                  TCS Resume Guide
+                </Link>
+              </li>
+              <li>
+                <Link href="/tips/resume-writing" className="hover:text-indigo-600 transition-colors">
+                  Resume Writing Guide
+                </Link>
+              </li>
             </ul>
           </div>
           <div className="md:col-span-2">

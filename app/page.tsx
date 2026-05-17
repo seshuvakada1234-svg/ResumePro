@@ -212,6 +212,67 @@ function AppContent() {
                 </section>
 
                 <AdBanner adSlot="builder-bottom" className="mt-12" />
+
+                {/* --- FOOTER SEO CONTENT --- */}
+                <section className="mt-24 pt-16 border-t border-gray-200 space-y-20">
+                  <div className="prose prose-slate lg:prose-lg max-w-none">
+                    <h2 className="text-3xl font-black text-gray-900 tracking-tight">The Best ATS Resume Builder for Freshers in India</h2>
+                    <p className="text-gray-600 leading-relaxed">
+                      Are you a student or a recent graduate in India looking for your first job? At <strong>FreeResume.dev</strong>, we understand that the job market is incredibly competitive. Whether you are aiming for a role at an MNC like <strong>TCS, Wipro, or Infosys</strong>, or a high-growth startup, your resume is your ticket to an interview. 
+                    </p>
+                    <p className="text-gray-600 leading-relaxed">
+                      Our official Free Resume Builder is designed to help you create an <strong>ATS-friendly resume</strong> that passes through Applicant Tracking Systems with ease. We provide specialized templates that are tried and tested for the Indian job market, ensuring that your skills, project details, and educational background are parsed correctly.
+                    </p>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10 my-16">
+                      <div className="space-y-4">
+                        <h3 className="text-xl font-bold text-gray-900">Why choose FreeResume.dev?</h3>
+                        <ul className="space-y-3 text-gray-600 list-disc pl-5">
+                          <li><strong>100% Free:</strong> No hidden charges, no "premium only" templates, and no watermarks. We believe every student deserves a professional resume.</li>
+                          <li><strong>ATS-Optimized Templates:</strong> Every template is built to be easily readable by the software used by HR departments in India.</li>
+                          <li><strong>Indian Market Focus:</strong> Includes fields and structures commonly expected by Indian recruiters, such as detailed educational percentages and project descriptions.</li>
+                          <li><strong>Instant PDF Download:</strong> Export your CV as a high-quality, professional PDF that looks great on any device.</li>
+                        </ul>
+                      </div>
+                      <div className="space-y-4">
+                        <h3 className="text-xl font-bold text-gray-900">Land Jobs at Top Companies</h3>
+                        <p className="text-gray-600">Our users have successfully used their resumes to apply for and land roles at:</p>
+                        <div className="flex flex-wrap gap-3">
+                          {['TCS', 'Infosys', 'Wipro', 'HCL', 'Cognizant', 'Accenture', 'Byju\'s', 'Zomato'].map(company => (
+                            <span key={company} className="px-3 py-1 bg-white border border-gray-200 rounded-lg text-sm font-bold text-gray-500">{company}</span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    <h2 className="text-3xl font-black text-gray-900 mt-16">Frequently Asked Questions (FAQs)</h2>
+                    <div className="space-y-8 mt-8">
+                      <div className="space-y-2">
+                        <h4 className="text-lg font-bold text-gray-900">Is this resume builder really free for life?</h4>
+                        <p className="text-gray-600 leading-relaxed">Yes! FreeResume.dev is and will always be a free resource for the student community in India. Our mission is to support freshers in their journey to land their first job without the burden of expensive tools.</p>
+                      </div>
+                      <div className="space-y-2">
+                        <h4 className="text-lg font-bold text-gray-900">How do I generate an ATS resume for freshers?</h4>
+                        <p className="text-gray-600 leading-relaxed">Simply fill in your details in our easy-to-use form, select from our professional templates like "Classic Professional," and click the download button. Your PDF will be ready in seconds, perfectly formatted for any ATS scanner.</p>
+                      </div>
+                      <div className="space-y-2">
+                        <h4 className="text-lg font-bold text-gray-900">Does my resume need a photo in India?</h4>
+                        <p className="text-gray-600 leading-relaxed">While it varies by industry, most major IT companies and MNCs in India do not require a photo on your resume. In fact, text-only resumes often perform better in ATS systems. We offer both options to suit your personal preference.</p>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                <footer className="py-12 text-center text-gray-400 text-sm border-t border-gray-100 mt-20">
+                  <div className="space-y-4">
+                    <p>&copy; {new Date().getFullYear()} FreeResume.dev - The Official #1 Free Resume Builder in India.</p>
+                    <div className="flex justify-center gap-6">
+                      <Link href="/privacy" className="hover:text-indigo-600 underline">Privacy Policy</Link>
+                      <Link href="/terms" className="hover:text-indigo-600 underline">Terms of Service</Link>
+                      <Link href="/contact" className="hover:text-indigo-600 underline">Contact Us</Link>
+                    </div>
+                  </div>
+                </footer>
               </div>
 
               {/* Right Sidebar: Desktop Only */}

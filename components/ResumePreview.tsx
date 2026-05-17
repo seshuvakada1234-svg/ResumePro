@@ -19,6 +19,7 @@ import PinkHeaderTemplate from '@/components/templates/PinkHeaderTemplate';
 import DarkNavyTemplate from '@/components/templates/DarkNavyTemplate';
 import CrimsonTemplate from '@/components/templates/CrimsonTemplate';
 import BlackYellowTemplate from '@/components/templates/BlackYellowTemplate';
+import { LuxuryGoldTemplate } from '@/components/templates/LuxuryGoldTemplate';
 
 const A4_WIDTH = 794;
 const A4_HEIGHT = 1123;
@@ -82,6 +83,8 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({ data }) => {
         return <CrimsonTemplate data={data} />;
       case 'black-yellow':
         return <BlackYellowTemplate data={data} />;
+      case 'luxury-gold':
+        return <LuxuryGoldTemplate data={data} />;
       case 'classic':
       default:
         return <ClassicTemplate data={data} />;

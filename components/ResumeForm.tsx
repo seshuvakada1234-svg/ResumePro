@@ -33,6 +33,7 @@ const resumeSchema = z.object({
     'dark-navy',
     'crimson',
     'black-yellow',
+    'luxury-gold',
   ]),
   personalInfo: z.object({
     fullName: z.string().min(1, 'Full Name is required'),

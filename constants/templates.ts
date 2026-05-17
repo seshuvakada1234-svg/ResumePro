@@ -15,6 +15,7 @@ import PinkHeaderTemplate from "@/components/templates/PinkHeaderTemplate";
 import DarkNavyTemplate from "@/components/templates/DarkNavyTemplate";
 import CrimsonTemplate from "@/components/templates/CrimsonTemplate";
 import BlackYellowTemplate from "@/components/templates/BlackYellowTemplate";
+import { LuxuryGoldTemplate } from "@/components/templates/LuxuryGoldTemplate";
 
 export const templateComponents: Record<string, any> = {
   'classic': ClassicTemplate,
@@ -34,6 +35,7 @@ export const templateComponents: Record<string, any> = {
   'dark-navy': DarkNavyTemplate,
   'crimson': CrimsonTemplate,
   'black-yellow': BlackYellowTemplate,
+  'luxury-gold': LuxuryGoldTemplate,
 };
 
 export const categories = [
@@ -47,6 +49,7 @@ export const categories = [
   'Marketing',
   'Engineering',
   'Fresher',
+  'Executive',
 ];
 
 export const templates = [
@@ -202,5 +205,14 @@ export const templates = [
     description: 'Bold black sidebar with yellow accents. Perfect for designers and creatives.',
     thumbnail: '/templates/modern.png',
     component: BlackYellowTemplate,
+  },
+  {
+    id: 'luxury-gold',
+    name: 'Luxury Gold',
+    category: 'Executive',
+    ats: true,
+    description: 'A professional, high-end design with gold accents and a dark aesthetic. Perfect for senior management and executive roles.',
+    thumbnail: '/templates/executive.png',
+    component: LuxuryGoldTemplate,
   },
 ];
