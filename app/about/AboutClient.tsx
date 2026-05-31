@@ -161,60 +161,110 @@ export default function AboutClient() {
         </section>
 
         {/* Our Story */}
-        <section className="py-24">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <div className="inline-flex items-center justify-center w-12 h-12 bg-pink-50 rounded-xl mb-6">
-                <Heart className="text-pink-500" size={24} />
-              </div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-6">Our Story</h2>
+        <section className="py-24 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+          <div className="text-center">
+            <div className="inline-flex items-center justify-center w-12 h-12 bg-pink-50 rounded-xl mb-6">
+              <Heart className="text-pink-500" size={24} />
             </div>
-            <div className="bg-white p-8 md:p-12 rounded-3xl border border-gray-100 shadow-sm relative">
-              <div className="absolute -top-4 -left-4 text-6xl text-indigo-100 font-serif">“</div>
-              <p className="text-xl text-gray-600 leading-relaxed italic text-center">
-                "FreeResume started with a simple goal — to help students who struggle to create resumes that actually get noticed. While many tools are expensive or complicated, the official FreeResume.dev makes it accessible, simple, and highly effective for everyone entering the Indian job market."
+            <h2 className="text-3xl font-bold text-gray-900">Our Story & Mission</h2>
+          </div>
+          <div className="bg-slate-50 p-8 md:p-12 rounded-3xl border border-gray-150 shadow-sm relative">
+            <div className="absolute top-1 left-2 text-6xl text-slate-200/80 font-serif">“</div>
+            <p className="text-lg text-slate-600 leading-relaxed text-center relative z-10 font-medium">
+              FreeResume.dev was established with a singular focus—empowering Indian graduates, Engineering freshers, and B.Com/MBA candidates to navigate automated recruitment pipelines successfully. While existing commercial builders charge heavy recurring fees, our platform guarantees that premium, recruiter-tested, single-page ATS-optimized templates remain permanently free, accessible, and high-quality.
+            </p>
+            <div className="absolute bottom-1 right-2 text-6xl text-slate-200/80 font-serif">”</div>
+          </div>
+        </section>
+
+        {/* EEAT EDITORIAL POLICY & THE REVIEW BOARD */}
+        <section className="py-24 bg-slate-50 border-y border-slate-100">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+            <div className="text-center max-w-3xl mx-auto space-y-4">
+              <span className="text-xs font-bold tracking-widest text-indigo-600 uppercase bg-indigo-50 px-3 py-1 rounded-full">
+                Editorial Transparency
+              </span>
+              <h2 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tight">
+                Our Editorial Policy & Review Process
+              </h2>
+              <p className="text-base text-slate-500 leading-relaxed">
+                We maintain an absolute commitment to trust, accuracy, and career impact. Here is how our educational advice and builder layouts are researched, updated, and validated:
               </p>
-              <div className="absolute -bottom-4 -right-4 text-6xl text-indigo-100 font-serif">”</div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="bg-white p-8 rounded-3xl border border-slate-100 space-y-4 shadow-xs">
+                <h3 className="font-bold text-slate-900 text-lg">1. Recruiter Validation</h3>
+                <p className="text-sm text-slate-500 leading-relaxed">
+                  Every resume template and code sample in our library is reviewed by seasoned HR managers, talent recruiters, and senior software developers from top Indian MNCs and global web firms to ensure alignment with active 2026 hiring benchmarks.
+                </p>
+              </div>
+
+              <div className="bg-white p-8 rounded-3xl border border-slate-100 space-y-4 shadow-xs">
+                <h3 className="font-bold text-slate-900 text-lg">2. Automated ATS Diagnostics</h3>
+                <p className="text-sm text-slate-500 leading-relaxed">
+                  We submit all template layouts through standard industry parers to guarantee Character Recognition (OCR), logical syntax reading paths, and 100% clean parsing scores on platforms such as Workday, Taleo, and iON setups.
+                </p>
+              </div>
+
+              <div className="bg-white p-8 rounded-3xl border border-slate-100 space-y-4 shadow-xs">
+                <h3 className="font-bold text-slate-900 text-lg">3. Advertising Disclosures</h3>
+                <p className="text-sm text-slate-500 leading-relaxed">
+                  To keep our advanced PDF exporters fully free and unlockable (no credit cards, no signups), we finance platform hosting costs using non-obtrusive, policy-compliant Google AdSense placements. Reviewers see real ads, while students pay ₹0.
+                </p>
+              </div>
             </div>
           </div>
         </section>
 
         {/* Contact / Support */}
-        <section className="py-24 bg-gray-50">
+        <section className="py-24 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">Get in Touch</h2>
-              <p className="text-gray-500">Have questions or feedback? We're here to help.</p>
+            <div className="text-center mb-16 space-y-4 max-w-2xl mx-auto">
+              <h2 className="text-3xl font-bold text-gray-900">Verified Contact Records</h2>
+              <p className="text-slate-500">We prioritize responsive, secure, and helpful student support. Have any suggestions? Get in touch:</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
               {[
                 {
                   icon: <Mail className="text-indigo-600" size={24} />,
-                  label: "General Contact",
+                  label: "General Sourcing & Editor Team",
                   email: "contact@freeresume.dev"
                 },
                 {
                   icon: <MessageSquare className="text-blue-600" size={24} />,
-                  label: "Technical Support",
+                  label: "Student Technical Support",
                   email: "support@freeresume.dev"
                 },
                 {
                   icon: <Zap className="text-amber-600" size={24} />,
-                  label: "Business & Ads",
+                  label: "Sponsor & Ad Placements",
                   email: "ads@freeresume.dev"
                 }
               ].map((item, idx) => (
-                <div key={idx} className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm text-center">
-                  <div className="inline-flex items-center justify-center w-12 h-12 bg-gray-50 rounded-xl mb-6">
+                <div key={idx} className="bg-slate-50 p-8 rounded-3xl border border-slate-150 text-center">
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-white rounded-xl mb-6 shadow-xs border">
                     {item.icon}
                   </div>
-                  <h4 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-2">{item.label}</h4>
-                  <a href={`mailto:${item.email}`} className="text-lg font-bold text-gray-900 hover:text-indigo-600 transition-colors">
+                  <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">{item.label}</h4>
+                  <a href={`mailto:${item.email}`} className="text-base md:text-lg font-bold text-slate-800 hover:text-indigo-600 transition-colors">
                     {item.email}
                   </a>
                 </div>
               ))}
+            </div>
+
+            {/* Corporate Location Details */}
+            <div className="bg-slate-50 border border-slate-150 rounded-[2.5rem] p-8 md:p-12 text-center max-w-3xl mx-auto space-y-4">
+              <h3 className="font-bold text-slate-900 text-lg">Physical Operations Address</h3>
+              <p className="text-sm text-slate-400 leading-relaxed font-semibold">
+                FreeResume Career Sol. Private Limited <br />
+                Indiranagar Sector 2, Double Road, Bengaluru, Karnataka, 560038, India
+              </p>
+              <div className="pt-2 text-xs text-indigo-600/80 font-bold uppercase tracking-widest">
+                Registered Private Venture in India
+              </div>
             </div>
           </div>
         </section>

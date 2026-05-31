@@ -1,65 +1,14 @@
 'use client';
 
 import React, { useState } from 'react';
-import { AdBanner } from '@/components/AdBanner';
 import { 
   FileText, Search, Zap, Layout, Target, Sparkles, AlertCircle, 
   CheckCircle2, ArrowRight, ChevronDown, ChevronRight, BarChart, 
-  ShieldCheck, Award, Users, Globe, TrendingUp, BookOpen, 
-  Clock, Server, Terminal, Filter
+  ShieldCheck, Award, Users, Globe, BookOpen, 
+  Clock, Server, Terminal, Filter, GraduationCap
 } from 'lucide-react';
 import Link from 'next/link';
-
-const FEATURED_TIPS = [
-  {
-    icon: <Search className="text-indigo-500" />,
-    title: 'ATS Keyword Optimization',
-    description: 'Learn how to extract high-value skills from job descriptions and naturally integrate them into your resume to score higher in scans.',
-    details: 'Identify both hard skills (e.g., Python, SQL) and soft skills (e.g., Leadership, Communication) that the ATS is specifically looking for.'
-  },
-  {
-    icon: <Layout className="text-pink-500" />,
-    title: 'Standard Resume Formatting',
-    description: 'Ensure your document hierarchy is clear. Stick to single-column layouts that older and modern ATS systems can parse without errors.',
-    details: 'Use standard fonts like Inter, Arial, or Calibri and avoid text boxes or graphics that break the logical reading flow.'
-  },
-  {
-    icon: <Zap className="text-yellow-500" />,
-    title: 'Power Action Verbs',
-    description: 'Replace passive phrases with dynamic action verbs like "Spearheaded," "Engineered," or "Increased" to show impact.',
-    details: 'Starting bullet points with action verbs makes your experience more persuasive to both software and human recruiters.'
-  },
-  {
-    icon: <Target className="text-blue-500" />,
-    title: 'Resume Accuracy Scoring',
-    description: 'Keep your descriptions outcome-focused. Use the STAR (Situation, Task, Action, Result) method to define your wins.',
-    details: 'Quantify your achievements with numbers (e.g., "Grew revenue by 22%") to give the ATS measurable data points to rank.'
-  },
-  {
-    icon: <FileText className="text-emerald-500" />,
-    title: 'Best ATS Fonts 2026',
-    description: 'Avoid serif fonts that might trigger parsing errors. Stick to clean, modern sans-serif typefaces for maximum compatibility.',
-    details: 'Fonts like Inter and Roboto are not only ATS-safe but also look professional across all modern PDF viewing software.'
-  },
-  {
-    icon: <AlertCircle className="text-orange-500" />,
-    title: 'Common Format Killers',
-    description: 'Identify the "silent killers" like tables, headers, and footers which are often ignored by less sophisticated tracking software.',
-    details: 'Never put critical contact information in the document header/footer section; move it directly into the top of the body.'
-  },
-  {
-    icon: <TrendingUp className="text-purple-500" />,
-    title: 'ATS-Friendly Summaries',
-    description: 'Write a punchy 2-3 sentence summary that contains your primary job title and 3-4 top technical skills.',
-    details: 'This acts as a "metadata" section that helps the software categorize your profile correctly within seconds.'
-  },
-  {
-    icon: <Sparkles className="text-cyan-500" />,
-    title: 'Visual Cleanliness',
-    description: 'Balance white space and text density. A resume that is too crowded might cause parsing overlap errors.',
-    details: 'Ensure 1-inch margins and clear separation between sections to help the software identify where "Experience" ends and "Education" begins.'
-  }
-];
+import { CAREER_TIPS_DB } from '@/lib/career-tips-db';
 
 const FAQS = [
   {
@@ -90,291 +39,253 @@ const FAQS = [
 
 export default function TipsPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [activeCategory, setActiveCategory] = useState<string>('All');
+
+  const tipsList = Object.values(CAREER_TIPS_DB);
+  const categories = ['All', 'ATS Optimization', 'Formatting & Layout', 'Career Guidance', 'Indian MNC Preparation'];
+
+  const filteredTips = activeCategory === 'All' 
+    ? tipsList 
+    : tipsList.filter(tip => tip.category === activeCategory);
 
   return (
     <div className="min-h-screen bg-[#fafafa] text-gray-900 font-sans selection:bg-indigo-100 selection:text-indigo-900">
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-24 space-y-24">
         
         {/* --- HERO SECTION --- */}
-        <div className="relative text-center space-y-8 mb-24">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-600 rounded-full text-sm font-bold tracking-wide uppercase mb-4 animate-fade-in text-center mx-auto">
-            <BookOpen size={16} /> The Ultimate Career Guide
+        <div className="relative text-center space-y-8">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-xs font-bold tracking-wide uppercase">
+            <BookOpen size={14} /> Career Resources & ATS Learning Hub
           </div>
           <h1 className="text-5xl md:text-7xl font-black text-gray-900 tracking-tight leading-[1.1] max-w-4xl mx-auto">
-            Master the <span className="text-indigo-600">ATS Game</span> <br/> & Get More Interviews
+            Crack the <span className="text-indigo-600">MNC Filters</span> <br/> & Secure High Packages
           </h1>
-          <p className="text-xl md:text-2xl text-gray-500 max-w-3xl mx-auto font-medium leading-relaxed">
-            Stop getting rejected by software. Learn exactly how Applicant Tracking Systems work and how to optimize your resume for the 2026 job market.
+          <p className="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto font-medium leading-relaxed">
+            Stop getting weeded out by automated software. Browse through our 30+ expert-written guidelines to optimize your CV and clear off-campus screening rounds.
           </p>
-          
-          <div className="flex flex-wrap justify-center gap-6 pt-4">
-            <div className="flex items-center gap-2 text-sm font-bold text-gray-400">
-              <CheckCircle2 className="text-indigo-500" size={18} /> 10,000+ Success Stories
+
+          <div className="flex flex-wrap justify-center gap-6 pt-4 text-xs font-bold text-gray-400 uppercase tracking-widest">
+            <div className="flex items-center gap-1.5">
+              <CheckCircle2 size={16} className="text-indigo-500" /> Free Resources
             </div>
-            <div className="flex items-center gap-2 text-sm font-bold text-gray-400">
-              <CheckCircle2 className="text-indigo-500" size={18} /> Verified by Recruiters
+            <div className="flex items-center gap-1.5">
+              <CheckCircle2 size={16} className="text-indigo-500" /> India Placement Ready
             </div>
-            <div className="flex items-center gap-2 text-sm font-bold text-gray-400">
-              <CheckCircle2 className="text-indigo-500" size={18} /> 2026 Optimized
+            <div className="flex items-center gap-1.5">
+              <CheckCircle2 size={16} className="text-indigo-500" /> ATS Scoring Pro
             </div>
           </div>
         </div>
 
-        <AdBanner adSlot="ats-tips-top" className="mb-20" />
-
-        {/* --- LONG FORM CONTENT: WHAT IS ATS? --- */}
-        <section className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-32">
-          <div className="space-y-8">
-            <h2 className="text-4xl font-black text-gray-900 tracking-tight">What is an Applicant Tracking System (ATS)?</h2>
-            <div className="prose prose-slate prose-lg max-w-none text-gray-600 space-y-6">
+        {/* --- HOW RECRUITMENT SOFTWARE WORKS --- */}
+        <section className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center bg-white border border-slate-100 rounded-[3rem] p-8 md:p-16 shadow-sm">
+          <div className="space-y-6">
+            <h2 className="text-3xl md:text-4xl font-black text-gray-900 tracking-tight">Understanding Applicant Tracking Systems (ATS)</h2>
+            <div className="prose prose-slate max-w-none text-slate-500 space-y-4 text-sm md:text-base leading-relaxed">
               <p>
-                An <strong>Applicant Tracking System (ATS)</strong> is a software used by companies—from massive MNCs like TCS and Google to fast-growing startups—to manage digital recruitment. It acts as a database for all applications received for a specific job posting.
+                An <strong>Applicant Tracking System (ATS)</strong> is a database software utilized by high-volume employers like TCS, Cognizant, Wipro, and global brands to capture, filter, and score candidate resumes automatically.
               </p>
               <p>
-                When you upload your resume to a job portal, the ATS doesn't just store it as a file. It <strong>parses</strong> your resume, breaking it down into structured data. It extracts your name, contact info, job history, and skills into a profile that recruiters can search through.
+                When you submit your application, older or less sophisticated parsers convert your PDF into standard text blocks. If you use floating elements, rating bars, or tables, the text splits incorrectly, leading to a zero-match score.
               </p>
               <p>
-                The primary purpose of an ATS is to help recruiters handle high volumes of applications. Instead of reading 1,000 resumes manually, a recruiter can search for "React Developer" and filter for those with a "Master's Degree." If your resume isn't optimized, it might never appear in these search results.
+                Our system guarantees your resume is constructed with clean text streams and responsive padding parameters, assuring complete readability metrics on 100% of industry-standard tracking portals.
               </p>
             </div>
-            <div className="bg-indigo-600 p-8 rounded-[2rem] text-white shadow-xl shadow-indigo-100 italic font-medium">
-              "The reality is that 75% of resumes are never seen by a human recruiter. They are filtered out by the ATS before a set of human eyes ever touches the paper."
+            
+            <div className="p-6 bg-indigo-50 rounded-2xl border border-indigo-100 italic text-sm font-semibold text-indigo-900">
+              "Over 75% of fresher applications are filtered out algorithmically before ever being reviewed by a human recruiter in India."
             </div>
           </div>
-          <div className="bg-white p-10 rounded-[3rem] border border-gray-100 shadow-2xl space-y-8 relative overflow-hidden group">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-50 rounded-full -mr-32 -mt-32 blur-3xl group-hover:bg-indigo-100 transition-colors"></div>
-            <h3 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
-              <BarChart className="text-indigo-600" /> How Software Ranks You
+
+          <div className="bg-slate-50 p-8 rounded-3xl border space-y-6 relative overflow-hidden">
+            <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+              <BarChart className="text-indigo-600" size={20} /> Optimization Scoring Metrics
             </h3>
-            <div className="space-y-6 relative z-10">
+            <div className="space-y-4">
               {[
-                { label: 'Keyword Matching', value: 'High', desc: 'Alignment with the specific skills mentioned in the job description.' },
-                { label: 'Formatting Integrity', value: 'Critical', desc: 'Can the software actually read and extract the text correctly?' },
-                { label: 'Job Title Alignment', value: 'Medium', desc: 'Does your past experience match the current role\'s seniority?' },
-                { label: 'Education Verification', value: 'Required', desc: 'Meets the basic degree and percentage criteria of the company.' }
-              ].map((item) => (
-                <div key={item.label} className="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                { label: 'Primary Sourcing Matching', val: '95% Match Ratio', desc: 'Keyword alignments matching standard job roles.' },
+                { label: 'Formatting Integrity checks', val: 'Pass Guarantee', desc: 'Eliminates tables, headers, and footer distortions.' },
+                { label: 'Academic cutoff standards', val: '60% / 6.0 CGPA', desc: 'Ensures board percentages are accurately indexed.' }
+              ].map((item, idx) => (
+                <div key={idx} className="bg-white p-4 rounded-xl border border-slate-200/60 shadow-xs">
                   <div className="flex justify-between items-center mb-1">
-                    <span className="font-bold text-gray-900">{item.label}</span>
-                    <span className="text-xs font-black uppercase text-indigo-600 bg-indigo-50 px-2 py-1 rounded-md">{item.value}</span>
+                    <span className="font-bold text-slate-800 text-sm">{item.label}</span>
+                    <span className="text-[10px] font-bold uppercase text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md">{item.val}</span>
                   </div>
-                  <p className="text-xs text-gray-500 leading-relaxed">{item.desc}</p>
+                  <p className="text-xs text-slate-400 font-medium">{item.desc}</p>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* --- PREMIUM TIPS GRID --- */}
-        <section className="space-y-16 mb-32">
-          <div className="text-center space-y-6 max-w-3xl mx-auto">
-            <h2 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tight">8 Premium Optimization Strategies</h2>
-            <p className="text-lg text-gray-500 leading-relaxed">
-              Use these advanced techniques to ensure your resume scores in the top 1% of all Applicant Tracking Systems.
-            </p>
+        {/* --- LEARNING CENTER CATEGORIES FILTER --- */}
+        <section className="space-y-8">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-gray-200">
+            <div className="space-y-2">
+              <h2 className="text-3xl font-black text-gray-900 tracking-tight">Our Career Resources</h2>
+              <p className="text-slate-400 text-sm font-medium">Explore 30+ highly-detailed preparation resources to land corporate jobs.</p>
+            </div>
+
+            {/* Filter buttons */}
+            <div className="flex flex-wrap gap-2">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCategory(cat)}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                    activeCategory === cat 
+                      ? 'bg-indigo-600 text-white shadow-md shadow-indigo-100' 
+                      : 'bg-white border border-gray-200 text-slate-600 hover:bg-slate-50'
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {FEATURED_TIPS.map((tip, i) => (
-              <div key={i} className="group bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500">
-                <div className="bg-gray-50 w-16 h-16 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-500">
-                  {tip.icon}
+
+          {/* Dynamic filtered list */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filteredTips.map((tip) => (
+              <div 
+                key={tip.slug} 
+                className="bg-white border border-gray-200/80 rounded-[2.5rem] p-8 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center gap-3 mb-6">
+                    <span className="px-2.5 py-1 bg-indigo-50 text-indigo-700 rounded-lg text-[10px] font-bold uppercase">
+                      {tip.category}
+                    </span>
+                    <span className="text-slate-300">|</span>
+                    <span className="text-xs font-bold text-slate-400 flex items-center gap-1">
+                      <Clock size={12} /> {tip.readTime}
+                    </span>
+                  </div>
+
+                  <h3 className="text-xl font-bold text-slate-900 mb-3 tracking-tight leading-snug">
+                    {tip.title}
+                  </h3>
+                  <p className="text-slate-500 text-sm mb-6 leading-relaxed">
+                    {tip.description}
+                  </p>
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-4 tracking-tight">{tip.title}</h3>
-                <p className="text-sm text-gray-500 leading-relaxed mb-6">
-                  {tip.description}
-                </p>
-                <div className="pt-6 border-t border-gray-50 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">{tip.details}</p>
+
+                <div className="pt-6 border-t border-slate-100 flex items-center justify-between">
+                  <span className="text-xs font-semibold text-slate-400">{tip.date}</span>
+                  <Link 
+                    href={`/tips/${tip.slug}`}
+                    className="text-indigo-600 font-bold text-sm inline-flex items-center gap-1.5 hover:gap-2.5 transition-all"
+                  >
+                    Read Resource <ChevronRight size={16} />
+                  </Link>
                 </div>
               </div>
             ))}
           </div>
         </section>
 
-        {/* --- WHY RESUMES GET REJECTED --- */}
-        <section className="bg-slate-900 rounded-[4rem] p-12 md:p-20 text-white overflow-hidden relative mb-32">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/10 rounded-full -mr-48 -mt-48 blur-[100px]"></div>
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-indigo-600/10 rounded-full -ml-48 -mb-48 blur-[100px]"></div>
-          
+        {/* --- FREQUENTLY REJECTED SHIELD STATEMENTS --- */}
+        <section className="bg-slate-900 rounded-[4rem] p-12 md:p-20 text-white relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/15 rounded-full -mr-48 -mt-48 blur-[100px]"></div>
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center relative z-10">
-            <div className="lg:col-span-12 xl:col-span-5 space-y-8">
-              <h2 className="text-4xl md:text-5xl font-black tracking-tight leading-tight">The "Silent Killers" of <br/> Modern Applications</h2>
-              <p className="text-indigo-100/70 text-lg leading-relaxed font-medium">
-                Recruiters across India report these 4 major mistakes as the primary reasons graduates get filtered out immediately.
+            <div className="lg:col-span-5 space-y-6">
+              <h2 className="text-4xl md:text-5xl font-black tracking-tight leading-tight">Common Layout Killers To Avoid</h2>
+              <p className="text-indigo-100/70 text-base leading-relaxed">
+                Indian graduates frequently commit these critical formatting mistakes, leading to immediate algorithmic rejections by MNC scanners:
               </p>
-              <div className="flex gap-4 pt-4">
-                <div className="bg-white/10 backdrop-blur-md p-6 rounded-3xl border border-white/5 flex-1 text-center">
-                  <span className="block text-3xl font-black mb-2 text-indigo-400">92%</span>
-                  <p className="text-[10px] text-indigo-100/60 font-bold uppercase tracking-wider">Failure Rate from Poor Formatting</p>
+              <div className="flex gap-4 pt-2">
+                <div className="bg-white/5 p-4 rounded-2xl border border-white/10 text-center flex-1">
+                  <span className="block text-2xl font-extrabold text-indigo-400">92%</span>
+                  <p className="text-[10px] text-indigo-100/60 font-semibold tracking-wider">Formatting Rejections</p>
                 </div>
-                <div className="bg-white/10 backdrop-blur-md p-6 rounded-3xl border border-white/5 flex-1 text-center">
-                  <span className="block text-3xl font-black mb-2 text-indigo-400">6.2s</span>
-                  <p className="text-[10px] text-indigo-100/60 font-bold uppercase tracking-wider">Avg. Time Before Manual Rejection</p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="lg:col-span-12 xl:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-6">
-              {[
-                { icon: <Layout className="text-red-400" />, title: 'Unreadable Layouts', desc: 'Over-designed templates with sidebars, images, and overlapping columns that common parsers simply cannot decode.' },
-                { icon: <Terminal className="text-red-400" />, title: 'Non-Standard Fonts', desc: 'Using specialized or decorative fonts that aren\'t part of the standard library, leading to character distortion.' },
-                { icon: <Server className="text-red-400" />, title: 'Hidden Metadata', desc: 'Putting your contact info in the document header/footer. Some ATS systems stop reading before even getting there.' },
-                { icon: <Filter className="text-red-400" />, title: 'Low Keyword Density', desc: 'Failing to naturally include the specific technologies and job-titles mentioned in the original posting.' }
-              ].map((item, idx) => (
-                <div key={idx} className="bg-white/5 p-8 rounded-3xl border border-white/10 hover:bg-white/10 transition-colors">
-                  <div className="mb-4">{item.icon}</div>
-                  <h4 className="font-bold text-xl mb-2">{item.title}</h4>
-                  <p className="text-sm text-indigo-100/60 leading-relaxed">{item.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* --- DEEP DIVE GUIDES --- */}
-        <section className="space-y-12 mb-32">
-          <div className="flex items-center justify-between">
-            <h2 className="text-3xl font-black text-gray-900 tracking-tight">Role-Specific ATS Optimization</h2>
-            <Link href="/resume-examples" className="text-indigo-600 font-bold flex items-center gap-2 hover:underline">
-              View All Examples <ArrowRight size={18} />
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-white">
-            <Link href="/tips/tcs-resume" className="group relative overflow-hidden bg-[#5c2d91] p-10 rounded-[3rem] shadow-xl hover:shadow-2xl transition-all h-[320px] flex flex-col justify-end">
-              <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full -mr-24 -mt-24 blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
-              <div className="space-y-4 relative z-10">
-                <h3 className="text-3xl font-black">TCS Resume Format Guide</h3>
-                <p className="text-indigo-100/70 text-sm leading-relaxed max-w-sm">Specialized techniques for the TCS iON portal and passing the Ninja/Digital shortlisting.</p>
-                <div className="flex items-center gap-2 font-bold text-white pt-2 group-hover:translate-x-2 transition-transform">
-                  Access Guide <ChevronRight size={20} />
+                <div className="bg-white/5 p-4 rounded-2xl border border-white/10 text-center flex-1">
+                  <span className="block text-2xl font-extrabold text-indigo-400">100%</span>
+                  <p className="text-[10px] text-indigo-100/60 font-semibold tracking-wider">ATS safe with our builder</p>
                 </div>
               </div>
-            </Link>
-            <Link href="/tips/resume-writing" className="group relative overflow-hidden bg-indigo-600 p-10 rounded-[3rem] shadow-xl hover:shadow-2xl transition-all h-[320px] flex flex-col justify-end">
-               <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full -mr-24 -mt-24 blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
-              <div className="space-y-4 relative z-10">
-                <h3 className="text-3xl font-black">Resume Writing Masterclass</h3>
-                <p className="text-indigo-100/70 text-sm leading-relaxed max-w-sm">A comprehensive, step-by-step tutorial on building a CV that actually results in more callbacks.</p>
-                <div className="flex items-center gap-2 font-bold text-white pt-2 group-hover:translate-x-2 transition-transform">
-                  Access Masterclass <ChevronRight size={20} />
-                </div>
+            </div>
+
+            <div className="lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+              <div className="p-6 bg-white/5 rounded-3xl border border-white/10">
+                <h4 className="font-bold text-lg mb-2">Unparseable Fonts</h4>
+                <p className="opacity-70 leading-relaxed text-xs">Avoid using complex Google display families. Safe options include Inter, Roboto, Calibri, and standard system helveticas.</p>
               </div>
-            </Link>
-          </div>
-        </section>
-
-        {/* --- FAQ SECTION: ACCORDION --- */}
-        <section className="bg-white rounded-[4rem] p-12 md:p-20 border border-gray-100 shadow-sm mb-32">
-          <div className="max-w-4xl mx-auto space-y-16">
-            <div className="text-center space-y-4">
-              <h2 className="text-4xl font-black text-gray-900 tracking-tight">Frequently Asked Questions</h2>
-              <p className="text-lg text-gray-500 font-medium">Quick answers to the most common questions about ATS optimization.</p>
-            </div>
-            
-            <div className="space-y-4">
-              {FAQS.map((faq, i) => (
-                <div key={i} className="bg-[#fafafa] rounded-3xl border border-gray-100 overflow-hidden">
-                  <button 
-                    onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                    className="w-full text-left p-6 flex justify-between items-center hover:bg-indigo-50/50 transition-colors"
-                  >
-                    <span className="font-bold text-gray-900 text-lg pr-8">{faq.q}</span>
-                    <div className={`p-2 rounded-xl transition-all ${openFaq === i ? 'bg-indigo-600 text-white rotate-180' : 'bg-white text-indigo-600'}`}>
-                      <ChevronDown size={20} />
-                    </div>
-                  </button>
-                  {openFaq === i && (
-                    <div className="p-6 pt-0 text-gray-500 leading-relaxed animate-accordion-down">
-                      {faq.a}
-                    </div>
-                  )}
-                </div>
-              ))}
+              <div className="p-6 bg-white/5 rounded-3xl border border-white/10">
+                <h4 className="font-bold text-lg mb-2">Non-Text PDF formats</h4>
+                <p className="opacity-70 leading-relaxed text-xs">Never host scanned images of your resume. Modern tools scan digital vectors. Check if your text is copy-pasteable before submitting.</p>
+              </div>
+              <div className="p-6 bg-white/5 rounded-3xl border border-white/10">
+                <h4 className="font-bold text-lg mb-2">Multi-Column Overlaps</h4>
+                <p className="opacity-70 leading-relaxed text-xs">Dual-column layouts are extremely difficult for older parsers to scan correctly. Stick to clean, top-to-bottom single-column structures.</p>
+              </div>
+              <div className="p-6 bg-white/5 rounded-3xl border border-white/10">
+                <h4 className="font-bold text-lg mb-2">Skills Rating Bars</h4>
+                <p className="opacity-70 leading-relaxed text-xs">Do not rate your skills with stars (e.g., Python 4/5). Computeras cannot read graphical parameters and will rate your skill competency as zero.</p>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* --- TRUST STATS / BADGES --- */}
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-32 text-center">
-          <div className="space-y-4">
-            <div className="bg-white w-20 h-20 rounded-full flex items-center justify-center mx-auto shadow-xl shadow-indigo-50 border border-gray-50 mb-6">
-              <Users className="text-indigo-600" size={32} />
-            </div>
-            <h4 className="text-4xl font-black text-gray-900">10k+</h4>
-            <p className="text-gray-400 font-bold uppercase tracking-widest text-[10px]">Active Users in India</p>
+        {/* --- FAQ COLLAPSIBLES ACCORDION --- */}
+        <section className="bg-white border border-slate-100 rounded-[3rem] p-8 md:p-16 shadow-sm max-w-4xl mx-auto space-y-12">
+          <div className="text-center space-y-3">
+            <h2 className="text-3xl font-black text-slate-900 tracking-tight">Frequently Asked Questions</h2>
+            <p className="text-slate-400 text-sm font-medium">Quick answers to the most common questions about ATS optimization.</p>
           </div>
+          
           <div className="space-y-4">
-            <div className="bg-white w-20 h-20 rounded-full flex items-center justify-center mx-auto shadow-xl shadow-indigo-50 border border-gray-50 mb-6">
-              <ShieldCheck className="text-indigo-600" size={32} />
-            </div>
-            <h4 className="text-4xl font-black text-gray-900">100%</h4>
-            <p className="text-gray-400 font-bold uppercase tracking-widest text-[10px]">ATS Compatible PDF Export</p>
-          </div>
-          <div className="space-y-4">
-            <div className="bg-white w-20 h-20 rounded-full flex items-center justify-center mx-auto shadow-xl shadow-indigo-50 border border-gray-50 mb-6">
-              <Globe className="text-indigo-600" size={32} />
-            </div>
-            <h4 className="text-4xl font-black text-gray-900">Elite</h4>
-            <p className="text-gray-400 font-bold uppercase tracking-widest text-[10px]">Pass Rate at Top MNCs</p>
+            {FAQS.map((faq, idx) => (
+              <div key={idx} className="bg-slate-50 rounded-2xl border overflow-hidden">
+                <button
+                  onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
+                  className="w-full text-left p-6 flex justify-between items-center hover:bg-slate-100/50 transition-colors focus:outline-none"
+                >
+                  <span className="font-bold text-slate-800 text-base md:text-lg pr-4">{faq.q}</span>
+                  <div className={`p-2 rounded-xl transition-all ${openFaq === idx ? 'bg-indigo-600 text-white' : 'bg-white border text-indigo-600'}`}>
+                    <ChevronDown size={18} className={`transition-transform duration-200 ${openFaq === idx ? 'rotate-180' : ''}`} />
+                  </div>
+                </button>
+                {openFaq === idx && (
+                  <div className="p-6 pt-0 text-slate-500 leading-relaxed text-sm md:text-base">
+                    {faq.a}
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         </section>
 
-        {/* --- CLOSING CTA --- */}
+        {/* --- CLOSING CALL TO ACTION --- */}
         <div className="bg-indigo-600 rounded-[3.5rem] p-12 md:p-20 text-white text-center shadow-2xl relative overflow-hidden">
           <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full -mr-48 -mt-48 blur-3xl"></div>
           <h2 className="text-4xl md:text-6xl font-black mb-8 leading-tight tracking-tight relative z-10">Start Your Professional <br/> Journey Successfully</h2>
           <p className="text-indigo-100 text-xl md:text-2xl mb-12 max-w-3xl mx-auto font-medium relative z-10">
-            Built by resume experts to help the next generation of graduates beat the software and get hired by their dream companies.
+            Utilize our free recruiter-verified tools and templates to construct an ATS-compliant resume and clear screening rounds instantly.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-6 relative z-10">
-            <Link href="/builder" className="bg-white text-indigo-600 hover:bg-indigo-50 px-12 py-6 rounded-2xl font-bold text-2xl transition-all shadow-xl">
-              Build My Resume Now
+            <Link href="/" className="bg-white text-indigo-600 hover:bg-indigo-50 px-12 py-5 rounded-2xl font-bold text-xl transition-all shadow-xl">
+              Create My Resume Now
             </Link>
-            <Link href="/templates" className="bg-indigo-500/30 border-2 border-indigo-400 text-white hover:bg-indigo-500/50 px-12 py-6 rounded-2xl font-bold text-2xl transition-all">
-              Browse Templates
+            <Link href="/resume-examples" className="bg-indigo-500/30 border-2 border-indigo-400 text-white hover:bg-indigo-500/50 px-12 py-5 rounded-2xl font-bold text-xl transition-all">
+              Browse Role Samples
             </Link>
           </div>
-        </div>
-
-        <AdBanner adSlot="ats-tips-bottom" className="mt-24" />
-
-        <div className="text-center mt-20">
-          <Link href="/" className="text-gray-400 hover:text-indigo-600 font-bold transition-colors">
-            ← Back to Home
-          </Link>
         </div>
       </main>
 
-      <footer className="bg-white border-t border-gray-100 py-12">
+      <footer className="bg-white border-t border-slate-200 py-12 mt-20">
         <div className="max-w-7xl mx-auto px-4 text-center space-y-4">
-          <p className="text-gray-400 text-sm font-medium">
+          <p className="text-slate-400 text-sm font-medium">
             &copy; {new Date().getFullYear()} FreeResume.dev - Empowering Indian Graduates to Land Their First Job.
           </p>
-          <div className="flex justify-center gap-8 text-xs font-bold text-gray-400 uppercase tracking-widest">
+          <div className="flex justify-center gap-8 text-xs font-bold text-slate-400 uppercase tracking-widest">
             <Link href="/privacy" className="hover:text-indigo-600">Privacy Policy</Link>
             <Link href="/terms" className="hover:text-indigo-600">Terms of Use</Link>
-            <Link href="/contact" className="hover:text-indigo-600">Contact</Link>
           </div>
         </div>
       </footer>
-
-      <style jsx global>{`
-        @keyframes fade-in {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in {
-          animation: fade-in 0.8s ease-out forwards;
-        }
-        @keyframes accordion-down {
-          from { height: 0; opacity: 0; }
-          to { height: auto; opacity: 1; }
-        }
-        .animate-accordion-down {
-          animation: accordion-down 0.3s ease-out forwards;
-        }
-      `}</style>
     </div>
   );
 }

@@ -214,62 +214,179 @@ function AppContent() {
                 <AdBanner adSlot="builder-bottom" className="mt-12" />
 
                 {/* --- FOOTER SEO CONTENT --- */}
-                <section className="mt-24 pt-16 border-t border-gray-200 space-y-20">
-                  <div className="prose prose-slate lg:prose-lg max-w-none">
-                    <h2 className="text-3xl font-black text-gray-900 tracking-tight">The Best ATS Resume Builder for Freshers in India</h2>
-                    <p className="text-gray-600 leading-relaxed">
-                      Are you a student or a recent graduate in India looking for your first job? At <strong>FreeResume.dev</strong>, we understand that the job market is incredibly competitive. Whether you are aiming for a role at an MNC like <strong>TCS, Wipro, or Infosys</strong>, or a high-growth startup, your resume is your ticket to an interview. 
-                    </p>
-                    <p className="text-gray-600 leading-relaxed">
-                      Our official Free Resume Builder is designed to help you create an <strong>ATS-friendly resume</strong> that passes through Applicant Tracking Systems with ease. We provide specialized templates that are tried and tested for the Indian job market, ensuring that your skills, project details, and educational background are parsed correctly.
-                    </p>
+                <section id="homepage-seo-guide" className="mt-28 pt-20 border-t border-slate-200 space-y-20">
+                  <div className="prose prose-slate max-w-none space-y-12">
+                    
+                    {/* Part 1: Deep Dive into ATS Resumes */}
+                    <div className="space-y-6">
+                      <h2 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
+                        The Comprehensive Guide on ATS Resumes for Indian Grads & Freshers
+                      </h2>
+                      <p className="text-slate-600 leading-relaxed text-sm md:text-base">
+                        If you are a student, recent graduate, or fresher candidate in India, entering the professional job market is one of the most exciting yet challenging milestones of your career. With thousands of applicants competing for entry-level positions at top multinational corporations (such as <strong>TCS, Wipro, Infosys, Cognizant, Wipro, HCL, and Accenture</strong>) alongside hyper-growth startup teams, human HR departments can no longer review every CV manually. 
+                      </p>
+                      <p className="text-slate-600 leading-relaxed text-sm md:text-base font-medium">
+                        To scale their verification processes, over 95% of top employers utilize automated recruitment software called an <strong>Applicant Tracking System (ATS)</strong>. An ATS acts as a digital gatekeeper, automatically parsing, reading, and scoring your resume based on keyword density, role titles, and layout configuration before any hiring manager ever lays eyes on your document. If your resume contains unparseable formatting (such as horizontal percentage bars, dual-column visual structures, or images of text), it is automatically rejected. At <strong>FreeResume.dev</strong>, we have designed our entire platform and free builder specifically to eliminate these risks, helping you clear automatic filters and secure interview calls on autopilot.
+                      </p>
+                    </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10 my-16">
-                      <div className="space-y-4">
-                        <h3 className="text-xl font-bold text-gray-900">Why choose FreeResume.dev?</h3>
-                        <ul className="space-y-3 text-gray-600 list-disc pl-5">
-                          <li><strong>100% Free:</strong> No hidden charges, no "premium only" templates, and no watermarks. We believe every student deserves a professional resume.</li>
-                          <li><strong>ATS-Optimized Templates:</strong> Every template is built to be easily readable by the software used by HR departments in India.</li>
-                          <li><strong>Indian Market Focus:</strong> Includes fields and structures commonly expected by Indian recruiters, such as detailed educational percentages and project descriptions.</li>
-                          <li><strong>Instant PDF Download:</strong> Export your CV as a high-quality, professional PDF that looks great on any device.</li>
-                        </ul>
-                      </div>
-                      <div className="space-y-4">
-                        <h3 className="text-xl font-bold text-gray-900">Land Jobs at Top Companies</h3>
-                        <p className="text-gray-600">Our users have successfully used their resumes to apply for and land roles at:</p>
-                        <div className="flex flex-wrap gap-3">
-                          {['TCS', 'Infosys', 'Wipro', 'HCL', 'Cognizant', 'Accenture', 'Byju\'s', 'Zomato'].map(company => (
-                            <span key={company} className="px-3 py-1 bg-white border border-gray-200 rounded-lg text-sm font-bold text-gray-500">{company}</span>
-                          ))}
+                    {/* Part 2: Resume Creation Process */}
+                    <div className="space-y-8 bg-slate-50 border rounded-[3rem] p-8 md:p-16">
+                      <h3 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">
+                        Our Step-by-Step Resume Creation Process (The FreeResume Strategy)
+                      </h3>
+                      <p className="text-slate-500 text-sm md:text-base leading-relaxed">
+                        To engineer a high-scoring resume, you must follow a structured, programmatic approach that balances key target skills with quantified professional accomplishments:
+                      </p>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
+                        <div className="space-y-3">
+                          <h4 className="font-extrabold text-slate-800 text-base">Phase 1: Header and Coordinates</h4>
+                          <p className="text-xs text-slate-500 leading-relaxed">
+                            Maintain a unified, text-searchable contact header at the top of the body. Include your legal name, professional email address, city location, active mobile contact registry, and clickable links directing to your portfolio or GitHub.
+                          </p>
+                        </div>
+
+                        <div className="space-y-3">
+                          <h4 className="font-extrabold text-slate-800 text-base">Phase 2: Recruiter-Oriented Objectives</h4>
+                          <p className="text-xs text-slate-500 leading-relaxed">
+                            Craft a punchy, 2-3 sentence objective summarizing your academic degree background and your primary technical skills. State clearly how you intend to apply those competencies to solve challenges for your potential employer.
+                          </p>
+                        </div>
+
+                        <div className="space-y-3">
+                          <h4 className="font-extrabold text-slate-800 text-base">Phase 3: Precise Academic Milestones</h4>
+                          <p className="text-xs text-slate-500 leading-relaxed">
+                            Clearly list your B.Tech, B.Com, or MBA degree, institution name, and completion schedules. Ensure you accurately include your 10th and 12th board percentages, as many top MNCs utilize these grades for shortlisting cutoffs.
+                          </p>
+                        </div>
+
+                        <div className="space-y-3">
+                          <h4 className="font-extrabold text-slate-800 text-base">Phase 4: Hands-on Projects Stack</h4>
+                          <p className="text-xs text-slate-500 leading-relaxed">
+                            Detailed technical projects are the absolute best proof of competence for fresher candidates. Highlight 2 to 3 key projects, stating the technologies utilized alongside accomplishments written in the STAR framework.
+                          </p>
                         </div>
                       </div>
                     </div>
 
-                    <h2 className="text-3xl font-black text-gray-900 mt-16">Frequently Asked Questions (FAQs)</h2>
-                    <div className="space-y-8 mt-8">
-                      <div className="space-y-2">
-                        <h4 className="text-lg font-bold text-gray-900">Is this resume builder really free for life?</h4>
-                        <p className="text-gray-600 leading-relaxed">Yes! FreeResume.dev is and will always be a free resource for the student community in India. Our mission is to support freshers in their journey to land their first job without the burden of expensive tools.</p>
+                    {/* Part 3: Customizing Resume Examples */}
+                    <div className="space-y-6">
+                      <h3 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">
+                        Leveraging Real-World Industry Resume Examples
+                      </h3>
+                      <p className="text-slate-600 leading-relaxed text-sm md:text-base">
+                        Every single candidate's journey is unique. Rather than using generic templates, you should explore our specialized libraries of 20+ role-focused samples. We host tailored guidelines and text copy packages for roles including:
+                      </p>
+                      <div className="flex flex-wrap gap-2.5">
+                        {[
+                          'Software Engineer', 'Java Developer', 'React Developer', 'Python Developer', 
+                          'Frontend Developer', 'DevOps Engineer', 'Data Analyst', 'HR Professional', 
+                          'Accountant', 'Teacher', 'Mechanical Engineer', 'Civil Engineer', 'MBA Graduate', 
+                          'Project Manager', 'Graphic Designer', 'Digital Marketer', 'Content Writer'
+                        ].map(role => (
+                          <span key={role} className="px-3.5 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-600 shadow-xs">
+                            {role} Template
+                          </span>
+                        ))}
                       </div>
-                      <div className="space-y-2">
-                        <h4 className="text-lg font-bold text-gray-900">How do I generate an ATS resume for freshers?</h4>
-                        <p className="text-gray-600 leading-relaxed">Simply fill in your details in our easy-to-use form, select from our professional templates like "Classic Professional," and click the download button. Your PDF will be ready in seconds, perfectly formatted for any ATS scanner.</p>
-                      </div>
-                      <div className="space-y-2">
-                        <h4 className="text-lg font-bold text-gray-900">Does my resume need a photo in India?</h4>
-                        <p className="text-gray-600 leading-relaxed">While it varies by industry, most major IT companies and MNCs in India do not require a photo on your resume. In fact, text-only resumes often perform better in ATS systems. We offer both options to suit your personal preference.</p>
+                      <p className="text-slate-600 leading-relaxed text-sm md:text-base">
+                        By navigating directly to our <Link href="/resume-examples" className="text-indigo-600 font-bold hover:underline">Resume Examples Hub</Link> or our <Link href="/tips" className="text-indigo-600 font-bold hover:underline">ATS Learning Center</Link>, you can review actual copy blocks, discover the top high-intent keywords HR managers look for, and inject them into our builder interface to compile an outstanding resume.
+                      </p>
+                    </div>
+
+                    {/* Part 4: Career Guidance */}
+                    <div className="space-y-6 bg-indigo-900 text-white p-8 md:p-16 rounded-[3rem] shadow-xl relative overflow-hidden">
+                      <div className="absolute top-0 right-0 w-80 h-80 bg-white/5 rounded-full -mr-40 -mt-40 blur-3xl"></div>
+                      <h3 className="text-white text-2xl md:text-3xl font-black tracking-tight flex items-center gap-2">
+                        <Sparkles className="text-amber-400" size={24} /> Essential Career Guidance for Indian Grads
+                      </h3>
+                      <p className="text-indigo-100 opacity-90 text-sm md:text-base leading-relaxed">
+                        To clear entry competitive requirements at Indian MNCs and land top corporate placements, you must pair your optimized resume with a clear placement strategy:
+                      </p>
+                      <ul className="space-y-4 text-xs md:text-sm text-indigo-100/90 list-disc pl-5">
+                        <li>
+                          <strong>Sourcing Off-Campus Internships:</strong> Use portals like Internshala, LinkedIn, and corporate careers hubs to apply before target seasons, choosing roles with concrete skill metrics that match your resume stack.
+                        </li>
+                        <li>
+                          <strong>Optimizing Your LinkedIn Presence:</strong> Align your LinkedIn headline and bio using the exact keywords featured on your resume. This allows headhunters searching for candidates to discover your profile.
+                        </li>
+                        <li>
+                          <strong>Preparing for Technical Screening Runs:</strong> In addition to writing a beautiful CV, you should spend time mastering basic Data Structures, Object-Oriented principles, and SQL queries to pass online tests.
+                        </li>
+                      </ul>
+                    </div>
+
+                    {/* Part 5: Benefits of FreeResume */}
+                    <div className="space-y-6">
+                      <h3 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">
+                        The Benefits of FreeResume.dev vs. Paid Alternatives
+                      </h3>
+                      <p className="text-slate-600 leading-relaxed text-sm md:text-base">
+                        Most commercial resume platforms across the internet leverage predatory payment modules—allowing you to design your resume only to lock down your PDF behind subscription paywalls. At <strong>FreeResume.dev</strong>, we operate with a strict commitment to transparency:
+                      </p>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div className="p-6 bg-slate-50 border border-slate-150 rounded-2xl">
+                          <h4 className="font-extrabold text-slate-900 text-base mb-2">Permanently 100% Free</h4>
+                          <p className="text-xs text-slate-500 leading-relaxed">
+                            No premium tiers, no hidden watermark locks, and no subscription popups. Build and export unlimited PDF copies completely free.
+                          </p>
+                        </div>
+
+                        <div className="p-6 bg-slate-50 border border-slate-150 rounded-2xl">
+                          <h4 className="font-extrabold text-slate-900 text-base mb-2">Rigorous Parser Audited</h4>
+                          <p className="text-xs text-slate-500 leading-relaxed">
+                            Our templates undergo active automated testing rounds against parsing platforms, ensuring outstanding character readability metrics.
+                          </p>
+                        </div>
+
+                        <div className="p-6 bg-slate-50 border border-slate-150 rounded-2xl">
+                          <h4 className="font-extrabold text-slate-900 text-base mb-2">Completely Ad-Supported</h4>
+                          <p className="text-xs text-slate-500 leading-relaxed">
+                            We sustain platform development, server hosting, and vector compilations using simple AdSense placements, ensuring students pay ₹0.
+                          </p>
+                        </div>
                       </div>
                     </div>
+
+                    {/* Part 6: Comprehensive FAQs for SEO */}
+                    <div className="space-y-8 mt-16">
+                      <h2 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                        Frequently Asked Questions (FAQs)
+                      </h2>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-sm md:text-base leading-relaxed text-slate-500">
+                        <div className="space-y-2 p-6 bg-slate-50 border border-slate-150 rounded-3xl">
+                          <h4 className="font-extrabold text-slate-900 text-base">Is this resume builder really free for life?</h4>
+                          <p className="text-xs md:text-sm">Yes, FreeResume.dev is a completely free resource for the entire student and fresher community in India. Our platform is dedicated to helping graduates build high-scoring, professional ATS resumes without charging fees.</p>
+                        </div>
+
+                        <div className="space-y-2 p-6 bg-slate-50 border border-slate-150 rounded-3xl">
+                          <h4 className="font-extrabold text-slate-900 text-base">How do I generate an ATS resume for freshers?</h4>
+                          <p className="text-xs md:text-sm">Simply upload your details inside of our intuitive inputs block, select one of our tested layouts (like Classic Professional), and trigger the download mechanism. Your text-searchable PDF is generated in under 5 seconds.</p>
+                        </div>
+
+                        <div className="space-y-2 p-6 bg-slate-50 border border-slate-150 rounded-3xl">
+                          <h4 className="font-extrabold text-slate-900 text-base">Does my resume need a photo for recruiters in India?</h4>
+                          <p className="text-xs md:text-sm">While photo guidelines vary globally, major IT players and multinational recruitment hubs across India discourage photos. Text-compliant, single-page professional layout resumes yield significantly higher parsing metrics.</p>
+                        </div>
+
+                        <div className="space-y-2 p-6 bg-slate-50 border border-slate-150 rounded-3xl">
+                          <h4 className="font-extrabold text-slate-900 text-base">Is it safe to run my details on this builder?</h4>
+                          <p className="text-xs md:text-sm">Absolutely. We maintain a secure, private infrastructure framework. Your data remains processed entirely inside your local browser container dynamically, protecting candidate integrity throughout the process.</p>
+                        </div>
+                      </div>
+                    </div>
+
                   </div>
                 </section>
 
-                <footer className="py-12 text-center text-gray-400 text-sm border-t border-gray-100 mt-20">
+                <footer className="py-12 text-center text-slate-400 text-sm border-t border-slate-200 mt-20 font-medium">
                   <div className="space-y-4">
                     <p>&copy; {new Date().getFullYear()} FreeResume.dev - The Official #1 Free Resume Builder in India.</p>
                     <div className="flex justify-center gap-6">
                       <Link href="/privacy" className="hover:text-indigo-600 underline">Privacy Policy</Link>
                       <Link href="/terms" className="hover:text-indigo-600 underline">Terms of Service</Link>
-                      <Link href="/contact" className="hover:text-indigo-600 underline">Contact Us</Link>
                     </div>
                   </div>
                 </footer>
