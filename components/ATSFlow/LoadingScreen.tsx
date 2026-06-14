@@ -4,14 +4,15 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { Loader2, Zap, Search, FileText, CheckCircle2 } from 'lucide-react';
 
+const steps = [
+  { icon: <FileText size={20} />, text: 'Reading resume content...' },
+  { icon: <Search size={20} />, text: 'Analyzing keywords...' },
+  { icon: <Zap size={20} />, text: 'Calculating ATS score...' },
+  { icon: <CheckCircle2 size={20} />, text: 'Finding job matches...' },
+];
+
 export const LoadingScreen: React.FC = () => {
   const [step, setStep] = useState(0);
-  const steps = [
-    { icon: <FileText size={20} />, text: 'Reading resume content...' },
-    { icon: <Search size={20} />, text: 'Analyzing keywords...' },
-    { icon: <Zap size={20} />, text: 'Calculating ATS score...' },
-    { icon: <CheckCircle2 size={20} />, text: 'Finding job matches...' },
-  ];
 
   useEffect(() => {
     const interval = setInterval(() => {

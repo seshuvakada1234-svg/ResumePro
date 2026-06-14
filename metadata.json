@@ -1,5 +1,6 @@
 {
   "name": "FreeResume - Free ATS Resume Builder",
   "description": "Build a professional, ATS-friendly resume for freshers in India. Real-time preview, AI suggestions, and one-click PDF download.",
-  "requestFramePermissions": []
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

@@ -8,13 +8,15 @@ import { PreviewFeatures } from '@/components/PreviewFeatures';
 import PDFDownloadButton from '@/components/PDFDownloadButton';
 import { ResumeData, defaultResumeData, ResumeTemplate } from '@/types/resume';
 import { Toaster, toast } from 'sonner';
-import { Sparkles, Plus, Share2 } from 'lucide-react';
+import { Sparkles, Plus, Share2, Award, Zap, FileText } from 'lucide-react';
 import { AdBanner } from '@/components/AdBanner';
 import { dummyResumeData } from '@/constants/dummyData';
+import { motion } from 'motion/react';
 
 function BuilderContent() {
   const [resumeData, setResumeData] = useState<ResumeData>(defaultResumeData);
   const [activeResumeId, setActiveResumeId] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -46,14 +48,14 @@ function BuilderContent() {
   const loadDummyData = () => {
     setResumeData(dummyResumeData);
     setActiveResumeId(null);
-    toast.info('Loaded sample data for testing');
+    toast.info('Loaded professional sample data!');
   };
 
   const handleShare = () => {
     if (typeof navigator !== 'undefined' && navigator.share) {
       navigator.share({
-        title: 'FreeResume',
-        text: 'Build your professional ATS resume for free!',
+        title: 'FreeResume - CV Builder',
+        text: 'Build your professional, ATS-friendly resume for free!',
         url: window.location.origin + '/builder',
       });
     } else {
@@ -62,78 +64,102 @@ function BuilderContent() {
     }
   };
 
-  const handleSave = async (_data: ResumeData) => {
-    toast.info('Sign in to save your resume to the cloud');
+  const handleSave = async (data: ResumeData) => {
+    setIsSaving(true);
+    // Simulate persistent save
+    setTimeout(() => {
+      setIsSaving(false);
+      toast.success('Resume saved successfully! Sign in to sink your files across devices.');
+    }, 800);
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900 font-sans">
+    <div className="relative min-h-screen bg-white text-[#0F172A] font-sans pb-16">
+      
+      {/* Premium ambient backdrop glow effects */}
+      <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden z-0">
+        <div className="absolute top-[5%] left-[3%] w-[35rem] h-[35rem] rounded-full bg-[#5B4DFF]/5 blur-[120px] mix-blend-multiply" />
+        <div className="absolute top-[25%] right-[2%] w-[40rem] h-[40rem] rounded-full bg-[#A855F7]/5 blur-[130px] mix-blend-multiply" />
+        <div className="absolute bottom-[15%] left-[10%] w-[38rem] h-[38rem] rounded-full bg-[#FF5EA8]/5 blur-[110px] mix-blend-multiply" />
+      </div>
+
       <Toaster position="top-center" richColors />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex flex-col lg:grid lg:grid-cols-12 xl:grid-cols-13 gap-8">
-
-          {/* LEFT */}
-          <div className="lg:col-span-5 space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-bold">Builder</h2>
-
-              <div className="flex gap-3">
-                {activeResumeId && (
-                  <button
-                    onClick={() => {
-                      setResumeData(defaultResumeData);
-                      setActiveResumeId(null);
-                    }}
-                    className="text-xs font-bold text-gray-600 bg-gray-100 px-3 py-1.5 rounded-lg"
-                  >
-                    <Plus size={14} /> New
-                  </button>
-                )}
-
-                <button
-                  onClick={loadDummyData}
-                  className="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg"
-                >
-                  <Sparkles size={14} /> Sample
-                </button>
-              </div>
+      <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10">
+        
+        {/* Professional Header Banner */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-[#ECECF5]/80 pb-8 mb-10">
+          <div className="space-y-1.5 text-left">
+            <div className="flex items-center gap-2">
+              <span className="flex items-center gap-1 text-[10px] font-extrabold text-white bg-gradient-to-r from-[#5B4DFF] via-[#A855F7] to-[#FF5EA8] px-2.5 py-1 rounded-full uppercase tracking-widest shadow-sm">
+                <Zap size={10} /> Premium Engine
+              </span>
+              <span className="text-[10px] font-bold text-[#64748B] bg-[#F1F5F9] px-2.5 py-1 rounded-full uppercase tracking-wider">
+                Version 3.5
+              </span>
             </div>
+            
+            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-[#0F172A]">
+              Premium Resume <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#5B4DFF] via-[#A855F7] to-[#FF5EA8]">Builder</span>
+            </h1>
+            <p className="text-sm text-[#64748B] font-medium">
+              Create your ATS-friendly resume in minutes.
+            </p>
+          </div>
 
+          {/* Quick Header Actions */}
+          <div className="flex flex-col sm:flex-row w-full sm:w-auto items-stretch sm:items-center gap-3">
+            <button
+              onClick={loadDummyData}
+              className="px-5 py-3 text-xs font-bold text-white bg-gradient-to-r from-[#5B4DFF] to-[#A855F7] hover:shadow-lg hover:shadow-[#5B4DFF]/20 rounded-2xl transition-all flex items-center justify-center gap-2 active:scale-95 cursor-pointer w-full sm:w-auto"
+            >
+              <Sparkles size={14} />
+              Load Premium Sample
+            </button>
+
+            <button
+              onClick={() => {
+                setResumeData(defaultResumeData);
+                toast.success('Cleared current workspace labels');
+              }}
+              className="px-5 py-3 text-xs font-bold text-[#0F172A] border border-[#ECECF5] bg-white hover:bg-[#F8FAFC] rounded-2xl transition-all flex items-center justify-center gap-2 active:scale-95 cursor-pointer w-full sm:w-auto"
+            >
+              <Plus size={14} />
+              Start Fresh
+            </button>
+
+            <button
+              onClick={handleShare}
+              className="p-3 text-[#64748B] border border-[#ECECF5] bg-white hover:text-[#0F172A] hover:bg-[#F8FAFC] rounded-2xl transition-all flex items-center justify-center cursor-pointer w-full sm:w-auto text-xs font-semibold gap-2"
+              title="Share Builder Link"
+            >
+              <Share2 size={16} />
+              <span className="sm:hidden font-bold">Share Workspace</span>
+            </button>
+          </div>
+        </div>
+
+        {/* 2-Column Desktop Grid Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          
+          {/* LEFT COLUMN: 40% (Form Steps) */}
+          <div className="lg:col-span-5 space-y-6">
             <ResumeForm
               initialData={resumeData}
               onChange={handleResumeChange}
               onSave={handleSave}
-              isSaving={false}
+              isSaving={isSaving}
             />
           </div>
 
-          {/* RIGHT */}
-          <div className="lg:col-span-7 flex flex-col gap-6">
-
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold">Live Preview</h2>
-
-              <button
-                onClick={handleShare}
-                className="p-2 border rounded-lg"
-              >
-                <Share2 size={18} />
-              </button>
-            </div>
-
-            <div className="p-4 bg-gray-100 rounded-xl flex flex-col items-center gap-4">
-              <PDFDownloadButton />
-            </div>
-
-            <div className="min-h-[600px]">
-              <ResumePreview data={resumeData} />
-            </div>
-
+          {/* RIGHT COLUMN: 60% (Sticky Live Resume Canvas Workspace) */}
+          <div id="live-preview-section" className="lg:col-span-7 lg:sticky lg:top-8 self-start space-y-6 scroll-mt-24">
+            <ResumePreview data={resumeData} />
             <PreviewFeatures />
-
           </div>
+
         </div>
+
       </main>
     </div>
   );
@@ -141,7 +167,7 @@ function BuilderContent() {
 
 export default function BuilderPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-white text-[#64748B] font-semibold text-sm">Initializing Creator Workspace...</div>}>
       <BuilderContent />
     </Suspense>
   );

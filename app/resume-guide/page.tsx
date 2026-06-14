@@ -32,10 +32,10 @@ export default function ResumeForFreshersPage() {
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4 pt-6">
               <Link 
-                href="/builder" 
+                href="/templates" 
                 className="bg-indigo-600 text-white px-10 py-5 rounded-2xl font-bold text-xl hover:bg-indigo-700 transition-all shadow-xl flex items-center justify-center gap-2"
               >
-                Start Building Now <ArrowRight size={20} />
+                Choose a Template <ArrowRight size={20} />
               </Link>
               <Link 
                 href="/resume-examples" 

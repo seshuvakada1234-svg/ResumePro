@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { toast } from "sonner";
 import { AdBanner } from "./AdBanner";
 import { X, Loader2, Zap, ChevronRight, Briefcase } from "lucide-react";
@@ -11,8 +12,8 @@ const A4_H = 1123;
 const SCALE = 3; // 216 DPI — crisp on all screens/printers
 
 const spinnerStyle: React.CSSProperties = {
-  width: "16px",
-  height: "16px",
+  width: "14px",
+  height: "14px",
   borderRadius: "50%",
   border: "2px solid rgba(255,255,255,0.35)",
   borderTopColor: "#ffffff",
@@ -20,18 +21,17 @@ const spinnerStyle: React.CSSProperties = {
   flexShrink: 0,
 };
 
-function DownloadIcon() {
+function DownloadIcon({ className }: { className?: string }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="16"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
       strokeWidth="2.2"
       strokeLinecap="round"
       strokeLinejoin="round"
+      className={className || "w-4 h-4"}
       style={{ flexShrink: 0 }}
       aria-hidden="true"
     >
@@ -41,10 +41,20 @@ function DownloadIcon() {
   );
 }
 
-export default function PDFDownloadButton() {
+interface PDFDownloadButtonProps {
+  className?: string;
+  size?: "sm" | "md" | "lg";
+}
+
+export default function PDFDownloadButton({ className, size = "lg" }: PDFDownloadButtonProps = {}) {
   const [loading, setLoading] = useState(false);
   const [showAdOverlay, setShowAdOverlay] = useState(false);
-  const [countdown, setCountdown] = useState(3);
+  const [countdown, setCountdown] = useState(5);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const startDownload = async () => {
     const element = document.getElementById("resume-preview");
@@ -205,7 +215,7 @@ export default function PDFDownloadButton() {
       );
 
       pdf.save("resume.pdf");
-      toast.success("Resume downloaded! ✅");
+      toast.success("✅ Resume downloaded successfully");
 
     } catch (err) {
       console.error("PDF generation error:", err);
@@ -222,7 +232,7 @@ export default function PDFDownloadButton() {
   const handleDownloadClick = () => {
     setLoading(true);
     setShowAdOverlay(true);
-    setCountdown(3);
+    setCountdown(5);
   };
 
   useEffect(() => {
@@ -247,15 +257,16 @@ export default function PDFDownloadButton() {
         onClick={handleDownloadClick}
         disabled={loading}
         aria-label={loading ? "Generating PDF, please wait" : "Download PDF"}
-        className={[
+        className={className || [
           "relative inline-flex w-auto items-center justify-center gap-2",
-          "px-8 py-4",
-          "rounded-xl font-bold text-lg text-white",
+          size === "sm" ? "px-4 py-2.5 text-xs rounded-xl" : "px-8 py-4 text-base sm:text-lg rounded-xl",
+          "font-bold text-white",
           "select-none outline-none",
+          "transform active:scale-[0.97]",
           "transition-all duration-200 ease-in-out",
           loading
-            ? "bg-indigo-600 cursor-not-allowed shadow-inner animate-pulse transition-none"
-            : "bg-indigo-600 hover:bg-indigo-700 active:scale-[0.97] shadow-lg shadow-indigo-200 hover:shadow-xl cursor-pointer",
+            ? "bg-slate-500 cursor-not-allowed shadow-inner animate-pulse transition-none"
+            : "bg-gradient-to-r from-[#5B4DFF] via-[#A855F7] to-[#FF5EA8] hover:opacity-95 shadow-md shadow-indigo-100 hover:shadow-lg cursor-pointer",
         ].join(" ")}
       >
         {loading ? (
@@ -265,46 +276,89 @@ export default function PDFDownloadButton() {
           </>
         ) : (
           <>
-            <DownloadIcon />
-            Download PDF 🚀
+            <DownloadIcon className="w-3.5 h-3.5 md:w-4 md:h-4 shrink-0" />
+            <span>Download PDF 🚀</span>
           </>
         )}
       </button>
 
-      {showAdOverlay && (
-        <div className="fixed inset-0 z-[9999] bg-white/95 backdrop-blur-sm flex flex-col items-center justify-center p-6 animate-in fade-in duration-300">
-          <div className="max-w-md w-full space-y-8 text-center">
-            <div className="flex flex-col items-center gap-4">
-              <div className="relative">
-                <Loader2 className="w-12 h-12 text-indigo-600 animate-spin" />
-                <div className="absolute inset-0 flex items-center justify-center text-xs font-bold text-indigo-600">
-                  {countdown > 0 ? countdown : ""}
+      {mounted && typeof document !== "undefined" && createPortal(
+        <AnimatePresence>
+          {showAdOverlay && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              id="pdf-download-overlay"
+              className="fixed inset-0 z-[9999] bg-white/70 backdrop-blur-xl flex flex-col justify-end sm:justify-center items-center p-4 overflow-y-auto"
+            >
+              <div 
+                id="pdf-container-box" 
+                className="w-[90vw] max-w-[320px] sm:w-full sm:max-w-[420px] bg-white border border-slate-200/80 shadow-[0_24px_50px_rgba(0,0,0,0.12)] rounded-[20px] sm:rounded-3xl p-5 sm:p-8 flex flex-col items-center text-center space-y-5 sm:space-y-6 relative mb-[calc(env(safe-area-inset-bottom,0px)+12px)] sm:mb-0 pb-[calc(1.25rem+env(safe-area-inset-bottom,0px))] sm:pb-8"
+              >
+                <button 
+                  onClick={() => {
+                    setShowAdOverlay(false);
+                    setLoading(false);
+                  }}
+                  className="absolute top-3.5 right-3.5 p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-all duration-200"
+                  aria-label="Cancel download"
+                >
+                  <X size={18} />
+                </button>
+
+                {/* Layout: Spinner, Preparing Your Resume, Generating ATS-friendly PDF..., Countdown, Responsive ad banner */}
+
+                {/* 1. Large Spinner */}
+                <div className="relative flex items-center justify-center py-1" id="pdf-spinner-area">
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ repeat: Infinity, duration: 1.1, ease: "linear" }}
+                    className="w-12 h-12 sm:w-14 sm:h-14 border-4 border-slate-100 border-t-indigo-600 rounded-full"
+                  />
+                </div>
+
+                {/* 2. Title & 3. Subtitle */}
+                <div className="space-y-1">
+                  <h3 className="text-lg sm:text-2xl font-black text-slate-900 tracking-tight" id="pdf-title">
+                    Preparing Your Resume
+                  </h3>
+                  <p className="text-slate-500 text-xs sm:text-sm font-semibold" id="pdf-subtitle">
+                    Generating ATS-friendly PDF...
+                  </p>
+                </div>
+
+                {/* 4. Countdown Timer */}
+                <div className="space-y-2 py-3 px-4 bg-slate-50 border border-slate-100 rounded-xl w-full" id="pdf-countdown-area">
+                  <p className="text-[10px] sm:text-xs font-bold text-indigo-600 uppercase tracking-widest animate-pulse">
+                    Ad loading...
+                  </p>
+                  <div className="text-3xl sm:text-4xl font-extrabold text-slate-800 tracking-tight tabular-nums">
+                    {countdown}s
+                  </div>
+                  <p className="text-[10px] sm:text-xs text-slate-500 font-semibold px-2">
+                    Please wait while your PDF is being prepared.
+                  </p>
+                </div>
+
+                {/* 5. Responsive Ad Container Below the Timer */}
+                <div className="w-full flex justify-center pt-1" id="pdf-ad-area">
+                  <div className="w-full max-w-[280px] sm:max-w-none sm:w-full flex items-center justify-center bg-slate-50/50 border border-slate-100/80 rounded-[14px] overflow-hidden p-1.5 min-h-[100px] sm:min-h-[90px]">
+                    <AdBanner 
+                      adSlot="download-loading-ad" 
+                      adFormat="horizontal"
+                      fullWidthResponsive={true}
+                      className="w-full"
+                      minHeight={{ mobile: '100px', desktop: '90px' }}
+                    />
+                  </div>
                 </div>
               </div>
-              <h3 className="text-2xl font-bold text-gray-900">Preparing Your Resume</h3>
-              <p className="text-gray-500">Your professional ATS-friendly resume is being generated. Please wait a moment.</p>
-            </div>
-
-            <div className="bg-gray-50 rounded-2xl p-4 border border-gray-100 shadow-inner">
-              <AdBanner adSlot="download-loading-ad" className="min-h-[250px]" />
-            </div>
-
-            <div className="flex items-center justify-center gap-2 text-xs text-gray-400">
-              <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
-              Processing high-quality PDF export...
-            </div>
-
-            <button 
-              onClick={() => {
-                setShowAdOverlay(false);
-                setLoading(false);
-              }}
-              className="absolute top-6 right-6 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-all"
-            >
-              <X size={24} />
-            </button>
-          </div>
-        </div>
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
       )}
     </>
   );

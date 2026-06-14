@@ -77,7 +77,7 @@ export default function ResumeExamplesPage() {
               Resume <span className="text-indigo-600">Examples</span> Hub
             </h1>
             <p className="text-xl text-slate-500 max-w-3xl mx-auto font-medium leading-relaxed">
-              Don't guess what hiring managers want. Explore our library of 20+ specialized, ATS-compliant resume examples tailored specifically for Indian freshers and graduates.
+              Don't guess what hiring managers want. Explore our library of 20+ specialized, ATS-compliant resume examples tailored specifically for Indian freshers and graduates. Or read our detailed <Link href="/resume-writing-guide" className="text-indigo-600 font-extrabold hover:underline">Resume Writing Guide →</Link>
             </p>
           </div>
         </div>

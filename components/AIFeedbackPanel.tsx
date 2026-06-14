@@ -107,7 +107,7 @@ export const AIFeedbackPanel: React.FC<AIFeedbackPanelProps> = ({ feedback }) =>
           icon={<CheckCircle2 size={16} className="text-emerald-600" />}
           title="Strengths"
           color="bg-emerald-50 text-emerald-800 hover:bg-emerald-100"
-          items={feedback.strengths.map(s => <span>{s}</span>)}
+          items={feedback.strengths.map((s, idx) => <span key={idx}>{s}</span>)}
           defaultOpen={true}
         />
 
@@ -115,7 +115,7 @@ export const AIFeedbackPanel: React.FC<AIFeedbackPanelProps> = ({ feedback }) =>
           icon={<AlertTriangle size={16} className="text-amber-600" />}
           title="Weaknesses"
           color="bg-amber-50 text-amber-800 hover:bg-amber-100"
-          items={feedback.weaknesses.map(w => <span>{w}</span>)}
+          items={feedback.weaknesses.map((w, idx) => <span key={idx}>{w}</span>)}
           defaultOpen={true}
         />
 
@@ -123,7 +123,7 @@ export const AIFeedbackPanel: React.FC<AIFeedbackPanelProps> = ({ feedback }) =>
           icon={<Lightbulb size={16} className="text-blue-600" />}
           title="Improvements"
           color="bg-blue-50 text-blue-800 hover:bg-blue-100"
-          items={feedback.improvements.map(i => <span>{i}</span>)}
+          items={feedback.improvements.map((i, idx) => <span key={idx}>{i}</span>)}
           defaultOpen={false}
         />
 
