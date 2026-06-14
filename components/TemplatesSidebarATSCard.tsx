@@ -11,7 +11,7 @@ export const TemplatesSidebarATSCard: React.FC = () => {
   return (
     <motion.div
       whileHover={{ y: -4 }}
-      className="bg-gradient-to-br from-indigo-600 to-blue-700 rounded-3xl p-8 text-white shadow-xl relative overflow-hidden group"
+      className="bg-gradient-to-r from-indigo-600 via-violet-500 to-pink-500 rounded-3xl p-8 text-white shadow-xl relative overflow-hidden group"
     >
       {/* Decorative elements */}
       <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 bg-white/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500" />

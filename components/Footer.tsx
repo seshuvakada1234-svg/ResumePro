@@ -21,7 +21,9 @@ const Footer: React.FC = () => {
                 <div className="bg-gradient-to-r from-[#5B4DFF] to-indigo-600 p-2.5 rounded-xl shadow-inner">
                   <FileText className="text-white" size={20} />
                 </div>
-                <span className="text-xl font-black tracking-tight text-slate-900">FreeResume</span>
+                <span className="text-xl font-black tracking-tight text-slate-900">
+                  Free<span className="bg-gradient-to-r from-indigo-600 via-violet-500 to-pink-500 bg-clip-text text-transparent inline-block font-black">Resume</span>
+                </span>
               </Link>
               
               <p className="text-slate-500 font-medium text-sm leading-[1.8] w-full md:max-w-sm">

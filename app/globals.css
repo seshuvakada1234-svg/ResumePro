@@ -175,3 +175,51 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* ── Mobile Responsive Navbar / Header ───────────────────────── */
+@media (max-width: 768px) {
+  .navbar {
+    min-height: 64px !important;
+    height: 64px !important;
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  .logo-icon {
+    width: 36px !important;
+    height: 36px !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .logo-icon svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
+  .logo-text {
+    font-size: 14px !important; /* Decreased font size by ~22% for mobile */
+  }
+
+  .profile-avatar {
+    width: 40px !important;
+    height: 40px !important;
+  }
+
+  .menu-icon,
+  .logout-icon {
+    width: 20px !important;
+    height: 20px !important;
+  }
+
+  .menu-icon {
+    width: 22px !important;
+    height: 22px !important;
+  }
+}
