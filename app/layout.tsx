@@ -148,6 +148,44 @@ export default function RootLayout({
           {children}
         </ResumeFunnelProvider>
         <Footer />
+
+        {/* ✅ Monetag In - Page Push (Zone ID 11149485) */}
+        <Script
+          id="monetag-in-page-push"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function(s){
+                s.dataset.zone='11149485';
+                s.src='https://nap5k.com/tag.min.js';
+              })(
+                [document.documentElement, document.body]
+                  .filter(Boolean)
+                  .pop()
+                  .appendChild(document.createElement('script'))
+              );
+            `,
+          }}
+        />
+
+        {/* ✅ Monetag Vignette Banner (Zone ID 11149486) */}
+        <Script
+          id="monetag-vignette-banner"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function(s){
+                s.dataset.zone='11149486';
+                s.src='https://n6wxm.com/vignette.min.js';
+              })(
+                [document.documentElement, document.body]
+                  .filter(Boolean)
+                  .pop()
+                  .appendChild(document.createElement('script'))
+              );
+            `,
+          }}
+        />
       </body>
     </html>
   );
