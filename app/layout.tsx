@@ -111,6 +111,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        {/* ✅ Monetag Verification */}
+        <meta name="monetag" content="9cfb02b252d4b116d21fe5348c820725" />
+
         {/* ✅ AdSense Account Verification */}
         <meta
           name="google-adsense-account"
