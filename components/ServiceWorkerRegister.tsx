@@ -6,10 +6,19 @@ export default function ServiceWorkerRegister() {
   useEffect(() => {
     if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
       const registerSW = async () => {
-        let useMonetag = false;
-        
+        // 1. Securely register the main clean PWA Service Worker on the root scope
         try {
-          // Fast reachability probe with a 1.5 second timeout
+          const mainRegistration = await navigator.serviceWorker.register('/sw.js');
+          console.log('Main PWA ServiceWorker registered with scope:', mainRegistration.scope);
+        } catch (error) {
+          console.error('Main ServiceWorker registration failed:', error);
+        }
+
+        // 2. Perform a fast network probe to check if Monetag domain is accessible.
+        // Adblockers usually block these domains completely, causing scripts or network calls to fail.
+        // If it is blocked, we avoid registering the Monetag SW to prevent registration timeout errors.
+        let isMonetagAvailable = false;
+        try {
           const controller = new AbortController();
           const timeoutId = setTimeout(() => controller.abort(), 1500);
           
@@ -19,18 +28,21 @@ export default function ServiceWorkerRegister() {
             signal: controller.signal,
           });
           clearTimeout(timeoutId);
-          useMonetag = true;
+          isMonetagAvailable = true;
         } catch (e) {
-          console.warn("Monetag Service Worker domain is blocked or offline. Falling back to clean Mode.");
+          console.warn("Monetag domain is blocked or unreachable (usually due to Adblocker). Skipping Monetag SW registration.");
         }
 
-        const swUrl = useMonetag ? '/sw.js?monetag=true' : '/sw.js?monetag=false';
-
-        try {
-          const registration = await navigator.serviceWorker.register(swUrl);
-          console.log('ServiceWorker registered with scope:', registration.scope, 'with monetag:', useMonetag);
-        } catch (error) {
-          console.error('ServiceWorker registration failed:', error);
+        if (isMonetagAvailable) {
+          try {
+            // Register Monetag SW under a dedicated scope to prevent any conflicts with the main SW
+            const monetagRegistration = await navigator.serviceWorker.register('/monetag-sw.js', {
+              scope: '/monetag-ads/'
+            });
+            console.log('Monetag ServiceWorker registered with scope:', monetagRegistration.scope);
+          } catch (error) {
+            console.error('Monetag ServiceWorker registration failed:', error);
+          }
         }
       };
 
