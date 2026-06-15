@@ -334,10 +334,13 @@ export default function TemplatesPage() {
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#4F46E5]/10 text-[#4F46E5] text-xs font-extrabold rounded-full tracking-wider uppercase">
               <Sparkles size={12} className="animate-pulse" /> Verified Recruiter Spacing Layouts
             </div>
-            <h1 className="text-4xl md:text-7xl font-extrabold text-[#0F172A] tracking-tight leading-none font-sans">
-              Choose Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4F46E5] via-[#8B5CF6] to-[#EC4899]">Resume Template</span>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[#0F172A] tracking-tight leading-[1.05] sm:leading-tight lg:leading-tight font-sans text-center">
+              Choose Your <br className="block" />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4F46E5] via-[#8B5CF6] to-[#EC4899] inline-block">
+                Resume Template
+              </span>
             </h1>
-            <p className="text-base sm:text-xl text-[#64748B] max-w-2xl mx-auto font-medium">
+            <p className="text-base lg:text-lg text-[#64748B] max-w-2xl mx-auto font-medium">
               Select from our professionally designed, ATS-optimized templates verified for freshers and executive professionals in India.
             </p>
             <div className="text-center">
@@ -361,7 +364,7 @@ export default function TemplatesPage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Query keywords, styles, or specific job categories..."
-                  className="w-full py-3 bg-transparent text-sm focus:outline-none placeholder-[#64748B]/60 text-[#0F172A] font-medium"
+                  className="w-full py-3 bg-transparent text-sm focus:outline-none placeholder-[#64748B]/60 text-[#0F172A] font-medium truncate whitespace-nowrap overflow-hidden"
                 />
                 {searchQuery && (
                   <button 
@@ -484,7 +487,7 @@ export default function TemplatesPage() {
                     setSelectedCategory(category);
                     setSelectedProfession(null);
                   }}
-                  className={`px-5 py-2.5 rounded-full text-xs font-bold uppercase transition-all duration-200 flex-shrink-0 border cursor-pointer ${
+                  className={`px-5 py-2.5 rounded-full text-xs font-bold uppercase transition-all duration-200 flex-shrink-0 border cursor-pointer whitespace-nowrap overflow-hidden text-ellipsis ${
                     isActive 
                       ? 'bg-[#0F172A] border-[#0F172A] text-white shadow-md' 
                       : 'bg-white border-[#ECECF5] text-[#64748B] hover:bg-[#4F46E5]/10 hover:text-[#4F46E5] hover:border-[#4F46E5]/25'
@@ -601,17 +604,17 @@ export default function TemplatesPage() {
                           </div>
                           <div>
                             <div className="flex items-center justify-between gap-1 mb-1 flex-wrap">
-                              <h3 className="font-extrabold text-xs sm:text-sm text-[#0F172A] leading-tight block truncate max-w-[110px] sm:max-w-none">{template.name}</h3>
+                              <h3 className="font-extrabold text-lg sm:text-xl text-[#0F172A] leading-tight block break-words whitespace-normal">{template.name}</h3>
                               {template.ats && (
-                                <span className="text-[8px] font-extrabold text-[#22C55E] bg-[#22C55E]/10 px-1.5 py-0.5 rounded-full flex items-center gap-0.5 uppercase whitespace-nowrap">
-                                  <CheckCircle2 size={8} /> ATS OK
+                                <span className="text-xs font-extrabold text-[#22C55E] bg-[#22C55E]/10 px-2 py-0.5 rounded-full flex items-center gap-0.5 uppercase whitespace-nowrap">
+                                  <CheckCircle2 size={10} /> ATS OK
                                 </span>
                               )}
                             </div>
-                            <span className="text-[9px] sm:text-[10px] font-bold text-[#64748B] uppercase tracking-widest">{template.category}</span>
+                            <span className="text-xs font-bold text-[#64748B] uppercase tracking-widest">{template.category}</span>
                             
                             {/* Template specifications */}
-                            <div className="mt-3 pt-2.5 border-t border-[#ECECF5] space-y-1.5 text-[9px] sm:text-xs text-[#64748B] font-medium">
+                            <div className="mt-3 pt-2.5 border-t border-[#ECECF5] space-y-1.5 text-xs text-[#64748B] font-medium">
                               <div className="flex justify-between items-center">
                                 <span>Style:</span>
                                 <span className="font-extrabold text-[#0F172A]">{meta.style}</span>
@@ -622,7 +625,7 @@ export default function TemplatesPage() {
                               </div>
                               <div className="flex justify-between items-center">
                                 <span>Focus:</span>
-                                <span className="font-extrabold text-[#0F172A] truncate max-w-[70px]">{meta.industries[0]}</span>
+                                <span className="font-extrabold text-[#0F172A] truncate max-w-[90px]">{meta.industries[0]}</span>
                               </div>
                             </div>
                           </div>
@@ -634,7 +637,7 @@ export default function TemplatesPage() {
                           style={{
                             background: 'linear-gradient(90deg, #4F46E5, #8B5CF6, #EC4899)'
                           }}
-                          className="mt-4 w-full py-2 sm:py-3 text-white font-extrabold text-[10px] sm:text-xs rounded-[16px] shadow-sm shadow-[#4F46E5]/10 hover:shadow-[#4F46E5]/25 hover:scale-[1.03] active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-1 sm:gap-1.5 uppercase tracking-wider cursor-pointer"
+                          className="mt-4 w-full py-2.5 sm:py-3 text-white font-extrabold text-sm rounded-[16px] shadow-sm shadow-[#4F46E5]/10 hover:shadow-[#4F46E5]/25 hover:scale-[1.03] active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-1 sm:gap-1.5 uppercase tracking-wider cursor-pointer"
                         >
                           <Check size={12} strokeWidth={3} />
                           Use Template
@@ -711,11 +714,11 @@ export default function TemplatesPage() {
                           <div>
                             {/* Inner Badge strip */}
                             <div className="mb-3 flex items-center justify-between flex-wrap gap-1.5">
-                              <span className="text-[9px] sm:text-[11px] font-extrabold text-[#4F46E5] bg-[#4F46E5]/10 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full uppercase">
+                              <span className="text-xs font-extrabold text-[#4F46E5] bg-[#4F46E5]/10 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full uppercase">
                                 {template.category}
                               </span>
                               {template.ats && (
-                                <span className="text-[9px] sm:text-[10px] font-extrabold text-white bg-[#22C55E] px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full flex items-center gap-0.5 sm:gap-1 uppercase whitespace-nowrap">
+                                <span className="text-xs font-extrabold text-white bg-[#22C55E] px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full flex items-center gap-0.5 sm:gap-1 uppercase whitespace-nowrap">
                                   <CheckCircle2 size={10} /> ATS OK
                                 </span>
                               )}
@@ -729,14 +732,14 @@ export default function TemplatesPage() {
                               <div className="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col gap-2 items-center justify-center p-2 sm:p-4">
                                 <button
                                   onClick={() => handleOpenPreview(template)}
-                                  className="w-full max-w-[140px] py-1.5 sm:py-2.5 bg-white text-[#4F46E5] font-extrabold text-[10px] sm:text-xs rounded-xl shadow-lg flex items-center justify-center gap-1.5 hover:bg-slate-50 transition-colors uppercase tracking-wider cursor-pointer"
+                                  className="w-full max-w-[140px] py-1.5 sm:py-2.5 bg-white text-[#4F46E5] font-extrabold text-sm rounded-xl shadow-lg flex items-center justify-center gap-1.5 hover:bg-slate-50 transition-colors uppercase tracking-wider cursor-pointer"
                                 >
                                   <Eye size={12} /> Live Preview
                                 </button>
                                 
                                 <Link 
                                   href={`/templates/${getTemplateSlug(template.id)}`}
-                                  className="w-full max-w-[140px] py-1.5 sm:py-2.5 bg-[#4F46E5] text-white font-extrabold text-[10px] sm:text-xs rounded-xl shadow-lg flex items-center justify-center gap-1.5 hover:opacity-90 transition-opacity uppercase tracking-wider border border-white/20 text-center"
+                                  className="w-full max-w-[140px] py-1.5 sm:py-2.5 bg-[#4F46E5] text-white font-extrabold text-sm rounded-xl shadow-lg flex items-center justify-center gap-1.5 hover:opacity-90 transition-opacity uppercase tracking-wider border border-white/20 text-center"
                                 >
                                   <Maximize2 size={12} /> Full Details
                                 </Link>
@@ -746,16 +749,16 @@ export default function TemplatesPage() {
                             {/* Card Copy Details */}
                             <div className="space-y-1.5 px-0.5">
                               <div className="flex items-center justify-between flex-wrap gap-1">
-                                <h3 className="font-extrabold text-sm sm:text-lg text-[#0F172A] tracking-tight group-hover:text-[#4F46E5] transition-colors truncate">
+                                <h3 className="font-extrabold text-lg sm:text-xl text-[#0F172A] tracking-tight group-hover:text-[#4F46E5] transition-colors break-words whitespace-normal">
                                   {template.name}
                                 </h3>
                               </div>
-                              <p className="text-[#64748B] text-[10px] sm:text-xs leading-relaxed line-clamp-2 font-medium">
+                              <p className="text-[#64748B] text-sm sm:text-base leading-relaxed line-clamp-2 font-medium break-words whitespace-normal">
                                 {template.description}
                               </p>
                               
                               {/* Advanced parameters for Item 9 */}
-                              <div className="mt-3 pt-2.5 border-t border-[#ECECF5] space-y-1.5 text-[10px] sm:text-xs text-[#64748B] font-medium">
+                              <div className="mt-3 pt-2.5 border-t border-[#ECECF5] space-y-1.5 text-xs text-[#64748B] font-medium">
                                 <div className="flex justify-between items-center">
                                   <span>Style:</span>
                                   <span className="font-extrabold text-[#0F172A]">{meta.style}</span>
@@ -779,7 +782,7 @@ export default function TemplatesPage() {
                               style={{
                                 background: 'linear-gradient(90deg, #4F46E5, #8B5CF6, #EC4899)'
                               }}
-                              className="w-full py-2 sm:py-3 text-white font-extrabold text-[10px] sm:text-xs rounded-[16px] shadow-sm shadow-[#4F46E5]/10 hover:shadow-[#4F46E5]/25 hover:scale-[1.03] active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-1 sm:gap-1.5 uppercase tracking-wider cursor-pointer"
+                              className="w-full py-2.5 sm:py-3 text-white font-extrabold text-sm rounded-[16px] shadow-sm shadow-[#4F46E5]/10 hover:shadow-[#4F46E5]/25 hover:scale-[1.03] active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-1 sm:gap-1.5 uppercase tracking-wider cursor-pointer"
                             >
                               <Check size={12} strokeWidth={3} />
                               Use Template

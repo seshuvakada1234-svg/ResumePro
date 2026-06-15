@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
 import { ResumeFunnelProvider } from "@/context/ResumeFunnelContext";
 import Script from "next/script";
+import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -140,6 +141,7 @@ export default function RootLayout({
         />
         <ResumeFunnelProvider>
           <Navbar />
+          <ServiceWorkerRegister />
           {children}
         </ResumeFunnelProvider>
         <Footer />
