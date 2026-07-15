@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { ResumeData } from '@/types/resume';
+import { FresherSections } from './FresherSectionsRenderer';
 
 /**
  * LuxuryGoldTemplate
@@ -139,36 +140,40 @@ export const LuxuryGoldTemplate: React.FC<LuxuryGoldTemplateProps> = ({ data }) 
 
         {/* --- MAIN CONTENT (Right on MD+) --- */}
         <main className="p-8 md:p-8 flex flex-col gap-8">
-          <section className="space-y-6">
-            <h2 className="text-[10px] font-bold tracking-[3px] uppercase text-[#1a1a1a] pb-1.5 border-b-2 border-[#E8B84B] inline-block">
-              Work Experience
-            </h2>
+          {data.experience && data.experience.length > 0 && data.experience[0]?.company && (
+            <section className="space-y-6">
+              <h2 className="text-[10px] font-bold tracking-[3px] uppercase text-[#1a1a1a] pb-1.5 border-b-2 border-[#E8B84B] inline-block">
+                Work Experience
+              </h2>
 
-            <div className="space-y-8">
-              {data.experience.map((job, i) => (
-                <div key={i} className="space-y-3">
-                  <div className="flex justify-between items-baseline gap-2">
-                    <p className="text-[14px] font-bold text-[#1a1a1a] leading-tight">{job.position}</p>
+              <div className="space-y-8">
+                {data.experience.map((job, i) => (
+                  <div key={i} className="space-y-3">
+                    <div className="flex justify-between items-baseline gap-2">
+                      <p className="text-[14px] font-bold text-[#1a1a1a] leading-tight">{job.position}</p>
+                    </div>
+                    <p className="text-[11.5px] italic text-[#888]">
+                      <span className="text-[#444] font-semibold not-italic">{job.company}</span> | {job.duration}
+                    </p>
+                    <div className="text-[12px] text-[#444] leading-relaxed">
+                      {job.description}
+                    </div>
+                    {job.bullets && job.bullets.length > 0 && (
+                      <ul className="mt-2 space-y-1.5">
+                        {job.bullets.map((bullet, idx) => (
+                          <li key={idx} className="text-[12px] text-[#444] pl-4 relative before:content-['•'] before:absolute before:left-0 before:text-[#E8B84B] before:text-[14px]">
+                            {bullet}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
                   </div>
-                  <p className="text-[11.5px] italic text-[#888]">
-                    <span className="text-[#444] font-semibold not-italic">{job.company}</span> | {job.duration}
-                  </p>
-                  <div className="text-[12px] text-[#444] leading-relaxed">
-                    {job.description}
-                  </div>
-                  {job.bullets && job.bullets.length > 0 && (
-                    <ul className="mt-2 space-y-1.5">
-                      {job.bullets.map((bullet, idx) => (
-                        <li key={idx} className="text-[12px] text-[#444] pl-4 relative before:content-['•'] before:absolute before:left-0 before:text-[#E8B84B] before:text-[14px]">
-                          {bullet}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              ))}
-            </div>
-          </section>
+                ))}
+              </div>
+            </section>
+          )}
+
+          <FresherSections data={data} styleType="luxury-gold" />
         </main>
 
         {/* --- FOOTER --- */}

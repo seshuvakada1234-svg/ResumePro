@@ -1,4 +1,5 @@
 import { ResumeData } from "@/types/resume";
+import { FresherSections } from "./FresherSectionsRenderer";
 
 interface Props {
   data: ResumeData;
@@ -118,6 +119,8 @@ export default function PinkHeaderTemplate({ data }: Props) {
             </div>
           </div>
         )}
+
+        <FresherSections data={data} styleType="pink-header" />
 
         {/* Education */}
         {data.education && data.education.length > 0 && (

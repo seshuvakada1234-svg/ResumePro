@@ -1,6 +1,7 @@
 import React from 'react';
 import { ResumeData } from '@/types/resume';
 import { Mail, Phone, MapPin } from 'lucide-react';
+import { FresherSections } from './FresherSectionsRenderer';
 
 const A4_H = 1123;
 
@@ -591,6 +592,8 @@ export const ExecutiveTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
               ))}
             </div>
           )}
+
+          <FresherSections data={data} styleType="executive" />
 
           {/* Education */}
           {education?.length > 0 && education[0].school && (

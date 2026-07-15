@@ -4,6 +4,7 @@ import React from 'react';
 import { ResumeData } from '@/types/resume';
 import { Mail, Phone, MapPin, Linkedin, Github, ExternalLink } from 'lucide-react';
 import IconText from '@/components/IconText';
+import { FresherSections } from './FresherSectionsRenderer';
 
 interface Props {
   data: ResumeData;
@@ -56,7 +57,7 @@ const SectionCard = ({
 );
 
 export default function PremiumTemplate({ data }: Props) {
-  const { personalInfo, education, experience, skills, languages, projects } = data;
+  const { personalInfo, education, experience, skills, languages } = data;
 
   const validExperience = (experience ?? []).filter(
     (exp) => exp?.company?.trim() || exp?.position?.trim() || exp?.description?.trim()
@@ -64,15 +65,11 @@ export default function PremiumTemplate({ data }: Props) {
   const validEducation = (education ?? []).filter(
     (edu) => edu?.school?.trim() || edu?.degree?.trim() || edu?.year?.trim()
   );
-  const validProjects = (projects ?? []).filter(
-    (proj) => proj?.name?.trim() || proj?.description?.trim() || proj?.link?.trim()
-  );
 
   const sectionCount =
     (personalInfo?.summary ? 1 : 0) +
     (validExperience.length > 0 ? 1 : 0) +
-    (validEducation.length > 0 ? 1 : 0) +
-    (validProjects.length > 0 ? 1 : 0);
+    (validEducation.length > 0 ? 1 : 0);
 
   const cardPadding = sectionCount <= 2 ? 'p-6' : sectionCount >= 4 ? 'p-4' : 'p-5';
 
@@ -312,34 +309,7 @@ export default function PremiumTemplate({ data }: Props) {
           </SectionCard>
         )}
 
-        {validProjects.length > 0 && (
-          <SectionCard title="Key Projects" padding={cardPadding}>
-            <div className="space-y-3">
-              {validProjects.map((proj, idx) => (
-                <div
-                  key={idx}
-                  className="p-3 rounded-xl"
-                  style={{ backgroundColor: '#f9fafb', border: '1px solid #f3f4f6' }}
-                >
-                  <div className="flex justify-between items-center mb-1 min-w-0">
-                    <h4 className="text-sm font-bold" style={{ color: '#111827' }}>{proj.name}</h4>
-                    {proj.link && (
-                      <a
-                        href={proj.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{ color: '#6366f1' }}
-                      >
-                        <ExternalLink size={12} />
-                      </a>
-                    )}
-                  </div>
-                  <p className="text-xs leading-relaxed" style={{ color: '#4b5563' }}>{proj.description}</p>
-                </div>
-              ))}
-            </div>
-          </SectionCard>
-        )}
+        <FresherSections data={data} styleType="premium" />
       </main>
     </div>
   );

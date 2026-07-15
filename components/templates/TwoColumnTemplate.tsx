@@ -1,6 +1,7 @@
 import React from 'react';
 import { ResumeData } from '@/types/resume';
 import { Mail, Phone, MapPin, Linkedin, Github } from 'lucide-react';
+import { FresherSections } from './FresherSectionsRenderer';
 
 const A4_H = 1123;
 
@@ -51,7 +52,7 @@ const ContactItem = ({
 );
 
 export const TwoColumnTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
-  const { personalInfo, education, experience, skills, projects } = data;
+  const { personalInfo, education, experience, skills } = data;
 
   return (
     <div
@@ -380,48 +381,7 @@ export const TwoColumnTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
           </section>
         )}
 
-        {/* Projects */}
-        {projects.length > 0 && projects[0].name && (
-          <section>
-            <SectionHeader label="Projects" />
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              {projects.map((proj, i) => (
-                <div
-                  key={i}
-                  style={{
-                    padding: '12px',
-                    borderRadius: '6px',
-                    backgroundColor: '#f8fafc',
-                    border: '1px solid #f1f5f9',
-                  }}
-                >
-                  <h3
-                    style={{
-                      fontSize: '12px',
-                      fontWeight: 700,
-                      color: '#0f172a',
-                      marginBottom: '4px',
-                    }}
-                  >
-                    {proj.name}
-                  </h3>
-                  <p
-                    style={{
-                      fontSize: '11px',
-                      lineHeight: 1.6,
-                      color: '#64748b',
-                      overflowWrap: 'break-word',
-                      wordBreak: 'normal',
-                      whiteSpace: 'normal',
-                    }}
-                  >
-                    {proj.description}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
+        <FresherSections data={data} styleType="two-column" />
       </main>
     </div>
   );

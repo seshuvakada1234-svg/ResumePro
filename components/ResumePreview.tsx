@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef, useState, useEffect } from 'react';
-import { ResumeData } from '@/types/resume';
+import { ResumeData, Skill, Language, Reference } from '@/types/resume';
 import { ClassicTemplate } from '@/components/templates/ClassicTemplate';
 import { ModernTemplate } from '@/components/templates/ModernTemplate';
 import { MinimalTemplate } from '@/components/templates/MinimalTemplate';
@@ -26,6 +26,210 @@ import { motion, AnimatePresence } from 'motion/react';
 const A4_WIDTH = 794;
 const A4_HEIGHT = 1123;
 
+const isStringPlaceholder = (str: string | undefined | null): boolean => {
+  if (!str) return true;
+  const s = str.trim().toLowerCase();
+  if (s === '') return true;
+
+  const exactPlaceholders = [
+    'project name',
+    'company name',
+    'lorem ipsum',
+    'example data',
+    'example university',
+    'school name',
+    'university name',
+    'your role',
+    'your company',
+    'job title / position',
+    'duration / dates',
+    'your profession',
+    'your profession here',
+    'professional role',
+    'professional title',
+    'internship: [company/role]',
+    'volunteer work: [organization]',
+    'achievement: [title/award]',
+    'briefly describe your responsibilities and achievements in this project.',
+    'describe your contributions, technical stack, and results accomplished.',
+    'outline what you did and your impact on the organization.',
+    'detail the recognition, details, and context of this achievement.',
+    'add bullet points describing technical challenges, key outcomes...',
+  ];
+
+  if (exactPlaceholders.includes(s)) {
+    return true;
+  }
+
+  // Check for common patterns
+  if (
+    s.includes('[company/role]') ||
+    s.includes('[organization]') ||
+    s.includes('[title/award]') ||
+    s.includes('lorem ipsum') ||
+    s === 'project name' ||
+    s === 'internship: [company/role]' ||
+    s === 'volunteer work: [organization]' ||
+    s === 'achievement: [title/award]' ||
+    s === 'describe your contributions...' ||
+    s === 'briefly describe your responsibilities and achievements in this project.' ||
+    s === 'describe your contributions, technical stack, and results accomplished.' ||
+    s === 'outline what you did and your impact on the organization.' ||
+    s === 'detail the recognition, details, and context of this achievement.' ||
+    s === 'company name' ||
+    s === 'example data' ||
+    s === 'lorem ipsum' ||
+    s.startsWith('describe your contributions') ||
+    s.startsWith('briefly describe your') ||
+    s.startsWith('outline what you did') ||
+    s.startsWith('detail the recognition')
+  ) {
+    return true;
+  }
+
+  return false;
+};
+
+const preprocessResumeData = (raw: ResumeData): ResumeData => {
+  const isFresher = raw.experienceType === 'fresher';
+
+  // 1. Filter education
+  const education = (raw.education || []).map(edu => ({
+    ...edu,
+    school: isStringPlaceholder(edu.school) ? '' : edu.school.trim(),
+    degree: isStringPlaceholder(edu.degree) ? '' : edu.degree.trim(),
+    year: isStringPlaceholder(edu.year) ? '' : edu.year.trim(),
+  })).filter(edu => edu.school !== '' || edu.degree !== '');
+
+  // 2. Filter experience: hide completely if fresher or has no entries
+  let experience: typeof raw.experience = [];
+  if (!isFresher) {
+    experience = (raw.experience || []).map(exp => ({
+      ...exp,
+      company: isStringPlaceholder(exp.company) ? '' : exp.company.trim(),
+      position: isStringPlaceholder(exp.position) ? '' : exp.position.trim(),
+      duration: isStringPlaceholder(exp.duration) ? '' : exp.duration.trim(),
+      description: isStringPlaceholder(exp.description) ? '' : exp.description.trim(),
+    })).filter(exp => exp.company !== '' || exp.position !== '');
+  }
+
+  // 3. Filter projects (including internships, volunteer work, achievements)
+  let projects = (raw.projects || []).map(proj => ({
+    ...proj,
+    name: isStringPlaceholder(proj.name) ? '' : proj.name.trim(),
+    description: isStringPlaceholder(proj.description) ? '' : proj.description.trim(),
+    technologies: isStringPlaceholder(proj.technologies) ? '' : (proj.technologies || '').trim(),
+    duration: isStringPlaceholder(proj.duration) ? '' : (proj.duration || '').trim(),
+    githubUrl: isStringPlaceholder(proj.githubUrl) ? '' : (proj.githubUrl || '').trim(),
+    liveUrl: isStringPlaceholder(proj.liveUrl) ? '' : (proj.liveUrl || '').trim(),
+    bullets: (proj.bullets || []).map(b => isStringPlaceholder(b) ? '' : b.trim()).filter(b => b !== ''),
+  })).filter(proj => proj.name !== '' || proj.description !== '' || (proj.bullets && proj.bullets.length > 0));
+
+  // 3b. Filter internships
+  const internships = (raw.internships || []).map(intern => ({
+    ...intern,
+    company: isStringPlaceholder(intern.company) ? '' : intern.company.trim(),
+    role: isStringPlaceholder(intern.role) ? '' : intern.role.trim(),
+    duration: isStringPlaceholder(intern.duration) ? '' : intern.duration.trim(),
+    location: isStringPlaceholder(intern.location) ? '' : (intern.location || '').trim(),
+    description: isStringPlaceholder(intern.description) ? '' : intern.description.trim(),
+    achievements: isStringPlaceholder(intern.achievements) ? '' : (intern.achievements || '').trim(),
+  })).filter(intern => intern.company !== '' || intern.role !== '' || intern.description !== '');
+
+  // 3c. Filter volunteerExperience
+  const volunteerExperience = (raw.volunteerExperience || []).map(vol => ({
+    ...vol,
+    organization: isStringPlaceholder(vol.organization) ? '' : vol.organization.trim(),
+    role: isStringPlaceholder(vol.role) ? '' : vol.role.trim(),
+    duration: isStringPlaceholder(vol.duration) ? '' : vol.duration.trim(),
+    description: isStringPlaceholder(vol.description) ? '' : vol.description.trim(),
+    achievements: isStringPlaceholder(vol.achievements) ? '' : (vol.achievements || '').trim(),
+  })).filter(vol => vol.organization !== '' || vol.role !== '' || vol.description !== '');
+
+  // 3d. Filter achievements
+  const achievements = (raw.achievements || []).map(ach => ({
+    ...ach,
+    title: isStringPlaceholder(ach.title) ? '' : ach.title.trim(),
+    organization: isStringPlaceholder(ach.organization) ? '' : ach.organization.trim(),
+    date: isStringPlaceholder(ach.date) ? '' : ach.date.trim(),
+    description: isStringPlaceholder(ach.description) ? '' : ach.description.trim(),
+  })).filter(ach => ach.title !== '' || ach.description !== '');
+
+  // 4. Handle Academic Work for Freshers
+  if (isFresher && raw.fresherAcademicWork && !isStringPlaceholder(raw.fresherAcademicWork)) {
+    const title = 'Academic Projects & Activities';
+    if (!projects.some(p => p.name === title)) {
+      projects.unshift({
+        name: title,
+        description: raw.fresherAcademicWork.trim(),
+        link: '',
+        technologies: '',
+        duration: '',
+        githubUrl: '',
+        liveUrl: '',
+        bullets: [],
+      });
+    }
+  }
+
+  // 5. Filter skills
+  const skills = (raw.skills || []).map(skill => {
+    if (!skill) return null;
+    const name = typeof skill === 'string' ? skill : skill.name;
+    if (isStringPlaceholder(name)) return null;
+    return skill;
+  }).filter(Boolean) as Skill[];
+
+  // 6. Filter languages
+  const languages = (raw.languages || []).map(lang => {
+    if (!lang) return null;
+    const name = typeof lang === 'string' ? lang : lang.name;
+    if (isStringPlaceholder(name)) return null;
+    return lang;
+  }).filter(Boolean) as Language[];
+
+  // 7. Filter certifications
+  const certifications = (raw.certifications || []).map(cert => {
+    if (!cert) return null;
+    const name = typeof cert === 'string' ? cert : (cert as any).name;
+    if (isStringPlaceholder(name)) return null;
+    return cert;
+  }).filter(Boolean) as (string | { name: string })[];
+
+  // 8. Filter references
+  const references = (raw.references || []).map(ref => {
+    if (!ref) return null;
+    if (isStringPlaceholder(ref.name) && isStringPlaceholder(ref.position)) return null;
+    return {
+      ...ref,
+      name: isStringPlaceholder(ref.name) ? '' : ref.name.trim(),
+      position: isStringPlaceholder(ref.position) ? '' : ref.position.trim(),
+      company: isStringPlaceholder(ref.company) ? '' : (ref.company || '').trim(),
+    };
+  }).filter(Boolean) as Reference[];
+
+  // Clean personalInfo summary if placeholder or empty
+  const personalInfo = { ...raw.personalInfo };
+  if (isStringPlaceholder(personalInfo.summary)) {
+    personalInfo.summary = '';
+  }
+
+  return {
+    ...raw,
+    personalInfo,
+    education,
+    experience,
+    projects,
+    internships,
+    volunteerExperience,
+    achievements,
+    skills,
+    languages,
+    certifications,
+    references,
+  };
+};
+
 interface ResumePreviewProps {
   data: ResumeData;
 }
@@ -35,6 +239,8 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({ data }) => {
   const [baseScale, setBaseScale] = useState(1);
   const [zoomFactor, setZoomFactor] = useState(1); // 0.6 to 1.5
   const [isFullscreen, setIsFullscreen] = useState(false);
+
+  const processedData = preprocessResumeData(data);
 
   useEffect(() => {
     const observer = new ResizeObserver((entries) => {
@@ -63,44 +269,44 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({ data }) => {
   const handleZoomReset = () => setZoomFactor(1);
 
   const renderTemplate = () => {
-    switch (data.template) {
+    switch (processedData.template) {
       case 'modern':
-        return <ModernTemplate data={data} />;
+        return <ModernTemplate data={processedData} />;
       case 'minimal':
-        return <MinimalTemplate data={data} />;
+        return <MinimalTemplate data={processedData} />;
       case 'two-column':
-        return <TwoColumnTemplate data={data} />;
+        return <TwoColumnTemplate data={processedData} />;
       case 'premium':
-        return <PremiumTemplate data={data} />;
+        return <PremiumTemplate data={processedData} />;
       case 'executive':
-        return <ExecutiveTemplate data={data} />;
+        return <ExecutiveTemplate data={processedData} />;
       case 'redline':
-        return <RedlineTemplate data={data} />;
+        return <RedlineTemplate data={processedData} />;
       case 'navy':
-        return <NavyTemplate data={data} />;
+        return <NavyTemplate data={processedData} />;
       case 'serif':
-        return <SerifTemplate data={data} />;
+        return <SerifTemplate data={processedData} />;
       case 'photo-sidebar':
-        return <PhotoSidebarTemplate data={data} />;
+        return <PhotoSidebarTemplate data={processedData} />;
       case 'photo-circle':
-        return <PhotoCircleTemplate data={data} />;
+        return <PhotoCircleTemplate data={processedData} />;
       case 'lawyer-classic':
-        return <LawyerClassicTemplate data={data} />;
+        return <LawyerClassicTemplate data={processedData} />;
       case 'minimal-pro':
-        return <MinimalProTemplate data={data} />;
+        return <MinimalProTemplate data={processedData} />;
       case 'pink-header':
-        return <PinkHeaderTemplate data={data} />;
+        return <PinkHeaderTemplate data={processedData} />;
       case 'dark-navy':
-        return <DarkNavyTemplate data={data} />;
+        return <DarkNavyTemplate data={processedData} />;
       case 'crimson':
-        return <CrimsonTemplate data={data} />;
+        return <CrimsonTemplate data={processedData} />;
       case 'black-yellow':
-        return <BlackYellowTemplate data={data} />;
+        return <BlackYellowTemplate data={processedData} />;
       case 'luxury-gold':
-        return <LuxuryGoldTemplate data={data} />;
+        return <LuxuryGoldTemplate data={processedData} />;
       case 'classic':
       default:
-        return <ClassicTemplate data={data} />;
+        return <ClassicTemplate data={processedData} />;
     }
   };
 

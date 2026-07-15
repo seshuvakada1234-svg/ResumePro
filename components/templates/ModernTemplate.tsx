@@ -2,9 +2,10 @@ import React from 'react';
 import { ResumeData } from '@/types/resume';
 import { Mail, Phone, MapPin, Linkedin, Github } from 'lucide-react';
 import IconText from '@/components/IconText';
+import { FresherSections } from './FresherSectionsRenderer';
 
 export const ModernTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
-  const { personalInfo, education, experience, skills, projects } = data;
+  const { personalInfo, education, experience, skills } = data;
 
   return (
     <div className="a4-page font-sans text-gray-800 flex flex-col p-0 min-w-0">
@@ -47,6 +48,8 @@ export const ModernTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
               </div>
             </section>
           )}
+
+          <FresherSections data={data} styleType="modern" />
         </div>
 
         <div className="col-span-4 space-y-8">

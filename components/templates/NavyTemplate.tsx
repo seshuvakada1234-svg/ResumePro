@@ -1,6 +1,7 @@
 import React from 'react';
 import { ResumeData } from '@/types/resume';
 import { Mail, Phone, MapPin } from 'lucide-react';
+import { FresherSections } from './FresherSectionsRenderer';
 
 const A4_H = 1123;
 
@@ -59,7 +60,7 @@ const ContactItem = ({
 );
 
 export const NavyTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
-  const { personalInfo, education, experience, skills, languages, projects } = data;
+  const { personalInfo, education, experience, skills, languages } = data;
 
   return (
     <div
@@ -458,6 +459,8 @@ export const NavyTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
             </div>
           )}
 
+          <FresherSections data={data} styleType="navy" />
+
           {/* Education */}
           {education?.length > 0 && education[0].school && (
             <div style={{ marginBottom: '22px' }}>
@@ -506,43 +509,6 @@ export const NavyTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
                   </div>
                 </div>
               ))}
-            </div>
-          )}
-
-          {/* Projects */}
-          {projects?.length > 0 && projects[0].name && (
-            <div style={{ marginBottom: '22px' }}>
-              <NavySectionHdr label="Projects" />
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 1fr',
-                  gap: '12px',
-                }}
-              >
-                {projects.map((proj, i) => (
-                  <div key={i}>
-                    <div
-                      style={{
-                        fontSize: '12px',
-                        fontWeight: 700,
-                        color: '#1a2e5a',
-                      }}
-                    >
-                      {proj.name}
-                    </div>
-                    <div
-                      style={{
-                        fontSize: '11px',
-                        color: '#666',
-                        lineHeight: 1.6,
-                      }}
-                    >
-                      {proj.description}
-                    </div>
-                  </div>
-                ))}
-              </div>
             </div>
           )}
         </div>

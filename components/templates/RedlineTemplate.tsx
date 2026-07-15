@@ -1,5 +1,6 @@
 import React from 'react';
 import { ResumeData } from '@/types/resume';
+import { FresherSections } from './FresherSectionsRenderer';
 
 const A4_H = 1123;
 
@@ -194,6 +195,8 @@ export const RedlineTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
             ))}
           </div>
         )}
+
+        <FresherSections data={data} styleType="redline" />
       </main>
     </div>
   );

@@ -1,4 +1,5 @@
 import { ResumeData } from "@/types/resume";
+import { FresherSections } from "./FresherSectionsRenderer";
 
 interface Props {
   data: ResumeData;
@@ -492,6 +493,8 @@ export default function BlackYellowTemplate({ data }: Props) {
             </div>
           </div>
         )}
+
+        <FresherSections data={data} styleType="black-yellow" />
 
         {/* Skills */}
         {data.skills && data.skills.length > 0 && (

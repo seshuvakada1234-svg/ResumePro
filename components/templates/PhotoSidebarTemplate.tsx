@@ -1,4 +1,5 @@
 import { ResumeData } from "@/types/resume";
+import { FresherSections } from "./FresherSectionsRenderer";
 
 interface Props {
   data: ResumeData;
@@ -260,31 +261,7 @@ export default function PhotoSidebarTemplate({ data }: Props) {
           </div>
         )}
 
-        {/* PROJECTS */}
-        {data.projects && data.projects.length > 0 && (
-          <div className="flex gap-6">
-            <div className="w-28 shrink-0">
-              <p
-                className="text-xs font-bold uppercase tracking-widest text-gray-900 pt-0.5"
-                style={{ letterSpacing: "0.12em" }}
-              >
-                Projects
-              </p>
-            </div>
-            <div className="flex-1 border-l border-gray-300 pl-6 flex flex-col gap-3">
-              {data.projects.map((proj, i) => (
-                <div key={i}>
-                  <p className="text-sm font-bold text-gray-900">{proj.name}</p>
-                  {proj.description && (
-                    <p className="text-xs text-gray-600 mt-0.5 leading-relaxed">
-                      {proj.description}
-                    </p>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        <FresherSections data={data} styleType="photo-sidebar" />
       </div>
     </div>
   );

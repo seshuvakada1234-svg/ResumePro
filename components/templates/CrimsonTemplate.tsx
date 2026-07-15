@@ -1,4 +1,5 @@
 import { ResumeData } from "@/types/resume";
+import { FresherSections } from "./FresherSectionsRenderer";
 
 interface Props {
   data: ResumeData;
@@ -157,6 +158,8 @@ export default function CrimsonTemplate({ data }: Props) {
             </div>
           </div>
         )}
+
+        <FresherSections data={data} styleType="crimson" />
 
         {/* Education */}
         {data.education && data.education.length > 0 && (

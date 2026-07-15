@@ -1,4 +1,5 @@
 import { ResumeData } from "@/types/resume";
+import { FresherSections } from "./FresherSectionsRenderer";
 
 interface Props {
   data: ResumeData;
@@ -144,6 +145,8 @@ export default function PhotoCircleTemplate({ data }: Props) {
               </div>
             </div>
           )}
+
+          <FresherSections data={data} styleType="photo-circle" />
 
           {/* Education */}
           {data.education && data.education.length > 0 && (

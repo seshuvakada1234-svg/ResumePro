@@ -25,7 +25,8 @@ import {
   ArrowRight,
   CheckCircle2,
   Check,
-  Download
+  Download,
+  Award
 } from 'lucide-react';
 import { AdBanner } from './AdBanner';
 import { motion, AnimatePresence } from 'motion/react';
@@ -80,12 +81,14 @@ const resumeSchema = z.object({
       year: z.string().min(1, 'Year is required'),
     })
   ),
+  experienceType: z.enum(['fresher', 'experienced']).optional(),
+  fresherAcademicWork: z.string().optional(),
   experience: z.array(
     z.object({
-      company: z.string().min(1, 'Company is required'),
-      position: z.string().min(1, 'Position is required'),
-      duration: z.string().min(1, 'Duration is required'),
-      description: z.string().min(1, 'Description is required'),
+      company: z.string(),
+      position: z.string(),
+      duration: z.string(),
+      description: z.string(),
     })
   ),
   skills: z
@@ -104,13 +107,66 @@ const resumeSchema = z.object({
   ),
   projects: z.array(
     z.object({
-      name: z.string().min(1, 'Project name is required'),
-      description: z.string().min(1, 'Description is required'),
+      name: z.string(),
+      description: z.string(),
       link: z.string().optional(),
+      technologies: z.string().optional(),
+      duration: z.string().optional(),
+      githubUrl: z.string().optional(),
+      liveUrl: z.string().optional(),
+      bullets: z.array(z.string()).optional(),
     })
   ),
+  internships: z.array(
+    z.object({
+      company: z.string(),
+      role: z.string(),
+      duration: z.string(),
+      location: z.string().optional(),
+      description: z.string(),
+      achievements: z.string().optional(),
+    })
+  ).optional(),
+  volunteerExperience: z.array(
+    z.object({
+      organization: z.string(),
+      role: z.string(),
+      duration: z.string(),
+      description: z.string(),
+      achievements: z.string().optional(),
+    })
+  ).optional(),
+  achievements: z.array(
+    z.object({
+      title: z.string(),
+      organization: z.string(),
+      date: z.string(),
+      description: z.string(),
+    })
+  ).optional(),
   createdAt: z.string().optional(),
   updatedAt: z.string().optional(),
+}).superRefine((data, ctx) => {
+  if (data.experienceType === 'experienced') {
+    if (data.experience && data.experience.length > 0) {
+      data.experience.forEach((exp, idx) => {
+        if (!exp.company || exp.company.trim() === '') {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Company Name is required',
+            path: ['experience', idx, 'company'],
+          });
+        }
+        if (!exp.position || exp.position.trim() === '') {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Job Title is required',
+            path: ['experience', idx, 'position'],
+          });
+        }
+      });
+    }
+  }
 });
 
 interface ResumeFormProps {
@@ -169,6 +225,9 @@ export const ResumeForm: React.FC<ResumeFormProps> = ({ initialData, onChange, o
     skills: true,
     languages: true,
     projects: true,
+    internships: true,
+    volunteer: true,
+    achievements: true,
   });
 
   // AI loading indicator map
@@ -209,7 +268,10 @@ export const ResumeForm: React.FC<ResumeFormProps> = ({ initialData, onChange, o
 
   const { fields: eduFields, append: appendEdu, remove: removeEdu } = useFieldArray({ control, name: 'education' });
   const { fields: expFields, append: appendExp, remove: removeExp } = useFieldArray({ control, name: 'experience' });
-  const { fields: projFields, append: appendProj, remove: removeProj } = useFieldArray({ control, name: 'projects' });
+  const { fields: projFields, append: appendProj, remove: removeProj, insert: insertProj } = useFieldArray({ control, name: 'projects' });
+  const { fields: internshipFields, append: appendInternship, remove: removeInternship } = useFieldArray({ control, name: 'internships' as any });
+  const { fields: volunteerFields, append: appendVolunteer, remove: removeVolunteer } = useFieldArray({ control, name: 'volunteerExperience' as any });
+  const { fields: achievementFields, append: appendAchievement, remove: removeAchievement } = useFieldArray({ control, name: 'achievements' as any });
   const { fields: skillFields, append: appendSkill, remove: removeSkill } = useFieldArray({ control, name: 'skills' });
   const { fields: langFields, append: appendLang, remove: removeLang } = useFieldArray({ control, name: 'languages' });
 
@@ -627,87 +689,435 @@ export const ResumeForm: React.FC<ResumeFormProps> = ({ initialData, onChange, o
                       className="overflow-hidden"
                     >
                       <div className="pt-6 space-y-6">
-                        <div className="flex justify-between items-center sm:pt-2">
-                          <span className="text-xs font-bold text-[#64748B] uppercase tracking-wider">Job Roles & History</span>
-                          <button
-                            type="button"
-                            onClick={() => appendExp({ company: '', position: '', duration: '', description: '' })}
-                            className="text-xs font-bold text-[#5B4DFF] hover:text-[#A855F7] flex items-center gap-1.5 transition-all bg-[#5B4DFF]/5 px-3 py-1.5 rounded-full hover:bg-[#5B4DFF]/10"
-                          >
-                            <Plus size={14} /> Add Experience
-                          </button>
+                        {/* Selector for Fresher vs Experienced */}
+                        <div className="bg-[#F8FAFC] border border-[#ECECF5] rounded-2xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                          <div>
+                            <span className="text-xs font-bold text-[#0F172A] uppercase tracking-wider block mb-1">Work Experience Type</span>
+                            <p className="text-[11px] text-[#64748B] font-medium">Choose whether you have corporate/work experience or are just starting out.</p>
+                          </div>
+                          <div className="flex flex-wrap items-center gap-3">
+                            <label className="flex items-center gap-2 cursor-pointer bg-white px-4 py-2.5 rounded-xl border border-gray-200 hover:border-[#5B4DFF]/50 transition-all text-xs font-bold text-[#0F172A] select-none shadow-sm">
+                              <input
+                                type="radio"
+                                value="fresher"
+                                checked={watchedData.experienceType === 'fresher'}
+                                onChange={() => setValue('experienceType', 'fresher')}
+                                className="w-4 h-4 text-[#5B4DFF] focus:ring-[#5B4DFF]/10 border-gray-300"
+                              />
+                              <span>Fresher / No Experience</span>
+                            </label>
+                            <label className="flex items-center gap-2 cursor-pointer bg-white px-4 py-2.5 rounded-xl border border-gray-200 hover:border-[#5B4DFF]/50 transition-all text-xs font-bold text-[#0F172A] select-none shadow-sm">
+                              <input
+                                type="radio"
+                                value="experienced"
+                                checked={watchedData.experienceType === 'experienced'}
+                                onChange={() => setValue('experienceType', 'experienced')}
+                                className="w-4 h-4 text-[#5B4DFF] focus:ring-[#5B4DFF]/10 border-gray-300"
+                              />
+                              <span>Experienced</span>
+                            </label>
+                          </div>
                         </div>
 
-                        {expFields.length === 0 && (
-                          <div className="text-center py-8 border border-dashed border-gray-200 rounded-2xl bg-gray-50/50">
-                            <p className="text-xs font-medium text-gray-400">No career history added yet.</p>
-                          </div>
-                        )}
+                        {watchedData.experienceType === 'fresher' ? (
+                          <div className="space-y-6">
+                            <div className="p-5 bg-gradient-to-br from-[#5B4DFF]/5 via-[#A855F7]/5 to-[#FF5EA8]/5 border border-[#ECECF5] rounded-2xl flex items-start gap-4 shadow-sm">
+                              <div className="bg-white p-2.5 rounded-xl shadow-sm text-[#5B4DFF] shrink-0 border border-gray-100 mt-0.5">
+                                <Sparkles size={20} className="animate-pulse" />
+                              </div>
+                              <p className="text-xs sm:text-sm font-medium text-[#475569] leading-relaxed">
+                                No work experience? That's okay! Your resume will focus on your education, projects, internships, certifications, achievements and skills.
+                              </p>
+                            </div>
 
-                        {expFields.map((field, index) => {
-                          const sugKey = `experience-${index}`;
-                          return (
-                            <div key={field.id} className="p-5 border border-[#ECECF5] rounded-2xl bg-[#F8FAFC]/55 hover:bg-[#F8FAFC]/90 transition-all space-y-4 relative group">
-                              <button
-                                type="button"
-                                onClick={() => removeExp(index)}
-                                className="absolute top-4 right-4 p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all opacity-0 group-hover:opacity-100"
-                              >
-                                <Trash2 size={16} />
-                              </button>
-                              
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="space-y-1">
-                                  <label className={labelClass}>Company Name</label>
-                                  <input {...register(`experience.${index}.company`)} placeholder="e.g. Google" className={inputClass} />
-                                </div>
-                                <div className="space-y-1">
-                                  <label className={labelClass}>Job Title / Position</label>
-                                  <input {...register(`experience.${index}.position`)} placeholder="e.g. Software Engineer" className={inputClass} />
-                                </div>
-                                <div className="space-y-1 md:col-span-2">
-                                  <label className={labelClass}>Duration / Dates</label>
-                                  <input {...register(`experience.${index}.duration`)} placeholder="e.g. June 2021 - Present" className={inputClass} />
-                                </div>
-                                
-                                <div className="space-y-1 md:col-span-2">
-                                  <div className="flex justify-between items-center mb-1.5 pt-1">
-                                    <label className={labelClass}>Job Description & Achievements</label>
-                                    <button
-                                      type="button"
-                                      onClick={() => {
-                                        const companyVal = watchedData.experience?.[index]?.company;
-                                        const positionVal = watchedData.experience?.[index]?.position;
-                                        const descVal = watchedData.experience?.[index]?.description;
-                                        handleAISuggest('experience', {
-                                          index,
-                                          position: positionVal,
-                                          company: companyVal,
-                                          description: descVal
-                                        }, (text) => setValue(`experience.${index}.description`, text));
-                                      }}
-                                      disabled={loadingAISug[sugKey]}
-                                      className="text-xs font-bold text-[#5B4DFF] flex items-center gap-1.5 hover:text-[#A855F7] transition-all bg-[#5B4DFF]/5 px-3 py-1.5 rounded-full hover:bg-[#5B4DFF]/10"
-                                    >
-                                      {loadingAISug[sugKey] ? (
-                                        <div className="w-3.5 h-3.5 border-2 border-[#5B4DFF] border-t-transparent rounded-full animate-spin" />
-                                      ) : (
-                                        <Sparkles size={13} className="text-[#5B4DFF]" />
-                                      )}
-                                      AI Suggest
-                                    </button>
-                                  </div>
-                                  <textarea
-                                    {...register(`experience.${index}.description`)}
-                                    placeholder="Add bullet points describing technical challenges, key outcomes..."
-                                    rows={4}
-                                    className="w-full min-h-[140px] p-4 border border-gray-200 rounded-2xl focus:border-[#A855F7] focus:ring-4 focus:ring-[#A855F7]/10 transition-all outline-none bg-white font-medium text-[#0F172A] placeholder-gray-400 text-sm transition-all duration-300 resize-none"
-                                  />
-                                </div>
+                            <div className="space-y-2">
+                              <label className={labelClass}>Academic Projects / College Activities / Volunteer Work</label>
+                              <textarea
+                                {...register('fresherAcademicWork')}
+                                placeholder="Describe any college projects, hackathons, leadership activities, freelancing, or volunteer work."
+                                rows={4}
+                                className="w-full min-h-[140px] p-4 border border-gray-200 rounded-2xl focus:border-[#A855F7] focus:ring-4 focus:ring-[#A855F7]/10 transition-all outline-none bg-white font-medium text-[#0F172A] placeholder-gray-400 text-sm transition-all duration-300 resize-none"
+                              />
+                            </div>
+
+                            <div className="space-y-3 pt-2">
+                              <span className="text-xs font-bold text-[#64748B] uppercase tracking-wider block mb-1">Add Resume Sections & Content</span>
+                              <div className="flex flex-wrap gap-2">
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    appendProj({ name: '', description: '', link: '', technologies: '', duration: '', bullets: [] });
+                                    toast.success('Added a new project to your resume! You can fill out the details below.');
+                                  }}
+                                  className="h-[40px] px-4 rounded-xl border border-dashed border-[#5B4DFF]/30 text-xs font-bold text-[#5B4DFF] hover:text-[#A855F7] hover:border-[#A855F7]/50 hover:bg-[#5B4DFF]/5 active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer select-none"
+                                >
+                                  <Plus size={14} /> Add Project
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    appendInternship({ company: '', role: '', duration: '', location: '', description: '', achievements: '' });
+                                    toast.success('Added internship to your resume! You can fill out the details below.');
+                                  }}
+                                  className="h-[40px] px-4 rounded-xl border border-dashed border-[#5B4DFF]/30 text-xs font-bold text-[#5B4DFF] hover:text-[#A855F7] hover:border-[#A855F7]/50 hover:bg-[#5B4DFF]/5 active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer select-none"
+                                >
+                                  <Plus size={14} /> Add Internship
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    appendVolunteer({ organization: '', role: '', duration: '', description: '', achievements: '' });
+                                    toast.success('Added volunteer experience to your resume! You can fill out the details below.');
+                                  }}
+                                  className="h-[40px] px-4 rounded-xl border border-dashed border-[#5B4DFF]/30 text-xs font-bold text-[#5B4DFF] hover:text-[#A855F7] hover:border-[#A855F7]/50 hover:bg-[#5B4DFF]/5 active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer select-none"
+                                >
+                                  <Plus size={14} /> Add Volunteer Experience
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    appendAchievement({ title: '', organization: '', date: '', description: '' });
+                                    toast.success('Added achievement to your resume! You can fill out the details below.');
+                                  }}
+                                  className="h-[40px] px-4 rounded-xl border border-dashed border-[#5B4DFF]/30 text-xs font-bold text-[#5B4DFF] hover:text-[#A855F7] hover:border-[#A855F7]/50 hover:bg-[#5B4DFF]/5 active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer select-none"
+                                >
+                                  <Plus size={14} /> Add Achievement
+                                </button>
                               </div>
                             </div>
-                          );
-                        })}
+
+                            {/* Dynamically added sections editable right here inside Step 2 */}
+                            {projFields.length > 0 && (
+                              <div className="space-y-4 pt-4 border-t border-[#ECECF5]/60">
+                                <h4 className="text-sm font-bold text-[#0F172A]">Added Projects</h4>
+                                <div className="space-y-4">
+                                  {projFields.map((field, index) => {
+                                    const sugKey = `fresher-project-${index}`;
+                                    return (
+                                      <div key={field.id} className="p-4 border border-[#ECECF5] rounded-xl bg-[#F8FAFC]/50 hover:bg-[#F8FAFC]/80 transition-all space-y-3 relative group">
+                                        <button
+                                          type="button"
+                                          onClick={() => removeProj(index)}
+                                          className="absolute top-3 right-3 p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all opacity-0 group-hover:opacity-100 cursor-pointer"
+                                        >
+                                          <Trash2 size={14} />
+                                        </button>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                          <div className="space-y-1">
+                                            <label className="text-[10px] font-bold text-[#0F172A] uppercase tracking-wider">Project Name *</label>
+                                            <input {...register(`projects.${index}.name`)} placeholder="e.g. AI Portfolio Generator" className="w-full h-[40px] px-3 bg-white border border-gray-200 rounded-xl outline-none text-xs font-semibold text-[#0F172A] focus:border-[#A855F7] focus:ring-4 focus:ring-[#A855F7]/10 transition-all" />
+                                          </div>
+                                          <div className="space-y-1">
+                                            <label className="text-[10px] font-bold text-[#0F172A] uppercase tracking-wider">Technologies Used</label>
+                                            <input {...register(`projects.${index}.technologies`)} placeholder="e.g. React, Next.js" className="w-full h-[40px] px-3 bg-white border border-gray-200 rounded-xl outline-none text-xs font-semibold text-[#0F172A] focus:border-[#A855F7] focus:ring-4 focus:ring-[#A855F7]/10 transition-all" />
+                                          </div>
+                                          <div className="space-y-1">
+                                            <label className="text-[10px] font-bold text-[#0F172A] uppercase tracking-wider">Duration</label>
+                                            <input {...register(`projects.${index}.duration`)} placeholder="e.g. 3 Months" className="w-full h-[40px] px-3 bg-white border border-gray-200 rounded-xl outline-none text-xs font-semibold text-[#0F172A] focus:border-[#A855F7] focus:ring-4 focus:ring-[#A855F7]/10 transition-all" />
+                                          </div>
+                                          <div className="space-y-1">
+                                            <label className="text-[10px] font-bold text-[#0F172A] uppercase tracking-wider">Project URL</label>
+                                            <input {...register(`projects.${index}.link`)} placeholder="e.g. domain.com" className="w-full h-[40px] px-3 bg-white border border-gray-200 rounded-xl outline-none text-xs font-semibold text-[#0F172A] focus:border-[#A855F7] focus:ring-4 focus:ring-[#A855F7]/10 transition-all" />
+                                          </div>
+                                          <div className="space-y-1 sm:col-span-2">
+                                            <div className="flex justify-between items-center">
+                                              <label className="text-[10px] font-bold text-[#0F172A] uppercase tracking-wider">Description</label>
+                                              <button
+                                                type="button"
+                                                onClick={() => {
+                                                  const nameVal = watchedData.projects?.[index]?.name;
+                                                  const descVal = watchedData.projects?.[index]?.description;
+                                                  handleAISuggest('project', {
+                                                    index,
+                                                    name: nameVal,
+                                                    description: descVal
+                                                  }, (text) => setValue(`projects.${index}.description`, text));
+                                                }}
+                                                disabled={loadingAISug[sugKey]}
+                                                className="text-[10px] font-bold text-[#5B4DFF] flex items-center gap-1 hover:text-[#A855F7] transition-all cursor-pointer"
+                                              >
+                                                {loadingAISug[sugKey] ? "Suggesting..." : "✨ AI Suggest"}
+                                              </button>
+                                            </div>
+                                            <textarea {...register(`projects.${index}.description`)} placeholder="Summarize key features..." rows={2} className="w-full p-3 bg-white border border-gray-200 rounded-xl outline-none text-xs font-semibold text-[#0F172A] focus:border-[#A855F7] focus:ring-4 focus:ring-[#A855F7]/10 transition-all resize-none" />
+                                          </div>
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            )}
+
+                            {internshipFields.length > 0 && (
+                              <div className="space-y-4 pt-4 border-t border-[#ECECF5]/60">
+                                <h4 className="text-sm font-bold text-[#0F172A]">Added Internships</h4>
+                                <div className="space-y-4">
+                                  {internshipFields.map((field, index) => {
+                                    const sugKey = `fresher-internship-${index}`;
+                                    return (
+                                      <div key={field.id} className="p-4 border border-[#ECECF5] rounded-xl bg-[#F8FAFC]/50 hover:bg-[#F8FAFC]/80 transition-all space-y-3 relative group">
+                                        <button
+                                          type="button"
+                                          onClick={() => removeInternship(index)}
+                                          className="absolute top-3 right-3 p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all opacity-0 group-hover:opacity-100 cursor-pointer"
+                                        >
+                                          <Trash2 size={14} />
+                                        </button>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                          <div className="space-y-1">
+                                            <label className="text-[10px] font-bold text-[#0F172A] uppercase tracking-wider">Company Name</label>
+                                            <input {...register(`internships.${index}.company` as any)} placeholder="e.g. Acme Corp" className="w-full h-[40px] px-3 bg-white border border-gray-200 rounded-xl outline-none text-xs font-semibold text-[#0F172A] focus:border-[#A855F7] focus:ring-4 focus:ring-[#A855F7]/10 transition-all" />
+                                          </div>
+                                          <div className="space-y-1">
+                                            <label className="text-[10px] font-bold text-[#0F172A] uppercase tracking-wider">Role / Title</label>
+                                            <input {...register(`internships.${index}.role` as any)} placeholder="e.g. Front-End Intern" className="w-full h-[40px] px-3 bg-white border border-gray-200 rounded-xl outline-none text-xs font-semibold text-[#0F172A] focus:border-[#A855F7] focus:ring-4 focus:ring-[#A855F7]/10 transition-all" />
+                                          </div>
+                                          <div className="space-y-1">
+                                            <label className="text-[10px] font-bold text-[#0F172A] uppercase tracking-wider">Duration</label>
+                                            <input {...register(`internships.${index}.duration` as any)} placeholder="e.g. May 2023 - July 2023" className="w-full h-[40px] px-3 bg-white border border-gray-200 rounded-xl outline-none text-xs font-semibold text-[#0F172A] focus:border-[#A855F7] focus:ring-4 focus:ring-[#A855F7]/10 transition-all" />
+                                          </div>
+                                          <div className="space-y-1">
+                                            <label className="text-[10px] font-bold text-[#0F172A] uppercase tracking-wider">Location</label>
+                                            <input {...register(`internships.${index}.location` as any)} placeholder="e.g. Remote" className="w-full h-[40px] px-3 bg-white border border-gray-200 rounded-xl outline-none text-xs font-semibold text-[#0F172A] focus:border-[#A855F7] focus:ring-4 focus:ring-[#A855F7]/10 transition-all" />
+                                          </div>
+                                          <div className="space-y-1 sm:col-span-2">
+                                            <div className="flex justify-between items-center">
+                                              <label className="text-[10px] font-bold text-[#0F172A] uppercase tracking-wider">Description</label>
+                                              <button
+                                                type="button"
+                                                onClick={() => {
+                                                  const companyVal = watchedData.internships?.[index]?.company;
+                                                  const roleVal = watchedData.internships?.[index]?.role;
+                                                  const descVal = watchedData.internships?.[index]?.description;
+                                                  handleAISuggest('internship', {
+                                                    index,
+                                                    role: roleVal,
+                                                    company: companyVal,
+                                                    description: descVal
+                                                  }, (text) => setValue(`internships.${index}.description` as any, text));
+                                                }}
+                                                disabled={loadingAISug[sugKey]}
+                                                className="text-[10px] font-bold text-[#5B4DFF] flex items-center gap-1 hover:text-[#A855F7] transition-all cursor-pointer"
+                                              >
+                                                {loadingAISug[sugKey] ? "Suggesting..." : "✨ AI Suggest"}
+                                              </button>
+                                            </div>
+                                            <textarea {...register(`internships.${index}.description` as any)} placeholder="Summarize responsibilities..." rows={2} className="w-full p-3 bg-white border border-gray-200 rounded-xl outline-none text-xs font-semibold text-[#0F172A] focus:border-[#A855F7] focus:ring-4 focus:ring-[#A855F7]/10 transition-all resize-none" />
+                                          </div>
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            )}
+
+                            {volunteerFields.length > 0 && (
+                              <div className="space-y-4 pt-4 border-t border-[#ECECF5]/60">
+                                <h4 className="text-sm font-bold text-[#0F172A]">Added Volunteer Experience</h4>
+                                <div className="space-y-4">
+                                  {volunteerFields.map((field, index) => {
+                                    const sugKey = `fresher-volunteer-${index}`;
+                                    return (
+                                      <div key={field.id} className="p-4 border border-[#ECECF5] rounded-xl bg-[#F8FAFC]/50 hover:bg-[#F8FAFC]/80 transition-all space-y-3 relative group">
+                                        <button
+                                          type="button"
+                                          onClick={() => removeVolunteer(index)}
+                                          className="absolute top-3 right-3 p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all opacity-0 group-hover:opacity-100 cursor-pointer"
+                                        >
+                                          <Trash2 size={14} />
+                                        </button>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                          <div className="space-y-1">
+                                            <label className="text-[10px] font-bold text-[#0F172A] uppercase tracking-wider">Organization</label>
+                                            <input {...register(`volunteerExperience.${index}.organization` as any)} placeholder="e.g. Red Cross" className="w-full h-[40px] px-3 bg-white border border-gray-200 rounded-xl outline-none text-xs font-semibold text-[#0F172A] focus:border-[#A855F7] focus:ring-4 focus:ring-[#A855F7]/10 transition-all" />
+                                          </div>
+                                          <div className="space-y-1">
+                                            <label className="text-[10px] font-bold text-[#0F172A] uppercase tracking-wider">Role / Position</label>
+                                            <input {...register(`volunteerExperience.${index}.role` as any)} placeholder="e.g. Web Lead" className="w-full h-[40px] px-3 bg-white border border-gray-200 rounded-xl outline-none text-xs font-semibold text-[#0F172A] focus:border-[#A855F7] focus:ring-4 focus:ring-[#A855F7]/10 transition-all" />
+                                          </div>
+                                          <div className="space-y-1 sm:col-span-2">
+                                            <label className="text-[10px] font-bold text-[#0F172A] uppercase tracking-wider">Duration</label>
+                                            <input {...register(`volunteerExperience.${index}.duration` as any)} placeholder="e.g. Jan 2022 - Present" className="w-full h-[40px] px-3 bg-white border border-gray-200 rounded-xl outline-none text-xs font-semibold text-[#0F172A] focus:border-[#A855F7] focus:ring-4 focus:ring-[#A855F7]/10 transition-all" />
+                                          </div>
+                                          <div className="space-y-1 sm:col-span-2">
+                                            <div className="flex justify-between items-center">
+                                              <label className="text-[10px] font-bold text-[#0F172A] uppercase tracking-wider">Description</label>
+                                              <button
+                                                type="button"
+                                                onClick={() => {
+                                                  const orgVal = watchedData.volunteerExperience?.[index]?.organization;
+                                                  const roleVal = watchedData.volunteerExperience?.[index]?.role;
+                                                  const descVal = watchedData.volunteerExperience?.[index]?.description;
+                                                  handleAISuggest('volunteer', {
+                                                    index,
+                                                    role: roleVal,
+                                                    organization: orgVal,
+                                                    description: descVal
+                                                  }, (text) => setValue(`volunteerExperience.${index}.description` as any, text));
+                                                }}
+                                                disabled={loadingAISug[sugKey]}
+                                                className="text-[10px] font-bold text-[#5B4DFF] flex items-center gap-1 hover:text-[#A855F7] transition-all cursor-pointer"
+                                              >
+                                                {loadingAISug[sugKey] ? "Suggesting..." : "✨ AI Suggest"}
+                                              </button>
+                                            </div>
+                                            <textarea {...register(`volunteerExperience.${index}.description` as any)} placeholder="Describe your contribution..." rows={2} className="w-full p-3 bg-white border border-gray-200 rounded-xl outline-none text-xs font-semibold text-[#0F172A] focus:border-[#A855F7] focus:ring-4 focus:ring-[#A855F7]/10 transition-all resize-none" />
+                                          </div>
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            )}
+
+                            {achievementFields.length > 0 && (
+                              <div className="space-y-4 pt-4 border-t border-[#ECECF5]/60">
+                                <h4 className="text-sm font-bold text-[#0F172A]">Added Achievements</h4>
+                                <div className="space-y-4">
+                                  {achievementFields.map((field, index) => {
+                                    const sugKey = `fresher-achievement-${index}`;
+                                    return (
+                                      <div key={field.id} className="p-4 border border-[#ECECF5] rounded-xl bg-[#F8FAFC]/50 hover:bg-[#F8FAFC]/80 transition-all space-y-3 relative group">
+                                        <button
+                                          type="button"
+                                          onClick={() => removeAchievement(index)}
+                                          className="absolute top-3 right-3 p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all opacity-0 group-hover:opacity-100 cursor-pointer"
+                                        >
+                                          <Trash2 size={14} />
+                                        </button>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                          <div className="space-y-1">
+                                            <label className="text-[10px] font-bold text-[#0F172A] uppercase tracking-wider">Achievement Title</label>
+                                            <input {...register(`achievements.${index}.title` as any)} placeholder="e.g. 1st Place Hackathon" className="w-full h-[40px] px-3 bg-white border border-gray-200 rounded-xl outline-none text-xs font-semibold text-[#0F172A] focus:border-[#A855F7] focus:ring-4 focus:ring-[#A855F7]/10 transition-all" />
+                                          </div>
+                                          <div className="space-y-1">
+                                            <label className="text-[10px] font-bold text-[#0F172A] uppercase tracking-wider">Issuing Organization</label>
+                                            <input {...register(`achievements.${index}.organization` as any)} placeholder="e.g. Google Cloud Developer Group" className="w-full h-[40px] px-3 bg-white border border-gray-200 rounded-xl outline-none text-xs font-semibold text-[#0F172A] focus:border-[#A855F7] focus:ring-4 focus:ring-[#A855F7]/10 transition-all" />
+                                          </div>
+                                          <div className="space-y-1 sm:col-span-2">
+                                            <label className="text-[10px] font-bold text-[#0F172A] uppercase tracking-wider">Date Received</label>
+                                            <input {...register(`achievements.${index}.date` as any)} placeholder="e.g. October 2023" className="w-full h-[40px] px-3 bg-white border border-gray-200 rounded-xl outline-none text-xs font-semibold text-[#0F172A] focus:border-[#A855F7] focus:ring-4 focus:ring-[#A855F7]/10 transition-all" />
+                                          </div>
+                                          <div className="space-y-1 sm:col-span-2">
+                                            <div className="flex justify-between items-center">
+                                              <label className="text-[10px] font-bold text-[#0F172A] uppercase tracking-wider">Description</label>
+                                              <button
+                                                type="button"
+                                                onClick={() => {
+                                                  const titleVal = watchedData.achievements?.[index]?.title;
+                                                  const orgVal = watchedData.achievements?.[index]?.organization;
+                                                  const descVal = watchedData.achievements?.[index]?.description;
+                                                  handleAISuggest('achievement', {
+                                                    index,
+                                                    title: titleVal,
+                                                    organization: orgVal,
+                                                    description: descVal
+                                                  }, (text) => setValue(`achievements.${index}.description` as any, text));
+                                                }}
+                                                disabled={loadingAISug[sugKey]}
+                                                className="text-[10px] font-bold text-[#5B4DFF] flex items-center gap-1 hover:text-[#A855F7] transition-all cursor-pointer"
+                                              >
+                                                {loadingAISug[sugKey] ? "Suggesting..." : "✨ AI Suggest"}
+                                              </button>
+                                            </div>
+                                            <textarea {...register(`achievements.${index}.description` as any)} placeholder="Explain the context of this award..." rows={2} className="w-full p-3 bg-white border border-gray-200 rounded-xl outline-none text-xs font-semibold text-[#0F172A] focus:border-[#A855F7] focus:ring-4 focus:ring-[#A855F7]/10 transition-all resize-none" />
+                                          </div>
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <div className="space-y-6">
+                            <div className="flex justify-between items-center sm:pt-2">
+                              <span className="text-xs font-bold text-[#64748B] uppercase tracking-wider">Job Roles & History</span>
+                              <button
+                                type="button"
+                                onClick={() => appendExp({ company: '', position: '', duration: '', description: '' })}
+                                className="text-xs font-bold text-[#5B4DFF] hover:text-[#A855F7] flex items-center gap-1.5 transition-all bg-[#5B4DFF]/5 px-3 py-1.5 rounded-full hover:bg-[#5B4DFF]/10"
+                              >
+                                <Plus size={14} /> Add Experience
+                              </button>
+                            </div>
+
+                            {expFields.length === 0 && (
+                              <div className="text-center py-8 border border-dashed border-gray-200 rounded-2xl bg-gray-50/50">
+                                <p className="text-xs font-medium text-gray-400">No career history added yet.</p>
+                              </div>
+                            )}
+
+                            {expFields.map((field, index) => {
+                              const sugKey = `experience-${index}`;
+                              return (
+                                <div key={field.id} className="p-5 border border-[#ECECF5] rounded-2xl bg-[#F8FAFC]/55 hover:bg-[#F8FAFC]/90 transition-all space-y-4 relative group">
+                                  <button
+                                    type="button"
+                                    onClick={() => removeExp(index)}
+                                    className="absolute top-4 right-4 p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all opacity-0 group-hover:opacity-100"
+                                  >
+                                    <Trash2 size={16} />
+                                  </button>
+                                  
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="space-y-1">
+                                      <label className={labelClass}>Company Name</label>
+                                      <input {...register(`experience.${index}.company`)} placeholder="e.g. Google" className={inputClass} />
+                                    </div>
+                                    <div className="space-y-1">
+                                      <label className={labelClass}>Job Title / Position</label>
+                                      <input {...register(`experience.${index}.position`)} placeholder="e.g. Software Engineer" className={inputClass} />
+                                    </div>
+                                    <div className="space-y-1 md:col-span-2">
+                                      <label className={labelClass}>Duration / Dates</label>
+                                      <input {...register(`experience.${index}.duration`)} placeholder="e.g. June 2021 - Present" className={inputClass} />
+                                    </div>
+                                    
+                                    <div className="space-y-1 md:col-span-2">
+                                      <div className="flex justify-between items-center mb-1.5 pt-1">
+                                        <label className={labelClass}>Job Description & Achievements</label>
+                                        <button
+                                          type="button"
+                                          onClick={() => {
+                                            const companyVal = watchedData.experience?.[index]?.company;
+                                            const positionVal = watchedData.experience?.[index]?.position;
+                                            const descVal = watchedData.experience?.[index]?.description;
+                                            handleAISuggest('experience', {
+                                              index,
+                                              position: positionVal,
+                                              company: companyVal,
+                                              description: descVal
+                                            }, (text) => setValue(`experience.${index}.description`, text));
+                                          }}
+                                          disabled={loadingAISug[sugKey]}
+                                          className="text-xs font-bold text-[#5B4DFF] flex items-center gap-1.5 hover:text-[#A855F7] transition-all bg-[#5B4DFF]/5 px-3 py-1.5 rounded-full hover:bg-[#5B4DFF]/10"
+                                        >
+                                          {loadingAISug[sugKey] ? (
+                                            <div className="w-3.5 h-3.5 border-2 border-[#5B4DFF] border-t-transparent rounded-full animate-spin" />
+                                          ) : (
+                                            <Sparkles size={13} className="text-[#5B4DFF]" />
+                                          )}
+                                          AI Suggest
+                                        </button>
+                                      </div>
+                                      <textarea
+                                        {...register(`experience.${index}.description`)}
+                                        placeholder="Add bullet points describing technical challenges, key outcomes..."
+                                        rows={4}
+                                        className="w-full min-h-[140px] p-4 border border-gray-200 rounded-2xl focus:border-[#A855F7] focus:ring-4 focus:ring-[#A855F7]/10 transition-all outline-none bg-white font-medium text-[#0F172A] placeholder-gray-400 text-sm transition-all duration-300 resize-none"
+                                      />
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
                       </div>
                     </motion.div>
                   )}
@@ -981,13 +1391,30 @@ export const ResumeForm: React.FC<ResumeFormProps> = ({ initialData, onChange, o
                               
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-1">
-                                  <label className={labelClass}>Project Name</label>
+                                  <label className={labelClass}>Project Name *</label>
                                   <input {...register(`projects.${index}.name`)} placeholder="e.g. AI Portfolio Generator" className={inputClass} />
+                                </div>
+                                <div className="space-y-1">
+                                  <label className={labelClass}>Technologies Used</label>
+                                  <input {...register(`projects.${index}.technologies`)} placeholder="e.g. React, Next.js, Tailwind, Gemini API" className={inputClass} />
+                                </div>
+                                <div className="space-y-1">
+                                  <label className={labelClass}>Duration</label>
+                                  <input {...register(`projects.${index}.duration`)} placeholder="e.g. 3 Months, June 2023 - Aug 2023" className={inputClass} />
                                 </div>
                                 <div className="space-y-1">
                                   <label className={labelClass}>Project URL (Optional)</label>
                                   <input {...register(`projects.${index}.link`)} placeholder="e.g. portfolio-generator.com" className={inputClass} />
                                 </div>
+                                <div className="space-y-1">
+                                  <label className={labelClass}>GitHub URL (Optional)</label>
+                                  <input {...register(`projects.${index}.githubUrl`)} placeholder="e.g. github.com/username/project" className={inputClass} />
+                                </div>
+                                <div className="space-y-1">
+                                  <label className={labelClass}>Live Demo URL (Optional)</label>
+                                  <input {...register(`projects.${index}.liveUrl`)} placeholder="e.g. demo.portfolio-generator.com" className={inputClass} />
+                                </div>
+                                
                                 <div className="space-y-1 md:col-span-2">
                                   <div className="flex justify-between items-center mb-1.5 pt-1">
                                     <label className={labelClass}>Project Description</label>
@@ -1003,7 +1430,7 @@ export const ResumeForm: React.FC<ResumeFormProps> = ({ initialData, onChange, o
                                         }, (text) => setValue(`projects.${index}.description`, text));
                                       }}
                                       disabled={loadingAISug[sugKey]}
-                                      className="text-xs font-bold text-[#5B4DFF] flex items-center gap-1.5 hover:text-[#A855F7] transition-all bg-[#5B4DFF]/5 px-3 py-1.5 rounded-full hover:bg-[#5B4DFF]/10"
+                                      className="text-xs font-bold text-[#5B4DFF] flex items-center gap-1.5 hover:text-[#A855F7] transition-all bg-[#5B4DFF]/5 px-3 py-1.5 rounded-full hover:bg-[#5B4DFF]/10 cursor-pointer"
                                     >
                                       {loadingAISug[sugKey] ? (
                                         <div className="w-3.5 h-3.5 border-2 border-[#5B4DFF] border-t-transparent rounded-full animate-spin" />
@@ -1016,6 +1443,421 @@ export const ResumeForm: React.FC<ResumeFormProps> = ({ initialData, onChange, o
                                   <textarea
                                     {...register(`projects.${index}.description`)}
                                     placeholder="Summarize the core technical stacks associated with this project and features..."
+                                    rows={3}
+                                    className="w-full min-h-[140px] p-4 border border-gray-200 rounded-2xl focus:border-[#A855F7] focus:ring-4 focus:ring-[#A855F7]/10 transition-all outline-none bg-white font-medium text-[#0F172A] placeholder-gray-400 text-sm transition-all duration-300 resize-none"
+                                  />
+                                </div>
+
+                                {/* Dynamic Bullet Points (dynamic) */}
+                                <div className="space-y-3 md:col-span-2 pt-2 border-t border-[#ECECF5]/60">
+                                  <div className="flex justify-between items-center">
+                                    <label className={labelClass}>Bullet Points (Dynamic)</label>
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const currentBullets = watchedData.projects?.[index]?.bullets || [];
+                                        setValue(`projects.${index}.bullets`, [...currentBullets, '']);
+                                      }}
+                                      className="text-xs font-bold text-[#5B4DFF] hover:text-[#A855F7] flex items-center gap-1 bg-[#5B4DFF]/5 px-2.5 py-1.5 rounded-full hover:bg-[#5B4DFF]/10 cursor-pointer"
+                                    >
+                                      <Plus size={12} /> Add Bullet Point
+                                    </button>
+                                  </div>
+                                  <div className="space-y-2">
+                                    {((watchedData.projects?.[index]?.bullets as string[]) || []).map((bullet, bIdx) => (
+                                      <div key={bIdx} className="flex items-center gap-2">
+                                        <span className="text-gray-400 text-xs font-mono">{bIdx + 1}.</span>
+                                        <input
+                                          {...register(`projects.${index}.bullets.${bIdx}` as any)}
+                                          placeholder="e.g. Engineered state managers and local persistence with a 99.9% success rate."
+                                          className="flex-1 h-[40px] px-3 border border-gray-200 rounded-xl focus:border-[#A855F7] focus:ring-4 focus:ring-[#A855F7]/10 outline-none bg-white font-medium text-[#0F172A] placeholder-gray-400 text-xs"
+                                        />
+                                        <button
+                                          type="button"
+                                          onClick={() => {
+                                            const currentBullets = [...(watchedData.projects?.[index]?.bullets || [])];
+                                            currentBullets.splice(bIdx, 1);
+                                            setValue(`projects.${index}.bullets`, currentBullets);
+                                          }}
+                                          className="p-1 text-gray-400 hover:text-red-500 rounded-lg cursor-pointer"
+                                        >
+                                          <Trash2 size={14} />
+                                        </button>
+                                      </div>
+                                    ))}
+                                    {(!watchedData.projects?.[index]?.bullets || watchedData.projects?.[index]?.bullets?.length === 0) && (
+                                      <p className="text-[11px] text-gray-400 italic">No bullet points added yet. Bullet points can be used alongside the description.</p>
+                                    )}
+                                  </div>
+                                </div>
+
+                                <div className="md:col-span-2 flex justify-end gap-2 pt-2 border-t border-[#ECECF5]/60">
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const currentVal = watchedData.projects?.[index];
+                                      insertProj(index + 1, {
+                                        ...currentVal,
+                                        name: currentVal?.name ? `${currentVal.name} (Copy)` : '',
+                                        bullets: currentVal?.bullets ? [...currentVal.bullets] : [],
+                                      });
+                                      toast.success('Project duplicated successfully!');
+                                    }}
+                                    className="text-xs font-bold text-[#5B4DFF] hover:text-[#A855F7] bg-[#5B4DFF]/5 px-3 py-1.5 rounded-full hover:bg-[#5B4DFF]/10 cursor-pointer flex items-center gap-1"
+                                  >
+                                    Duplicate Project
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* Internships section card */}
+              <div className="bg-white rounded-[24px] shadow-sm shadow-[#ECECF5]/60 hover:shadow-md transition-all duration-300 p-4 sm:p-6 lg:p-8 border border-[#ECECF5] relative overflow-hidden pl-5 sm:pl-7 lg:pl-9 before:absolute before:left-0 before:top-0 before:bottom-0 before:w-[4px] sm:before:w-[5px] before:bg-gradient-to-b before:from-[#5B4DFF] before:via-[#A855F7] before:to-[#FF5EA8] before:rounded-l-full">
+                <div 
+                  onClick={() => toggleSection('internships')} 
+                  className="flex items-center justify-between cursor-pointer"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="bg-gradient-to-br from-[#5B4DFF]/10 to-[#A855F7]/10 p-3 rounded-2xl text-[#5B4DFF]">
+                      <Briefcase size={22} />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-[#0F172A]">Internships</h3>
+                      <p className="text-xs text-[#64748B] font-medium">Professional internships and industrial training programs.</p>
+                    </div>
+                  </div>
+                  <ChevronDown className={`text-gray-400 transition-transform duration-300 ${expandedSections.internships ? 'rotate-180' : ''}`} size={20} />
+                </div>
+
+                <AnimatePresence initial={false}>
+                  {expandedSections.internships && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
+                      className="overflow-hidden"
+                    >
+                      <div className="pt-6 space-y-6">
+                        <div className="flex justify-between items-center sm:pt-2">
+                          <span className="text-xs font-bold text-[#64748B] uppercase tracking-wider">Internship History</span>
+                          <button
+                            type="button"
+                            onClick={() => appendInternship({ company: '', role: '', duration: '', location: '', description: '', achievements: '' })}
+                            className="text-xs font-bold text-[#5B4DFF] hover:text-[#A855F7] flex items-center gap-1.5 transition-all bg-[#5B4DFF]/5 px-3 py-1.5 rounded-full hover:bg-[#5B4DFF]/10 cursor-pointer"
+                          >
+                            <Plus size={14} /> Add Internship
+                          </button>
+                        </div>
+
+                        {internshipFields.length === 0 && (
+                          <div className="text-center py-8 border border-dashed border-gray-200 rounded-2xl bg-gray-50/50">
+                            <p className="text-xs font-medium text-gray-400">No internships added yet.</p>
+                          </div>
+                        )}
+
+                        {internshipFields.map((field, index) => {
+                          const sugKey = `internship-${index}`;
+                          return (
+                            <div key={field.id} className="p-5 border border-[#ECECF5] rounded-2xl bg-[#F8FAFC]/55 hover:bg-[#F8FAFC]/90 transition-all space-y-4 relative group">
+                              <button
+                                type="button"
+                                onClick={() => removeInternship(index)}
+                                className="absolute top-4 right-4 p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all opacity-0 group-hover:opacity-100"
+                              >
+                                <Trash2 size={16} />
+                              </button>
+                              
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="space-y-1">
+                                  <label className={labelClass}>Company Name</label>
+                                  <input {...register(`internships.${index}.company` as any)} placeholder="e.g. Acme Corp" className={inputClass} />
+                                </div>
+                                <div className="space-y-1">
+                                  <label className={labelClass}>Role / Title</label>
+                                  <input {...register(`internships.${index}.role` as any)} placeholder="e.g. Front-End Intern" className={inputClass} />
+                                </div>
+                                <div className="space-y-1">
+                                  <label className={labelClass}>Duration / Dates</label>
+                                  <input {...register(`internships.${index}.duration` as any)} placeholder="e.g. May 2023 - July 2023" className={inputClass} />
+                                </div>
+                                <div className="space-y-1">
+                                  <label className={labelClass}>Location</label>
+                                  <input {...register(`internships.${index}.location` as any)} placeholder="e.g. San Francisco, CA (Remote)" className={inputClass} />
+                                </div>
+                                
+                                <div className="space-y-1 md:col-span-2">
+                                  <div className="flex justify-between items-center mb-1.5 pt-1">
+                                    <label className={labelClass}>Description & Responsibilities</label>
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const companyVal = watchedData.internships?.[index]?.company;
+                                        const roleVal = watchedData.internships?.[index]?.role;
+                                        const descVal = watchedData.internships?.[index]?.description;
+                                        handleAISuggest('internship', {
+                                          index,
+                                          role: roleVal,
+                                          company: companyVal,
+                                          description: descVal
+                                        }, (text) => setValue(`internships.${index}.description` as any, text));
+                                      }}
+                                      disabled={loadingAISug[sugKey]}
+                                      className="text-xs font-bold text-[#5B4DFF] flex items-center gap-1.5 hover:text-[#A855F7] transition-all bg-[#5B4DFF]/5 px-3 py-1.5 rounded-full hover:bg-[#5B4DFF]/10 cursor-pointer"
+                                    >
+                                      {loadingAISug[sugKey] ? (
+                                        <div className="w-3.5 h-3.5 border-2 border-[#5B4DFF] border-t-transparent rounded-full animate-spin" />
+                                      ) : (
+                                        <Sparkles size={13} className="text-[#5B4DFF]" />
+                                      )}
+                                      AI Suggest
+                                    </button>
+                                  </div>
+                                  <textarea
+                                    {...register(`internships.${index}.description` as any)}
+                                    placeholder="Summarize the core achievements and technologies utilized..."
+                                    rows={3}
+                                    className="w-full min-h-[140px] p-4 border border-gray-200 rounded-2xl focus:border-[#A855F7] focus:ring-4 focus:ring-[#A855F7]/10 transition-all outline-none bg-white font-medium text-[#0F172A] placeholder-gray-400 text-sm transition-all duration-300 resize-none"
+                                  />
+                                </div>
+
+                                <div className="space-y-1 md:col-span-2">
+                                  <label className={labelClass}>Key Achievements (Optional)</label>
+                                  <input {...register(`internships.${index}.achievements` as any)} placeholder="e.g. Boosted SEO score by 40% and improved test suites" className={inputClass} />
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* Volunteer Experience section card */}
+              <div className="bg-white rounded-[24px] shadow-sm shadow-[#ECECF5]/60 hover:shadow-md transition-all duration-300 p-4 sm:p-6 lg:p-8 border border-[#ECECF5] relative overflow-hidden pl-5 sm:pl-7 lg:pl-9 before:absolute before:left-0 before:top-0 before:bottom-0 before:w-[4px] sm:before:w-[5px] before:bg-gradient-to-b before:from-[#5B4DFF] before:via-[#A855F7] before:to-[#FF5EA8] before:rounded-l-full">
+                <div 
+                  onClick={() => toggleSection('volunteer')} 
+                  className="flex items-center justify-between cursor-pointer"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="bg-gradient-to-br from-[#5B4DFF]/10 to-[#A855F7]/10 p-3 rounded-2xl text-[#5B4DFF]">
+                      <User size={22} />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-[#0F172A]">Volunteer Experience</h3>
+                      <p className="text-xs text-[#64748B] font-medium">Your community work, leadership, and non-profit roles.</p>
+                    </div>
+                  </div>
+                  <ChevronDown className={`text-gray-400 transition-transform duration-300 ${expandedSections.volunteer ? 'rotate-180' : ''}`} size={20} />
+                </div>
+
+                <AnimatePresence initial={false}>
+                  {expandedSections.volunteer && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
+                      className="overflow-hidden"
+                    >
+                      <div className="pt-6 space-y-6">
+                        <div className="flex justify-between items-center sm:pt-2">
+                          <span className="text-xs font-bold text-[#64748B] uppercase tracking-wider">Volunteer History</span>
+                          <button
+                            type="button"
+                            onClick={() => appendVolunteer({ organization: '', role: '', duration: '', description: '', achievements: '' })}
+                            className="text-xs font-bold text-[#5B4DFF] hover:text-[#A855F7] flex items-center gap-1.5 transition-all bg-[#5B4DFF]/5 px-3 py-1.5 rounded-full hover:bg-[#5B4DFF]/10 cursor-pointer"
+                          >
+                            <Plus size={14} /> Add Volunteer Experience
+                          </button>
+                        </div>
+
+                        {volunteerFields.length === 0 && (
+                          <div className="text-center py-8 border border-dashed border-gray-200 rounded-2xl bg-gray-50/50">
+                            <p className="text-xs font-medium text-gray-400">No volunteer experience added yet.</p>
+                          </div>
+                        )}
+
+                        {volunteerFields.map((field, index) => {
+                          const sugKey = `volunteer-${index}`;
+                          return (
+                            <div key={field.id} className="p-5 border border-[#ECECF5] rounded-2xl bg-[#F8FAFC]/55 hover:bg-[#F8FAFC]/90 transition-all space-y-4 relative group">
+                              <button
+                                type="button"
+                                onClick={() => removeVolunteer(index)}
+                                className="absolute top-4 right-4 p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all opacity-0 group-hover:opacity-100"
+                              >
+                                <Trash2 size={16} />
+                              </button>
+                              
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="space-y-1">
+                                  <label className={labelClass}>Organization</label>
+                                  <input {...register(`volunteerExperience.${index}.organization` as any)} placeholder="e.g. Red Cross" className={inputClass} />
+                                </div>
+                                <div className="space-y-1">
+                                  <label className={labelClass}>Role / Position</label>
+                                  <input {...register(`volunteerExperience.${index}.role` as any)} placeholder="e.g. Web Lead" className={inputClass} />
+                                </div>
+                                <div className="space-y-1 md:col-span-2">
+                                  <label className={labelClass}>Duration / Dates</label>
+                                  <input {...register(`volunteerExperience.${index}.duration` as any)} placeholder="e.g. Jan 2022 - Present" className={inputClass} />
+                                </div>
+                                
+                                <div className="space-y-1 md:col-span-2">
+                                  <div className="flex justify-between items-center mb-1.5 pt-1">
+                                    <label className={labelClass}>Role Description</label>
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const orgVal = watchedData.volunteerExperience?.[index]?.organization;
+                                        const roleVal = watchedData.volunteerExperience?.[index]?.role;
+                                        const descVal = watchedData.volunteerExperience?.[index]?.description;
+                                        handleAISuggest('volunteer', {
+                                          index,
+                                          role: roleVal,
+                                          organization: orgVal,
+                                          description: descVal
+                                        }, (text) => setValue(`volunteerExperience.${index}.description` as any, text));
+                                      }}
+                                      disabled={loadingAISug[sugKey]}
+                                      className="text-xs font-bold text-[#5B4DFF] flex items-center gap-1.5 hover:text-[#A855F7] transition-all bg-[#5B4DFF]/5 px-3 py-1.5 rounded-full hover:bg-[#5B4DFF]/10 cursor-pointer"
+                                    >
+                                      {loadingAISug[sugKey] ? (
+                                        <div className="w-3.5 h-3.5 border-2 border-[#5B4DFF] border-t-transparent rounded-full animate-spin" />
+                                      ) : (
+                                        <Sparkles size={13} className="text-[#5B4DFF]" />
+                                      )}
+                                      AI Suggest
+                                    </button>
+                                  </div>
+                                  <textarea
+                                    {...register(`volunteerExperience.${index}.description` as any)}
+                                    placeholder="Explain your contribution and community impact..."
+                                    rows={3}
+                                    className="w-full min-h-[140px] p-4 border border-gray-200 rounded-2xl focus:border-[#A855F7] focus:ring-4 focus:ring-[#A855F7]/10 transition-all outline-none bg-white font-medium text-[#0F172A] placeholder-gray-400 text-sm transition-all duration-300 resize-none"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* Achievements section card */}
+              <div className="bg-white rounded-[24px] shadow-sm shadow-[#ECECF5]/60 hover:shadow-md transition-all duration-300 p-4 sm:p-6 lg:p-8 border border-[#ECECF5] relative overflow-hidden pl-5 sm:pl-7 lg:pl-9 before:absolute before:left-0 before:top-0 before:bottom-0 before:w-[4px] sm:before:w-[5px] before:bg-gradient-to-b before:from-[#5B4DFF] before:via-[#A855F7] before:to-[#FF5EA8] before:rounded-l-full">
+                <div 
+                  onClick={() => toggleSection('achievements')} 
+                  className="flex items-center justify-between cursor-pointer"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="bg-gradient-to-br from-[#5B4DFF]/10 to-[#A855F7]/10 p-3 rounded-2xl text-[#5B4DFF]">
+                      <Award size={22} />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-[#0F172A]">Achievements</h3>
+                      <p className="text-xs text-[#64748B] font-medium">Your medals, awards, hackathons, and certifications.</p>
+                    </div>
+                  </div>
+                  <ChevronDown className={`text-gray-400 transition-transform duration-300 ${expandedSections.achievements ? 'rotate-180' : ''}`} size={20} />
+                </div>
+
+                <AnimatePresence initial={false}>
+                  {expandedSections.achievements && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
+                      className="overflow-hidden"
+                    >
+                      <div className="pt-6 space-y-6">
+                        <div className="flex justify-between items-center sm:pt-2">
+                          <span className="text-xs font-bold text-[#64748B] uppercase tracking-wider">Awards & Achievements</span>
+                          <button
+                            type="button"
+                            onClick={() => appendAchievement({ title: '', organization: '', date: '', description: '' })}
+                            className="text-xs font-bold text-[#5B4DFF] hover:text-[#A855F7] flex items-center gap-1.5 transition-all bg-[#5B4DFF]/5 px-3 py-1.5 rounded-full hover:bg-[#5B4DFF]/10 cursor-pointer"
+                          >
+                            <Plus size={14} /> Add Achievement
+                          </button>
+                        </div>
+
+                        {achievementFields.length === 0 && (
+                          <div className="text-center py-8 border border-dashed border-gray-200 rounded-2xl bg-gray-50/50">
+                            <p className="text-xs font-medium text-gray-400">No achievements added yet.</p>
+                          </div>
+                        )}
+
+                        {achievementFields.map((field, index) => {
+                          const sugKey = `achievement-${index}`;
+                          return (
+                            <div key={field.id} className="p-5 border border-[#ECECF5] rounded-2xl bg-[#F8FAFC]/55 hover:bg-[#F8FAFC]/90 transition-all space-y-4 relative group">
+                              <button
+                                type="button"
+                                onClick={() => removeAchievement(index)}
+                                className="absolute top-4 right-4 p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all opacity-0 group-hover:opacity-100"
+                              >
+                                <Trash2 size={16} />
+                              </button>
+                              
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="space-y-1">
+                                  <label className={labelClass}>Achievement Title</label>
+                                  <input {...register(`achievements.${index}.title` as any)} placeholder="e.g. 1st Place Hackathon" className={inputClass} />
+                                </div>
+                                <div className="space-y-1">
+                                  <label className={labelClass}>Issuing Organization</label>
+                                  <input {...register(`achievements.${index}.organization` as any)} placeholder="e.g. Google Cloud Developer Group" className={inputClass} />
+                                </div>
+                                <div className="space-y-1 md:col-span-2">
+                                  <label className={labelClass}>Date Received</label>
+                                  <input {...register(`achievements.${index}.date` as any)} placeholder="e.g. October 2023" className={inputClass} />
+                                </div>
+                                
+                                <div className="space-y-1 md:col-span-2">
+                                  <div className="flex justify-between items-center mb-1.5 pt-1">
+                                    <label className={labelClass}>Description / Context</label>
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const titleVal = watchedData.achievements?.[index]?.title;
+                                        const orgVal = watchedData.achievements?.[index]?.organization;
+                                        const descVal = watchedData.achievements?.[index]?.description;
+                                        handleAISuggest('achievement', {
+                                          index,
+                                          title: titleVal,
+                                          organization: orgVal,
+                                          description: descVal
+                                        }, (text) => setValue(`achievements.${index}.description` as any, text));
+                                      }}
+                                      disabled={loadingAISug[sugKey]}
+                                      className="text-xs font-bold text-[#5B4DFF] flex items-center gap-1.5 hover:text-[#A855F7] transition-all bg-[#5B4DFF]/5 px-3 py-1.5 rounded-full hover:bg-[#5B4DFF]/10 cursor-pointer"
+                                    >
+                                      {loadingAISug[sugKey] ? (
+                                        <div className="w-3.5 h-3.5 border-2 border-[#5B4DFF] border-t-transparent rounded-full animate-spin" />
+                                      ) : (
+                                        <Sparkles size={13} className="text-[#5B4DFF]" />
+                                      )}
+                                      AI Suggest
+                                    </button>
+                                  </div>
+                                  <textarea
+                                    {...register(`achievements.${index}.description` as any)}
+                                    placeholder="Explain the background, criteria, and impact of this recognition..."
                                     rows={3}
                                     className="w-full min-h-[140px] p-4 border border-gray-200 rounded-2xl focus:border-[#A855F7] focus:ring-4 focus:ring-[#A855F7]/10 transition-all outline-none bg-white font-medium text-[#0F172A] placeholder-gray-400 text-sm transition-all duration-300 resize-none"
                                   />

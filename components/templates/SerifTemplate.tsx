@@ -1,5 +1,6 @@
 import React from 'react';
 import { ResumeData } from '@/types/resume';
+import { FresherSections } from './FresherSectionsRenderer';
 
 const A4_H = 1123;
 
@@ -169,6 +170,8 @@ export const SerifTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
             ))}
           </div>
         )}
+
+        <FresherSections data={data} styleType="serif" />
 
         {/* Education */}
         {education?.length > 0 && education[0].school && (

@@ -2,9 +2,10 @@ import React from 'react';
 import { ResumeData } from '@/types/resume';
 import { Mail, Phone, MapPin, Linkedin, Github, Globe } from 'lucide-react';
 import IconText from '@/components/IconText';
+import { FresherSections } from './FresherSectionsRenderer';
 
 export const ClassicTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
-  const { personalInfo, education, experience, skills, projects } = data;
+  const { personalInfo, education, experience, skills } = data;
 
   return (
     <div className="a4-page font-serif text-gray-800 p-[20mm]">
@@ -56,19 +57,7 @@ export const ClassicTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
         </section>
       )}
 
-      {projects.length > 0 && projects[0].name && (
-        <section className="mb-8">
-          <h2 className="text-lg font-bold uppercase border-b border-gray-300 mb-4">Projects</h2>
-          <div className="space-y-4">
-            {projects.map((proj, i) => (
-              <div key={i}>
-                <h3 className="font-bold text-sm mb-1">{proj.name}</h3>
-                <p className="text-sm leading-relaxed">{proj.description}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
+      <FresherSections data={data} styleType="classic" />
 
       <div className="grid grid-cols-2 gap-8">
         {education.length > 0 && education[0].school && (

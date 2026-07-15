@@ -38,6 +38,27 @@ export async function POST(req: Request) {
       Project Name: ${name || 'Project'}
       Current description/notes: ${description || 'Details'}
       Return just the optimized bullet points, each on a new line starting with "• ". Overwrite any casual messaging with strong phrasing.`;
+    } else if (type === "internship") {
+      const { role, company, description } = payload;
+      prompt = `Optimize this internship description for a resume. Transform it into 2 or 3 bullet points, each starting with an impactful action verb. Highlight what you learned, contributed, and achieved.
+      Role: ${role || 'Intern'}
+      Company: ${company || 'Company'}
+      Notes/Description: ${description || 'Details'}
+      Return just the polished, action-oriented lines, each on a new line starting with a bullet character "• ". Do not wrap in markdown or write introductions.`;
+    } else if (type === "volunteer") {
+      const { role, organization, description } = payload;
+      prompt = `Optimize this volunteer experience description for a resume. Transform it into 2 bullet points, starting with action verbs.
+      Role: ${role || 'Volunteer'}
+      Organization: ${organization || 'Organization'}
+      Notes/Description: ${description || 'Details'}
+      Return just the polished lines, each on a new line starting with "• ". Do not wrap in markdown.`;
+    } else if (type === "achievement") {
+      const { title, organization, description } = payload;
+      prompt = `Optimize this achievement entry for a resume. Transform it into 1 or 2 concise, professional sentences or bullet points highlighting the impact and selective nature of this achievement.
+      Achievement Title: ${title || 'Achievement'}
+      Issuing Organization: ${organization || 'Organization'}
+      Description: ${description || 'Details'}
+      Return just the polished description. Do not wrap in markdown.`;
     } else if (type === "skills") {
       const { title, currentSkills } = payload;
       prompt = `Suggest a comma-separated list of 10 modern, industry-standard, and highly searchable technical and soft skills for a resume.

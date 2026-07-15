@@ -46,6 +46,35 @@ export interface Project {
   name: string;
   description: string;
   link?: string;
+  technologies?: string;
+  duration?: string;
+  githubUrl?: string;
+  liveUrl?: string;
+  bullets?: string[];
+}
+
+export interface Internship {
+  company: string;
+  role: string;
+  duration: string;
+  location?: string;
+  description: string;
+  achievements?: string;
+}
+
+export interface VolunteerExperience {
+  organization: string;
+  role: string;
+  duration: string;
+  description: string;
+  achievements?: string;
+}
+
+export interface Achievement {
+  title: string;
+  organization: string;
+  date: string;
+  description: string;
 }
 
 export interface Reference {
@@ -93,7 +122,12 @@ export interface ResumeData {
   languages: Language[];
   certifications?: (string | { name: string })[]; // For PhotoSidebarTemplate
   projects: Project[];
+  internships?: Internship[];
+  volunteerExperience?: VolunteerExperience[];
+  achievements?: Achievement[];
   references?: Reference[]; // For CrimsonTemplate
+  experienceType?: 'fresher' | 'experienced';
+  fresherAcademicWork?: string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -118,4 +152,9 @@ export const defaultResumeData: ResumeData = {
   skills: [],
   languages: [],
   projects: [{ name: '', description: '', link: '' }],
+  internships: [],
+  volunteerExperience: [],
+  achievements: [],
+  experienceType: 'fresher',
+  fresherAcademicWork: '',
 };

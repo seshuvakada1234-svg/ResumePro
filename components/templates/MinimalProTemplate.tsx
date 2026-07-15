@@ -1,4 +1,5 @@
 import { ResumeData } from "@/types/resume";
+import { FresherSections } from "./FresherSectionsRenderer";
 
 interface Props {
   data: ResumeData;
@@ -82,6 +83,8 @@ export default function MinimalProTemplate({ data }: Props) {
           </div>
         </div>
       )}
+
+      <FresherSections data={data} styleType="minimal-pro" />
 
       {/* Education */}
       {data.education && data.education.length > 0 && (
