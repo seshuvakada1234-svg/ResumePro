@@ -126,6 +126,41 @@ export const ResumeForm: React.FC<ResumeFormProps> = ({ initialData, onChange, o
   // Multi-step form state
   const [activeStep, setActiveStep] = useState(1);
 
+  // Synchronize activeStep with browser history state so back button works perfectly on mobile!
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
+    // Replace the initial state with step 1 so popstate knows where to stop
+    if (!window.history.state) {
+      window.history.replaceState({ step: 1 }, '');
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const currentHistoryState = window.history.state;
+    if (!currentHistoryState || currentHistoryState.step !== activeStep) {
+      // Only push if the new step is different
+      window.history.pushState({ step: activeStep }, '');
+    }
+  }, [activeStep]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const handlePopState = (e: PopStateEvent) => {
+      if (e.state && typeof e.state.step === 'number') {
+        setActiveStep(e.state.step);
+      } else {
+        setActiveStep(1);
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
   // Expanded/collapsed states for section cards
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     personal: true,
