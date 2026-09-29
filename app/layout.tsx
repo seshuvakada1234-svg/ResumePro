@@ -137,6 +137,24 @@ export default function RootLayout({
       </head>
 
       <body className={`${inter.className} overflow-x-hidden`}>
+        {/* ✅ Google Analytics 4 (gtag.js) */}
+        <Script
+          strategy="afterInteractive"
+          src="https://www.googletagmanager.com/gtag/js?id=G-62ZCZ2N908"
+        />
+        <Script
+          id="google-analytics"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-62ZCZ2N908');
+            `,
+          }}
+        />
+
         {/* ✅ JSON-LD Structured Data */}
         <script
           type="application/ld+json"
