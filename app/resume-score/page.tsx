@@ -92,12 +92,10 @@ export default function ResumeScorePage() {
       console.log('AI analysis complete:', { role, skills });
       setExtractedData({ role, skills });
 
-      // Fetch jobs
+      // Fetch jobs via secure server-side proxy route
       console.log('Fetching matching jobs...');
-      const ADZUNA_APP_ID = '0780283e';
-      const ADZUNA_APP_KEY = '69766986420556637378370774780517';
       const jobResponse = await axios.get(
-        `https://api.adzuna.com/v1/api/jobs/in/search/1?app_id=${ADZUNA_APP_ID}&app_key=${ADZUNA_APP_KEY}&results_per_page=5&what=${encodeURIComponent(role || 'Developer')}`
+        `/api/jobs?role=${encodeURIComponent(role || 'Developer')}`
       );
       
       const jobsData = jobResponse.data?.results || [];
