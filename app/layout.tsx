@@ -189,10 +189,9 @@ export default function RootLayout({
         {/* ✅ Monetag Vignette Banner (Zone ID 11149486) */}
         <Script
           id="monetag-vignette-banner"
+          src="https://n6wxm.com/vignette.min.js"
+          data-zone="11149486"
           strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `(function(s){s.dataset.zone='11149486',s.src='https://n6wxm.com/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))`,
-          }}
         />
       </body>
     </html>
