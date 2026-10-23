@@ -8,7 +8,7 @@ import {
   type Auth,
   type User,
 } from 'firebase/auth';
-import { initializeFirestore, setLogLevel, type Firestore } from 'firebase/firestore';
+import { getFirestore, initializeFirestore, setLogLevel, type Firestore } from 'firebase/firestore';
 import { getStorage, type FirebaseStorage } from 'firebase/storage';
 
 interface FirebaseServices {
@@ -20,8 +20,24 @@ interface FirebaseServices {
 
 let cachedServices: FirebaseServices | null = null;
 let initPromise: Promise<FirebaseServices> | null = null;
+let isSignInInProgress = false;
 
 export const googleProvider = new GoogleAuthProvider();
+
+function getOrInitFirestore(app: FirebaseApp): Firestore {
+  try {
+    return initializeFirestore(app, {
+      experimentalForceLongPolling: true,
+      experimentalAutoDetectLongPolling: false,
+    });
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    if (msg.includes('already been started')) {
+      return getFirestore(app);
+    }
+    throw err;
+  }
+}
 
 export async function getFirebaseServices(): Promise<FirebaseServices> {
   if (cachedServices) {
@@ -37,10 +53,7 @@ export async function getFirebaseServices(): Promise<FirebaseServices> {
       if (getApps().length > 0) {
         const app = getApp();
         const auth = getAuth(app);
-        const db = initializeFirestore(app, {
-          experimentalForceLongPolling: true,
-          experimentalAutoDetectLongPolling: false,
-        });
+        const db = getOrInitFirestore(app);
         const storage = getStorage(app);
         cachedServices = { app, auth, db, storage };
         return cachedServices;
@@ -69,10 +82,7 @@ export async function getFirebaseServices(): Promise<FirebaseServices> {
       setLogLevel('error');
 
       const auth = getAuth(app);
-      const db = initializeFirestore(app, {
-        experimentalForceLongPolling: true,
-        experimentalAutoDetectLongPolling: false,
-      });
+      const db = getOrInitFirestore(app);
       const storage = getStorage(app);
 
       cachedServices = { app, auth, db, storage };
@@ -85,8 +95,29 @@ export async function getFirebaseServices(): Promise<FirebaseServices> {
 
 // ✅ GOOGLE LOGIN
 export async function signInWithGoogle() {
-  const { auth } = await getFirebaseServices();
-  return signInWithPopup(auth, googleProvider);
+  if (isSignInInProgress) {
+    console.warn('Sign-in with Google is already in progress.');
+    return null;
+  }
+  isSignInInProgress = true;
+  try {
+    const { auth } = await getFirebaseServices();
+    const result = await signInWithPopup(auth, googleProvider);
+    return result;
+  } catch (err: unknown) {
+    const errorCode = (err as { code?: string })?.code;
+    if (
+      errorCode === 'auth/popup-closed-by-user' ||
+      errorCode === 'auth/cancelled-popup-request'
+    ) {
+      console.warn('Google sign-in popup was closed or cancelled by user.');
+      return null;
+    }
+    console.error('Sign-in with Google error:', err);
+    throw err;
+  } finally {
+    isSignInInProgress = false;
+  }
 }
 
 // ✅ LOGOUT

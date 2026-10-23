@@ -15,13 +15,19 @@ export async function GET() {
         const raw = fs.readFileSync(configPath, 'utf8');
         const parsed = JSON.parse(raw);
         if (parsed.apiKey && parsed.projectId) {
+          // Normalize key in case of character 0 vs O typo
+          const cleanApiKey = parsed.apiKey === 'AIzaSyD4A7vwD4oZVJtej02E0riqOnEyOgGjQk0'
+            ? 'AIzaSyD4A7vwD4oZVJtejO2E0riqOnEyOgGjQk0'
+            : parsed.apiKey;
+
           config = {
-            apiKey: parsed.apiKey,
-            authDomain: parsed.authDomain,
-            projectId: parsed.projectId,
-            storageBucket: parsed.storageBucket || '',
-            messagingSenderId: parsed.messagingSenderId || '',
-            appId: parsed.appId || '',
+            apiKey: cleanApiKey,
+            authDomain: parsed.authDomain || 'studio-8830367951-73851.firebaseapp.com',
+            projectId: parsed.projectId || 'studio-8830367951-73851',
+            storageBucket: parsed.storageBucket || 'studio-8830367951-73851.firebasestorage.app',
+            messagingSenderId: parsed.messagingSenderId || '303359164045',
+            appId: parsed.appId || '1:303359164045:web:9bbbde70f885e31cf9acc4',
+            firestoreDatabaseId: parsed.firestoreDatabaseId || '',
           };
         }
       } catch (err) {
@@ -31,12 +37,13 @@ export async function GET() {
 
     if (!config) {
       config = {
-        apiKey: process.env.FIREBASE_API_KEY || '',
-        authDomain: process.env.FIREBASE_AUTH_DOMAIN || '',
-        projectId: process.env.FIREBASE_PROJECT_ID || '',
-        storageBucket: process.env.FIREBASE_STORAGE_BUCKET || '',
-        messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID || '',
-        appId: process.env.FIREBASE_APP_ID || '',
+        apiKey: process.env.FIREBASE_API_KEY || 'AIzaSyD4A7vwD4oZVJtejO2E0riqOnEyOgGjQk0',
+        authDomain: process.env.FIREBASE_AUTH_DOMAIN || 'studio-8830367951-73851.firebaseapp.com',
+        projectId: process.env.FIREBASE_PROJECT_ID || 'studio-8830367951-73851',
+        storageBucket: process.env.FIREBASE_STORAGE_BUCKET || 'studio-8830367951-73851.firebasestorage.app',
+        messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID || '303359164045',
+        appId: process.env.FIREBASE_APP_ID || '1:303359164045:web:9bbbde70f885e31cf9acc4',
+        firestoreDatabaseId: '',
       };
     }
 
