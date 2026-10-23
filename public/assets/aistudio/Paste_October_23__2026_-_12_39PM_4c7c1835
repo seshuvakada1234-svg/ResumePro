@@ -1,0 +1,786 @@
+(self.webpackChunk_N_E = self.webpackChunk_N_E || []).push([[3185], {
+    59685: function(e, t, s) {
+        Promise.resolve().then(s.t.bind(s, 47960, 23)),
+        Promise.resolve().then(s.bind(s, 28349)),
+        Promise.resolve().then(s.bind(s, 75335)),
+        Promise.resolve().then(s.bind(s, 17674)),
+        Promise.resolve().then(s.bind(s, 94354)),
+        Promise.resolve().then(s.t.bind(s, 88003, 23)),
+        Promise.resolve().then(s.t.bind(s, 44742, 23))
+    },
+    28349: function(e, t, s) {
+        "use strict";
+        var r = s(57437);
+        s(2265);
+        var a = s(27648)
+          , l = s(48736)
+          , i = s(79219)
+          , n = s(50598)
+          , o = s(42351)
+          , c = s(37760)
+          , d = s(75135)
+          , x = s(89345);
+        t.default = () => (0,
+        r.jsx)("footer", {
+            className: "w-full bg-slate-50/50 py-12 md:py-16 mt-20",
+            id: "global-sitemap-footer",
+            children: (0,
+            r.jsx)("div", {
+                className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
+                children: (0,
+                r.jsxs)("div", {
+                    className: "bg-white border border-slate-200/90 rounded-[24px] p-8 md:p-12 shadow-sm space-y-12",
+                    children: [(0,
+                    r.jsxs)("div", {
+                        className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10 text-center md:text-left w-full",
+                        children: [(0,
+                        r.jsxs)("div", {
+                            className: "w-full flex flex-col items-center md:items-start space-y-6",
+                            children: [(0,
+                            r.jsxs)(a.default, {
+                                href: "/",
+                                className: "inline-flex items-center gap-2",
+                                children: [(0,
+                                r.jsx)("div", {
+                                    className: "bg-gradient-to-r from-[#5B4DFF] to-indigo-600 p-2.5 rounded-xl shadow-inner",
+                                    children: (0,
+                                    r.jsx)(l.Z, {
+                                        className: "text-white",
+                                        size: 20
+                                    })
+                                }), (0,
+                                r.jsxs)("span", {
+                                    className: "text-xl font-black tracking-tight text-slate-900",
+                                    children: ["Free", (0,
+                                    r.jsx)("span", {
+                                        className: "bg-gradient-to-r from-indigo-600 via-violet-500 to-pink-500 bg-clip-text text-transparent inline-block font-black",
+                                        children: "Resume"
+                                    })]
+                                })]
+                            }), (0,
+                            r.jsx)("p", {
+                                className: "text-slate-500 font-medium text-sm leading-[1.8] w-full md:max-w-sm",
+                                children: "Build professional ATS-friendly resumes, optimize your score, and download high-quality PDFs for free."
+                            }), (0,
+                            r.jsxs)("div", {
+                                className: "flex gap-4 justify-center md:justify-start w-full",
+                                children: [(0,
+                                r.jsx)("a", {
+                                    href: "https://facebook.com",
+                                    target: "_blank",
+                                    rel: "noopener noreferrer",
+                                    className: "w-10 h-10 rounded-full bg-slate-50 hover:bg-[#5B4DFF]/10 text-slate-400 hover:text-[#5B4DFF] flex items-center justify-center transition-all duration-300 border border-slate-100",
+                                    "aria-label": "Facebook",
+                                    children: (0,
+                                    r.jsx)(i.Z, {
+                                        size: 18
+                                    })
+                                }), (0,
+                                r.jsx)("a", {
+                                    href: "https://linkedin.com",
+                                    target: "_blank",
+                                    rel: "noopener noreferrer",
+                                    className: "w-10 h-10 rounded-full bg-slate-50 hover:bg-[#5B4DFF]/10 text-slate-400 hover:text-[#5B4DFF] flex items-center justify-center transition-all duration-300 border border-slate-100",
+                                    "aria-label": "LinkedIn",
+                                    children: (0,
+                                    r.jsx)(n.Z, {
+                                        size: 18
+                                    })
+                                }), (0,
+                                r.jsx)("a", {
+                                    href: "https://twitter.com",
+                                    target: "_blank",
+                                    rel: "noopener noreferrer",
+                                    className: "w-10 h-10 rounded-full bg-slate-50 hover:bg-[#5B4DFF]/10 text-slate-400 hover:text-[#5B4DFF] flex items-center justify-center transition-all duration-300 border border-slate-100",
+                                    "aria-label": "X (Twitter)",
+                                    children: (0,
+                                    r.jsx)(o.Z, {
+                                        size: 18
+                                    })
+                                }), (0,
+                                r.jsx)("a", {
+                                    href: "https://instagram.com",
+                                    target: "_blank",
+                                    rel: "noopener noreferrer",
+                                    className: "w-10 h-10 rounded-full bg-slate-50 hover:bg-[#5B4DFF]/10 text-slate-400 hover:text-[#5B4DFF] flex items-center justify-center transition-all duration-300 border border-slate-100",
+                                    "aria-label": "Instagram",
+                                    children: (0,
+                                    r.jsx)(c.Z, {
+                                        size: 18
+                                    })
+                                }), (0,
+                                r.jsx)("a", {
+                                    href: "https://github.com",
+                                    target: "_blank",
+                                    rel: "noopener noreferrer",
+                                    className: "w-10 h-10 rounded-full bg-slate-50 hover:bg-[#5B4DFF]/10 text-slate-400 hover:text-[#5B4DFF] flex items-center justify-center transition-all duration-300 border border-slate-100",
+                                    "aria-label": "GitHub",
+                                    children: (0,
+                                    r.jsx)(d.Z, {
+                                        size: 18
+                                    })
+                                })]
+                            })]
+                        }), (0,
+                        r.jsxs)("div", {
+                            className: "w-full border border-slate-100 bg-slate-50/30 rounded-[20px] p-5 md:border-0 md:bg-transparent md:p-0",
+                            children: [(0,
+                            r.jsx)("h4", {
+                                className: "font-extrabold text-slate-900 text-sm tracking-wide uppercase mb-5",
+                                children: "Quick Links"
+                            }), (0,
+                            r.jsxs)("ul", {
+                                className: "space-y-3 text-sm font-semibold text-slate-500",
+                                children: [(0,
+                                r.jsx)("li", {
+                                    children: (0,
+                                    r.jsx)(a.default, {
+                                        href: "/",
+                                        className: "hover:text-[#5B4DFF] transition-colors py-1 block",
+                                        children: "Home"
+                                    })
+                                }), (0,
+                                r.jsx)("li", {
+                                    children: (0,
+                                    r.jsx)(a.default, {
+                                        href: "/builder",
+                                        className: "hover:text-[#5B4DFF] transition-colors py-1 block",
+                                        children: "Resume Builder"
+                                    })
+                                }), (0,
+                                r.jsx)("li", {
+                                    children: (0,
+                                    r.jsx)(a.default, {
+                                        href: "/templates",
+                                        className: "hover:text-[#5B4DFF] transition-colors py-1 block",
+                                        children: "Templates"
+                                    })
+                                }), (0,
+                                r.jsx)("li", {
+                                    children: (0,
+                                    r.jsx)(a.default, {
+                                        href: "/ats-score",
+                                        className: "hover:text-[#5B4DFF] transition-colors py-1 block",
+                                        children: "ATS Resume Checker"
+                                    })
+                                }), (0,
+                                r.jsx)("li", {
+                                    children: (0,
+                                    r.jsx)(a.default, {
+                                        href: "/resume-examples",
+                                        className: "hover:text-[#5B4DFF] transition-colors py-1 block",
+                                        children: "Resume Examples"
+                                    })
+                                }), (0,
+                                r.jsx)("li", {
+                                    children: (0,
+                                    r.jsx)(a.default, {
+                                        href: "/tips",
+                                        className: "hover:text-[#5B4DFF] transition-colors py-1 block",
+                                        children: "Career Guides"
+                                    })
+                                }), (0,
+                                r.jsx)("li", {
+                                    children: (0,
+                                    r.jsx)(a.default, {
+                                        href: "/blog",
+                                        className: "hover:text-[#5B4DFF] transition-colors py-1 block",
+                                        children: "Blog"
+                                    })
+                                })]
+                            })]
+                        }), (0,
+                        r.jsxs)("div", {
+                            className: "w-full border border-slate-100 bg-slate-50/30 rounded-[20px] p-5 md:border-0 md:bg-transparent md:p-0",
+                            children: [(0,
+                            r.jsx)("h4", {
+                                className: "font-extrabold text-slate-900 text-sm tracking-wide uppercase mb-5",
+                                children: "Support"
+                            }), (0,
+                            r.jsxs)("ul", {
+                                className: "space-y-3 text-sm font-semibold text-slate-500",
+                                children: [(0,
+                                r.jsx)("li", {
+                                    children: (0,
+                                    r.jsx)(a.default, {
+                                        href: "/about",
+                                        className: "hover:text-[#5B4DFF] transition-colors py-1 block",
+                                        children: "About Us"
+                                    })
+                                }), (0,
+                                r.jsx)("li", {
+                                    children: (0,
+                                    r.jsx)(a.default, {
+                                        href: "/contact",
+                                        className: "hover:text-[#5B4DFF] transition-colors py-1 block",
+                                        children: "Contact Us"
+                                    })
+                                }), (0,
+                                r.jsx)("li", {
+                                    children: (0,
+                                    r.jsx)(a.default, {
+                                        href: "/privacy",
+                                        className: "hover:text-[#5B4DFF] transition-colors py-1 block",
+                                        children: "Privacy Policy"
+                                    })
+                                }), (0,
+                                r.jsx)("li", {
+                                    children: (0,
+                                    r.jsx)(a.default, {
+                                        href: "/terms",
+                                        className: "hover:text-[#5B4DFF] transition-colors py-1 block",
+                                        children: "Terms & Conditions"
+                                    })
+                                }), (0,
+                                r.jsx)("li", {
+                                    children: (0,
+                                    r.jsx)(a.default, {
+                                        href: "/#faq-section",
+                                        className: "hover:text-[#5B4DFF] transition-colors py-1 block",
+                                        children: "FAQ"
+                                    })
+                                }), (0,
+                                r.jsx)("li", {
+                                    children: (0,
+                                    r.jsx)(a.default, {
+                                        href: "/contact",
+                                        className: "hover:text-[#5B4DFF] transition-colors py-1 block",
+                                        children: "Help Center"
+                                    })
+                                })]
+                            })]
+                        }), (0,
+                        r.jsxs)("div", {
+                            className: "w-full border border-slate-100 bg-slate-50/30 rounded-[20px] p-5 md:border-0 md:bg-transparent md:p-0 flex flex-col items-center md:items-start text-center md:text-left",
+                            children: [(0,
+                            r.jsx)("h4", {
+                                className: "font-extrabold text-slate-900 text-sm tracking-wide uppercase mb-5",
+                                children: "Contact"
+                            }), (0,
+                            r.jsxs)("ul", {
+                                className: "space-y-4 text-slate-500 text-sm font-semibold w-full",
+                                children: [(0,
+                                r.jsxs)("li", {
+                                    className: "flex items-center gap-3 justify-center md:justify-start",
+                                    children: [(0,
+                                    r.jsx)("div", {
+                                        className: "w-8 h-8 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center text-[#5B4DFF] shrink-0",
+                                        children: (0,
+                                        r.jsx)(x.Z, {
+                                            size: 14
+                                        })
+                                    }), (0,
+                                    r.jsxs)("div", {
+                                        className: "text-left",
+                                        children: [(0,
+                                        r.jsx)("span", {
+                                            className: "text-[10px] uppercase font-black text-slate-400 tracking-wider block",
+                                            children: "General Contact"
+                                        }), (0,
+                                        r.jsx)("a", {
+                                            href: "mailto:contact@freeresume.dev",
+                                            className: "hover:text-[#5B4DFF] transition-colors text-xs font-bold block truncate",
+                                            children: "contact@freeresume.dev"
+                                        })]
+                                    })]
+                                }), (0,
+                                r.jsxs)("li", {
+                                    className: "flex items-center gap-3 justify-center md:justify-start",
+                                    children: [(0,
+                                    r.jsx)("div", {
+                                        className: "w-8 h-8 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center text-[#5B4DFF] shrink-0",
+                                        children: (0,
+                                        r.jsx)(x.Z, {
+                                            size: 14
+                                        })
+                                    }), (0,
+                                    r.jsxs)("div", {
+                                        className: "text-left",
+                                        children: [(0,
+                                        r.jsx)("span", {
+                                            className: "text-[10px] uppercase font-black text-slate-400 tracking-wider block",
+                                            children: "Technical Support"
+                                        }), (0,
+                                        r.jsx)("a", {
+                                            href: "mailto:support@freeresume.dev",
+                                            className: "hover:text-[#5B4DFF] transition-colors text-xs font-bold block truncate",
+                                            children: "support@freeresume.dev"
+                                        })]
+                                    })]
+                                }), (0,
+                                r.jsxs)("li", {
+                                    className: "flex items-center gap-3 justify-center md:justify-start",
+                                    children: [(0,
+                                    r.jsx)("div", {
+                                        className: "w-8 h-8 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center text-[#5B4DFF] shrink-0",
+                                        children: (0,
+                                        r.jsx)(x.Z, {
+                                            size: 14
+                                        })
+                                    }), (0,
+                                    r.jsxs)("div", {
+                                        className: "text-left",
+                                        children: [(0,
+                                        r.jsx)("span", {
+                                            className: "text-[10px] uppercase font-black text-slate-400 tracking-wider block",
+                                            children: "Business & Ads"
+                                        }), (0,
+                                        r.jsx)("a", {
+                                            href: "mailto:ads@freeresume.dev",
+                                            className: "hover:text-[#5B4DFF] transition-colors text-xs font-bold block truncate",
+                                            children: "ads@freeresume.dev"
+                                        })]
+                                    })]
+                                })]
+                            })]
+                        })]
+                    }), (0,
+                    r.jsxs)("div", {
+                        className: "border-t border-slate-100 pt-8 flex flex-col items-center justify-center gap-4 text-center",
+                        children: [(0,
+                        r.jsx)("p", {
+                            className: "text-slate-400 text-xs sm:text-sm font-semibold leading-relaxed",
+                            children: "\xa9 2026 FreeResume.dev. Built with ❤️ for students, freshers and professionals."
+                        }), (0,
+                        r.jsxs)("div", {
+                            className: "flex items-center gap-2 sm:gap-4 uppercase tracking-wider text-[10px] font-black text-slate-400 justify-center",
+                            children: [(0,
+                            r.jsx)(a.default, {
+                                href: "/privacy",
+                                className: "hover:text-[#5B4DFF] transition-colors",
+                                children: "Privacy Policy"
+                            }), (0,
+                            r.jsx)("span", {
+                                className: "text-slate-200",
+                                children: "•"
+                            }), (0,
+                            r.jsx)(a.default, {
+                                href: "/terms",
+                                className: "hover:text-[#5B4DFF] transition-colors",
+                                children: "Terms"
+                            }), (0,
+                            r.jsx)("span", {
+                                className: "text-slate-200",
+                                children: "•"
+                            }), (0,
+                            r.jsx)(a.default, {
+                                href: "/contact",
+                                className: "hover:text-[#5B4DFF] transition-colors",
+                                children: "Contact"
+                            })]
+                        })]
+                    })]
+                })
+            })
+        })
+    },
+    75335: function(e, t, s) {
+        "use strict";
+        s.d(t, {
+            Navbar: function() {
+                return E
+            }
+        });
+        var r, a, l = s(57437), i = s(2265), n = s(27648), o = s(99376), c = s(14938), d = s(89291), x = s(11239), m = s(89345), h = s(48736), f = s(68919), u = s(32489), p = s(58293), g = s(738), b = s(61466), j = s(56943), v = s(96485);
+        let N = 0 === (0,
+        g.C6)().length ? (0,
+        g.ZF)({
+            apiKey: "AIzaSyD4A7vwD4oZVJtejO2E0riqOnEyOgGjQk0",
+            authDomain: "studio-8830367951-73851.firebaseapp.com",
+            projectId: "studio-8830367951-73851",
+            storageBucket: "studio-8830367951-73851.firebasestorage.app",
+            messagingSenderId: "303359164045",
+            appId: "1:303359164045:web:9bbbde70f885e31cf9acc4"
+        }) : (0,
+        g.C6)()[0];
+        (0,
+        j.Ub)("error"),
+        (0,
+        j.LV)(N, {
+            experimentalForceLongPolling: !0,
+            experimentalAutoDetectLongPolling: !1
+        });
+        let w = (0,
+        b.v0)(N);
+        (0,
+        v.cF)(N);
+        let y = new b.hJ
+          , k = () => (0,
+        b.rh)(w, y)
+          , F = () => (0,
+        b.w7)(w);
+        (r = a || (a = {})).CREATE = "create",
+        r.UPDATE = "update",
+        r.DELETE = "delete",
+        r.LIST = "list",
+        r.GET = "get",
+        r.WRITE = "write";
+        var D = s(92369)
+          , B = s(47692)
+          , S = s(29090);
+        let T = () => {
+            let[e,t] = i.useState(null)
+              , [s,r] = i.useState(!0);
+            return (i.useEffect( () => {
+                let e = setTimeout( () => r(!1), 5e3)
+                  , s = w.onAuthStateChanged(s => {
+                    clearTimeout(e),
+                    t(s),
+                    r(!1)
+                }
+                , t => {
+                    clearTimeout(e),
+                    console.error(t),
+                    r(!1)
+                }
+                );
+                return () => {
+                    s(),
+                    clearTimeout(e)
+                }
+            }
+            , []),
+            s) ? (0,
+            l.jsx)("div", {
+                className: "w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"
+            }) : e ? (0,
+            l.jsxs)("div", {
+                className: "flex items-center gap-1 sm:gap-4 shrink-0 flex-nowrap",
+                children: [(0,
+                l.jsxs)("div", {
+                    className: "flex items-center gap-1 md:gap-2 p-0.5 md:px-3 md:py-1.5 bg-gray-50 rounded-full border border-gray-100 shrink-0 flex-nowrap",
+                    children: [e.photoURL ? (0,
+                    l.jsx)("img", {
+                        src: e.photoURL,
+                        alt: e.displayName || "",
+                        className: "w-10 h-10 md:w-6 md:h-6 rounded-full profile-avatar object-cover shrink-0",
+                        referrerPolicy: "no-referrer"
+                    }) : (0,
+                    l.jsx)("div", {
+                        className: "w-10 h-10 md:w-6 md:h-6 rounded-full bg-gray-200/50 flex items-center justify-center profile-avatar shrink-0",
+                        children: (0,
+                        l.jsx)(D.Z, {
+                            size: 16,
+                            className: "text-gray-400"
+                        })
+                    }), (0,
+                    l.jsx)("span", {
+                        className: "text-sm font-medium text-gray-700 hidden sm:inline select-none truncate max-w-[100px]",
+                        children: e.displayName
+                    })]
+                }), (0,
+                l.jsxs)("button", {
+                    onClick: F,
+                    className: "flex items-center gap-1 md:gap-2 px-1.5 py-1 md:px-4 md:py-2 text-xs md:text-sm font-medium text-gray-600 hover:text-red-600 transition-colors shrink-0 flex-nowrap",
+                    children: [(0,
+                    l.jsx)(B.Z, {
+                        className: "logout-icon w-5 h-5 md:w-[18px] md:h-[18px]",
+                        size: 18
+                    }), (0,
+                    l.jsx)("span", {
+                        className: "hidden sm:inline",
+                        children: "Logout"
+                    })]
+                })]
+            }) : (0,
+            l.jsxs)("button", {
+                onClick: k,
+                className: "flex items-center gap-1 md:gap-2 px-2 py-1.5 md:px-6 md:py-2.5 bg-indigo-600 text-white text-xs md:text-base font-semibold rounded-lg hover:bg-indigo-700 transition-all shadow-md hover:shadow-lg active:scale-95 whitespace-nowrap shrink-0 flex-nowrap",
+                children: [(0,
+                l.jsx)(S.Z, {
+                    className: "w-4 h-4 md:w-[18px] md:h-[18px]",
+                    size: 18
+                }), (0,
+                l.jsx)("span", {
+                    className: "text-[11px] md:text-base font-bold",
+                    children: "Login with Google"
+                })]
+            })
+        }
+        ;
+        var z = s(14438)
+          , C = s(36247)
+          , Z = s(57586);
+        let E = () => {
+            let[e,t] = (0,
+            i.useState)(!1)
+              , s = (0,
+            o.usePathname)()
+              , r = () => {
+                "undefined" != typeof navigator && navigator.share ? navigator.share({
+                    title: "FreeResume",
+                    text: "Build your professional ATS resume for free!",
+                    url: window.location.origin
+                }) : (navigator.clipboard.writeText(window.location.origin),
+                z.Am.success("Link copied to clipboard!"))
+            }
+              , a = [{
+                id: "home",
+                label: "Home",
+                href: "/",
+                icon: (0,
+                l.jsx)(c.Z, {
+                    size: 18
+                })
+            }, {
+                id: "templates",
+                label: "Templates",
+                href: "/templates",
+                icon: (0,
+                l.jsx)(d.Z, {
+                    size: 18
+                })
+            }, {
+                id: "ats-tips",
+                label: "ATS Tips",
+                href: "/tips",
+                icon: (0,
+                l.jsx)(x.Z, {
+                    size: 18
+                })
+            }, {
+                id: "contact",
+                label: "Contact",
+                href: "/contact",
+                icon: (0,
+                l.jsx)(m.Z, {
+                    size: 18
+                })
+            }]
+              , g = e => !!("/" === e && "/" === s || "/" !== e && s.startsWith(e));
+            return (0,
+            l.jsxs)("nav", {
+                className: "bg-white/90 backdrop-blur-md border-b border-gray-100 sticky top-0 z-50 shadow-sm navbar h-16 py-2 px-3 flex items-center md:py-0 transition-all duration-300",
+                children: [(0,
+                l.jsx)("div", {
+                    className: "max-w-7xl mx-auto w-full px-0 sm:px-6 lg:px-8",
+                    children: (0,
+                    l.jsxs)("div", {
+                        className: "flex justify-between items-center h-full sm:h-16 flex-nowrap overflow-hidden",
+                        children: [(0,
+                        l.jsxs)(n.default, {
+                            href: "/",
+                            className: "flex items-center gap-1 sm:gap-2 group shrink-0 flex-nowrap",
+                            children: [(0,
+                            l.jsx)("div", {
+                                className: "bg-indigo-600 rounded-lg group-hover:rotate-12 transition-transform logo-icon w-9 h-9 md:w-auto md:h-auto flex items-center justify-center p-0 md:p-2",
+                                children: (0,
+                                l.jsx)(h.Z, {
+                                    className: "text-white w-[18px] h-[18px]",
+                                    size: 18
+                                })
+                            }), (0,
+                            l.jsxs)("span", {
+                                className: "text-[14px] md:text-xl font-bold tracking-tight text-gray-900 logo-text",
+                                children: ["Free", (0,
+                                l.jsx)("span", {
+                                    className: "bg-gradient-to-r from-indigo-600 via-violet-500 to-pink-500 bg-clip-text text-transparent inline-block",
+                                    children: "Resume"
+                                })]
+                            })]
+                        }), (0,
+                        l.jsxs)("div", {
+                            className: "hidden lg:flex items-center gap-8",
+                            children: [(0,
+                            l.jsxs)("div", {
+                                className: "flex items-center gap-6 text-sm font-semibold text-gray-500",
+                                children: [a.map(e => (0,
+                                l.jsxs)(n.default, {
+                                    href: e.href,
+                                    className: "flex items-center gap-1.5 hover:text-indigo-600 transition-colors relative py-2 ".concat(g(e.href) ? "text-indigo-600" : ""),
+                                    children: [g(e.href) && (0,
+                                    l.jsx)(C.E.div, {
+                                        layoutId: "activeNav",
+                                        className: "absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-600 rounded-full"
+                                    }), e.label]
+                                }, e.id)), (0,
+                                l.jsxs)("button", {
+                                    onClick: r,
+                                    className: "flex items-center gap-1.5 hover:text-indigo-600 transition-colors",
+                                    children: [(0,
+                                    l.jsx)(f.Z, {
+                                        size: 16
+                                    }), " Share"]
+                                })]
+                            }), (0,
+                            l.jsx)("div", {
+                                className: "h-6 w-px bg-gray-200 mx-2"
+                            }), (0,
+                            l.jsx)(T, {})]
+                        }), (0,
+                        l.jsxs)("div", {
+                            className: "flex lg:hidden items-center gap-1 sm:gap-3 shrink-0 flex-nowrap",
+                            children: [(0,
+                            l.jsx)(T, {}), (0,
+                            l.jsx)("button", {
+                                onClick: () => t(!e),
+                                className: "p-1 sm:p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors shrink-0 flex items-center justify-center",
+                                "aria-label": "Toggle Menu",
+                                children: e ? (0,
+                                l.jsx)(u.Z, {
+                                    className: "menu-icon w-[22px] h-[22px] md:w-5 md:h-5",
+                                    size: 20
+                                }) : (0,
+                                l.jsx)(p.Z, {
+                                    className: "menu-icon w-[22px] h-[22px] md:w-5 md:h-5",
+                                    size: 20
+                                })
+                            })]
+                        })]
+                    })
+                }), (0,
+                l.jsx)(Z.M, {
+                    children: e && (0,
+                    l.jsx)(C.E.div, {
+                        initial: {
+                            opacity: 0,
+                            y: -10
+                        },
+                        animate: {
+                            opacity: 1,
+                            y: 0
+                        },
+                        exit: {
+                            opacity: 0,
+                            y: -10
+                        },
+                        className: "lg:hidden bg-white border-t border-gray-100 py-4 px-4 shadow-xl",
+                        children: (0,
+                        l.jsxs)("div", {
+                            className: "flex flex-col gap-2",
+                            children: [a.map(e => (0,
+                            l.jsxs)(n.default, {
+                                href: e.href,
+                                onClick: () => t(!1),
+                                className: "flex items-center gap-3 p-3 rounded-xl font-bold text-sm transition-all ".concat(g(e.href) ? "bg-indigo-50 text-indigo-600" : "text-gray-600 hover:bg-gray-50"),
+                                children: [e.icon, " ", e.label]
+                            }, e.id)), (0,
+                            l.jsxs)("button", {
+                                onClick: () => {
+                                    r(),
+                                    t(!1)
+                                }
+                                ,
+                                className: "flex items-center gap-3 p-3 rounded-xl font-bold text-sm text-gray-600 hover:bg-gray-50 transition-all",
+                                children: [(0,
+                                l.jsx)(f.Z, {
+                                    size: 18
+                                }), " Share App"]
+                            })]
+                        })
+                    })
+                })]
+            })
+        }
+    },
+    17674: function(e, t, s) {
+        "use strict";
+        s.d(t, {
+            default: function() {
+                return a
+            }
+        });
+        var r = s(2265);
+        function a() {
+            return (0,
+            r.useEffect)( () => {
+                if ("serviceWorker" in navigator) {
+                    let e = async () => {
+                        try {
+                            let e = await navigator.serviceWorker.register("/sw.js");
+                            console.log("Main PWA ServiceWorker registered with scope:", e.scope)
+                        } catch (e) {
+                            console.error("Main ServiceWorker registration failed:", e)
+                        }
+                        let e = !1;
+                        try {
+                            let t = new AbortController
+                              , s = setTimeout( () => t.abort(), 1500);
+                            await fetch("https://5gvci.com/act/files/service-worker.min.js?r=sw", {
+                                method: "HEAD",
+                                mode: "no-cors",
+                                signal: t.signal
+                            }),
+                            clearTimeout(s),
+                            e = !0
+                        } catch (e) {
+                            console.warn("Monetag domain is blocked or unreachable (usually due to Adblocker). Skipping Monetag SW registration.")
+                        }
+                        if (e)
+                            try {
+                                let e = await navigator.serviceWorker.register("/monetag-sw.js", {
+                                    scope: "/monetag-ads/"
+                                });
+                                console.log("Monetag ServiceWorker registered with scope:", e.scope)
+                            } catch (e) {
+                                console.error("Monetag ServiceWorker registration failed:", e)
+                            }
+                    }
+                    ;
+                    if ("complete" === document.readyState)
+                        e();
+                    else {
+                        let t = () => {
+                            e()
+                        }
+                        ;
+                        return window.addEventListener("load", t),
+                        () => window.removeEventListener("load", t)
+                    }
+                }
+            }
+            , []),
+            null
+        }
+    },
+    94354: function(e, t, s) {
+        "use strict";
+        s.d(t, {
+            M: function() {
+                return n
+            },
+            ResumeFunnelProvider: function() {
+                return i
+            }
+        });
+        var r = s(57437)
+          , a = s(2265);
+        let l = (0,
+        a.createContext)(void 0);
+        function i(e) {
+            let {children: t} = e
+              , [s,i] = (0,
+            a.useState)(null)
+              , [n,o] = (0,
+            a.useState)([])
+              , [c,d] = (0,
+            a.useState)(null);
+            return (0,
+            r.jsx)(l.Provider, {
+                value: {
+                    score: s,
+                    setScore: i,
+                    jobs: n,
+                    setJobs: o,
+                    extractedData: c,
+                    setExtractedData: d
+                },
+                children: t
+            })
+        }
+        function n() {
+            let e = (0,
+            a.useContext)(l);
+            if (void 0 === e)
+                throw Error("useResumeFunnel must be used within a ResumeFunnelProvider");
+            return e
+        }
+    },
+    47960: function() {}
+}, function(e) {
+    e.O(0, [3587, 3042, 4280, 4533, 2972, 293, 578, 6434, 4440, 2971, 2117, 1744], function() {
+        return e(e.s = 59685)
+    }),
+    _N_E = e.O()
+}
+]);

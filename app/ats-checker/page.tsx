@@ -4,7 +4,6 @@ import React from 'react';
 import { AdBanner } from '@/components/AdBanner';
 import { FileText, Home, Layout, Zap, Menu, X, Mail, Share2, CheckCircle2, Search, ShieldCheck, Target } from 'lucide-react';
 import Link from 'next/link';
-import { Auth } from '@/components/Auth';
 
 export default function ATSCheckerPage() {
   const handleShare = () => {

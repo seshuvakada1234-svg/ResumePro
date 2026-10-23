@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { signInWithGoogle, logout, auth } from '@/lib/firebase';
-import { User } from 'firebase/auth';
+import { signInWithGoogle, logout, subscribeToAuth } from '@/lib/firebase';
+import type { User } from 'firebase/auth';
 import { LogIn, LogOut, User as UserIcon } from 'lucide-react';
 
 export const Auth: React.FC = () => {
@@ -10,25 +10,49 @@ export const Auth: React.FC = () => {
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-    const timeout = setTimeout(() => setLoading(false), 5000); // failsafe
+    let unsubscribe: (() => void) | undefined;
+    let isMounted = true;
 
-    const unsubscribe = auth.onAuthStateChanged(
-      (u) => { clearTimeout(timeout); setUser(u); setLoading(false); },
-      (err) => { clearTimeout(timeout); console.error(err); setLoading(false); }
-    );
+    const timeout = setTimeout(() => {
+      if (isMounted) setLoading(false);
+    }, 4000);
 
-    return () => { unsubscribe(); clearTimeout(timeout); };
+    subscribeToAuth(
+      (u) => {
+        if (!isMounted) return;
+        clearTimeout(timeout);
+        setUser(u);
+        setLoading(false);
+      },
+      (err) => {
+        if (!isMounted) return;
+        clearTimeout(timeout);
+        console.error('Auth state error:', err);
+        setLoading(false);
+      }
+    ).then((unsub) => {
+      unsubscribe = unsub;
+    });
+
+    return () => {
+      isMounted = false;
+      clearTimeout(timeout);
+      if (unsubscribe) unsubscribe();
+    };
   }, []);
 
-  if (loading) return (
-    <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
-  );
+  if (loading) {
+    return (
+      <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin shrink-0" />
+    );
+  }
 
   if (user) {
     return (
       <div className="flex items-center gap-1 sm:gap-4 shrink-0 flex-nowrap">
         <div className="flex items-center gap-1 md:gap-2 p-0.5 md:px-3 md:py-1.5 bg-gray-50 rounded-full border border-gray-100 shrink-0 flex-nowrap">
           {user.photoURL ? (
+            /* eslint-disable-next-line @next/next/no-img-element */
             <img 
               src={user.photoURL} 
               alt={user.displayName || ''} 
@@ -40,7 +64,9 @@ export const Auth: React.FC = () => {
               <UserIcon size={16} className="text-gray-400" />
             </div>
           )}
-          <span className="text-sm font-medium text-gray-700 hidden sm:inline select-none truncate max-w-[100px]">{user.displayName}</span>
+          <span className="text-sm font-medium text-gray-700 hidden sm:inline select-none truncate max-w-[100px]">
+            {user.displayName}
+          </span>
         </div>
         <button
           onClick={logout}

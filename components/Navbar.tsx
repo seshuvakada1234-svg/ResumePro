@@ -4,9 +4,16 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { FileText, Home, Layout, Zap, Mail, Share2, Menu, X, LogOut, User as UserIcon } from 'lucide-react';
-import { Auth } from './Auth';
+import dynamic from 'next/dynamic';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'motion/react';
+
+const Auth = dynamic(() => import('./Auth').then((mod) => mod.Auth), {
+  ssr: false,
+  loading: () => (
+    <div className="w-8 h-8 rounded-full bg-gray-100 animate-pulse shrink-0" />
+  ),
+});
 
 export const Navbar: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

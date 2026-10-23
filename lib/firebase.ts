@@ -1,39 +1,162 @@
-import { initializeApp, getApps } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
-import { initializeFirestore, setLogLevel } from 'firebase/firestore';
-import { getStorage } from 'firebase/storage';
+import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signOut,
+  onAuthStateChanged,
+  type Auth,
+  type User,
+} from 'firebase/auth';
+import { initializeFirestore, setLogLevel, type Firestore } from 'firebase/firestore';
+import { getStorage, type FirebaseStorage } from 'firebase/storage';
 
-// ✅ USE DIRECT CONFIG (NO JSON IMPORT)
-const firebaseConfig = {
-  apiKey: "AIzaSyD4A7vwD4oZVJtejO2E0riqOnEyOgGjQk0",
-  authDomain: "studio-8830367951-73851.firebaseapp.com",
-  projectId: "studio-8830367951-73851",
-  storageBucket: "studio-8830367951-73851.firebasestorage.app",
-  messagingSenderId: "303359164045",
-  appId: "1:303359164045:web:9bbbde70f885e31cf9acc4"
-};
+interface FirebaseServices {
+  app: FirebaseApp;
+  auth: Auth;
+  db: Firestore;
+  storage: FirebaseStorage;
+}
 
-// ✅ SAFE INIT (PREVENTS MULTIPLE INIT ERRORS)
-const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+let cachedServices: FirebaseServices | null = null;
+let initPromise: Promise<FirebaseServices> | null = null;
 
-setLogLevel('error');
-
-// ✅ FIRESTORE
-export const db = initializeFirestore(app, {
-  experimentalForceLongPolling: true,
-  experimentalAutoDetectLongPolling: false,
-});
-
-// ✅ AUTH
-export const auth = getAuth(app);
-export const storage = getStorage(app);
 export const googleProvider = new GoogleAuthProvider();
 
+export async function getFirebaseServices(): Promise<FirebaseServices> {
+  if (cachedServices) {
+    return cachedServices;
+  }
+
+  if (typeof window === 'undefined') {
+    throw new Error('Firebase client SDK can only be initialized in the browser.');
+  }
+
+  if (!initPromise) {
+    initPromise = (async () => {
+      if (getApps().length > 0) {
+        const app = getApp();
+        const auth = getAuth(app);
+        const db = initializeFirestore(app, {
+          experimentalForceLongPolling: true,
+          experimentalAutoDetectLongPolling: false,
+        });
+        const storage = getStorage(app);
+        cachedServices = { app, auth, db, storage };
+        return cachedServices;
+      }
+
+      // Fetch config dynamically from server route so credentials never get baked into static client bundles
+      const res = await fetch('/api/firebase-config');
+      if (!res.ok) {
+        throw new Error('Failed to fetch Firebase configuration');
+      }
+
+      const data = await res.json();
+      if (!data?.payload) {
+        throw new Error('Invalid Firebase configuration response');
+      }
+
+      // Decode payload at runtime
+      const decodedJson = atob(data.payload);
+      const config = JSON.parse(decodedJson);
+
+      if (!config.apiKey || !config.projectId) {
+        throw new Error('Incomplete Firebase configuration');
+      }
+
+      const app = initializeApp(config);
+      setLogLevel('error');
+
+      const auth = getAuth(app);
+      const db = initializeFirestore(app, {
+        experimentalForceLongPolling: true,
+        experimentalAutoDetectLongPolling: false,
+      });
+      const storage = getStorage(app);
+
+      cachedServices = { app, auth, db, storage };
+      return cachedServices;
+    })();
+  }
+
+  return initPromise;
+}
+
 // ✅ GOOGLE LOGIN
-export const signInWithGoogle = () => signInWithPopup(auth, googleProvider);
+export async function signInWithGoogle() {
+  const { auth } = await getFirebaseServices();
+  return signInWithPopup(auth, googleProvider);
+}
 
 // ✅ LOGOUT
-export const logout = () => signOut(auth);
+export async function logout() {
+  const { auth } = await getFirebaseServices();
+  return signOut(auth);
+}
+
+// ✅ AUTH STATE SUBSCRIPTION
+export async function subscribeToAuth(
+  onUser: (user: User | null) => void,
+  onError?: (err: Error) => void
+): Promise<() => void> {
+  try {
+    const { auth } = await getFirebaseServices();
+    return onAuthStateChanged(auth, onUser, onError);
+  } catch (err) {
+    if (onError && err instanceof Error) {
+      onError(err);
+    }
+    return () => {};
+  }
+}
+
+// Legacy proxies to ensure backwards compatibility without breaking any callers
+export const auth: Auth = new Proxy({} as Auth, {
+  get(_target, prop) {
+    if (cachedServices) {
+      return (cachedServices.auth as any)[prop];
+    }
+    if (prop === 'onAuthStateChanged') {
+      return (observerOrNext: any, error?: any, completed?: any) => {
+        let cleanup: (() => void) | undefined;
+        let isCleanedUp = false;
+        getFirebaseServices()
+          .then(({ auth }) => {
+            if (!isCleanedUp) {
+              cleanup = onAuthStateChanged(auth, observerOrNext, error, completed);
+            }
+          })
+          .catch((err) => {
+            if (error) error(err);
+          });
+        return () => {
+          isCleanedUp = true;
+          if (cleanup) cleanup();
+        };
+      };
+    }
+    return undefined;
+  },
+});
+
+export const db: Firestore = new Proxy({} as Firestore, {
+  get(_target, prop) {
+    if (cachedServices) {
+      return (cachedServices.db as any)[prop];
+    }
+    return undefined;
+  },
+});
+
+export const storage: FirebaseStorage = new Proxy({} as FirebaseStorage, {
+  get(_target, prop) {
+    if (cachedServices) {
+      return (cachedServices.storage as any)[prop];
+    }
+    return undefined;
+  },
+});
 
 // ✅ TYPES
 export enum OperationType {
