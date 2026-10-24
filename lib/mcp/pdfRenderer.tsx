@@ -4,15 +4,539 @@ import {
   Page,
   Text,
   View,
+  Image,
   StyleSheet,
+  Font,
   renderToBuffer,
 } from '@react-pdf/renderer';
-import { ResumeData, ResumeTemplate, Skill, Language, Experience, Education, Project, Achievement, Internship } from '@/types/resume';
+import {
+  ResumeData,
+  ResumeTemplate,
+  Skill,
+  Language,
+  Experience,
+  Education,
+  Project,
+  Achievement,
+  Internship,
+} from '@/types/resume';
 
+// ── Register High-Fidelity Embedded Fonts ──
+let hasEmbeddedFonts = false;
+try {
+  Font.register({
+    family: 'LiberationSans',
+    fonts: [
+      { src: '/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf' },
+      { src: '/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf', fontWeight: 'bold' },
+      { src: '/usr/share/fonts/truetype/liberation/LiberationSans-Italic.ttf', fontStyle: 'italic' },
+    ],
+  });
+  Font.register({
+    family: 'LiberationSerif',
+    fonts: [
+      { src: '/usr/share/fonts/truetype/liberation/LiberationSerif-Regular.ttf' },
+      { src: '/usr/share/fonts/truetype/liberation/LiberationSerif-Bold.ttf', fontWeight: 'bold' },
+      { src: '/usr/share/fonts/truetype/liberation/LiberationSerif-Italic.ttf', fontStyle: 'italic' },
+    ],
+  });
+  hasEmbeddedFonts = true;
+} catch {
+  hasEmbeddedFonts = false;
+}
+
+const DEFAULT_SANS = hasEmbeddedFonts ? 'LiberationSans' : 'Helvetica';
+const DEFAULT_SERIF = hasEmbeddedFonts ? 'LiberationSerif' : 'Times-Roman';
+
+// ════════════════════════════════════════════════════════════════════════════
+// BLACK & YELLOW PRO TEMPLATE STYLES AND COMPONENTS
+// ════════════════════════════════════════════════════════════════════════════
+const byStyles = StyleSheet.create({
+  page: {
+    flexDirection: 'row',
+    backgroundColor: '#ffffff',
+    fontFamily: DEFAULT_SANS,
+    padding: 0,
+  },
+  sidebar: {
+    width: '28.2%', // exactly 224px / 794px
+    backgroundColor: '#1a1a1a',
+    flexDirection: 'column',
+    minHeight: '100%',
+  },
+  photoContainer: {
+    width: '100%',
+    height: 155,
+    backgroundColor: '#2a2a2a',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  photoImg: {
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover',
+  },
+  avatarCircle: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    backgroundColor: '#3a3a3a',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  avatarText: {
+    fontSize: 34,
+    fontWeight: 'bold',
+    color: '#666666',
+  },
+  sidebarContent: {
+    paddingVertical: 14,
+    paddingHorizontal: 11,
+    flexDirection: 'column',
+    flex: 1,
+  },
+  yellowBadge: {
+    backgroundColor: '#f5c518',
+    alignSelf: 'flex-start',
+    paddingVertical: 2,
+    paddingHorizontal: 7,
+    marginBottom: 7,
+  },
+  yellowBadgeText: {
+    fontSize: 6.8,
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+    letterSpacing: 1.1,
+    color: '#000000',
+  },
+  eduItem: {
+    marginBottom: 8,
+  },
+  eduDegree: {
+    fontSize: 7.5,
+    fontWeight: 'bold',
+    color: '#ffffff',
+    marginBottom: 1.5,
+  },
+  eduSchool: {
+    fontSize: 6.8,
+    color: '#aaaaaa',
+    marginBottom: 1,
+  },
+  eduYear: {
+    fontSize: 6.5,
+    color: '#888888',
+  },
+  certItem: {
+    fontSize: 6.8,
+    color: '#cccccc',
+    marginBottom: 4,
+    lineHeight: 1.3,
+  },
+  contactSection: {
+    marginTop: 'auto',
+    paddingTop: 14,
+  },
+  contactRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 7,
+  },
+  contactYellowBar: {
+    width: 2.2,
+    minHeight: 20,
+    backgroundColor: '#f5c518',
+    marginRight: 6,
+    marginTop: 1,
+  },
+  contactLabel: {
+    fontSize: 7.2,
+    fontWeight: 'bold',
+    color: '#ffffff',
+  },
+  contactValue: {
+    fontSize: 6.5,
+    color: '#aaaaaa',
+    marginTop: 1,
+  },
+  mainColumn: {
+    width: '71.8%', // exactly 570px / 794px
+    backgroundColor: '#ffffff',
+    paddingHorizontal: 22,
+    paddingVertical: 24,
+    flexDirection: 'column',
+  },
+  mainHeader: {
+    marginBottom: 16,
+  },
+  headerFirstName: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#111827',
+    lineHeight: 0.95,
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
+  },
+  headerLastName: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#111827',
+    lineHeight: 0.95,
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
+    marginBottom: 4,
+  },
+  headerTitle: {
+    fontSize: 8,
+    fontWeight: 'bold',
+    color: '#888888',
+    letterSpacing: 1.8,
+    textTransform: 'uppercase',
+    marginTop: 4,
+  },
+  sectionBox: {
+    marginBottom: 13,
+  },
+  bodySummary: {
+    fontSize: 7.5,
+    color: '#555555',
+    lineHeight: 1.5,
+  },
+  expItem: {
+    flexDirection: 'row',
+    marginBottom: 10,
+  },
+  expDateCol: {
+    width: 44,
+    marginRight: 8,
+  },
+  expDateText: {
+    fontSize: 6.8,
+    color: '#888888',
+    lineHeight: 1.4,
+  },
+  expContentCol: {
+    flex: 1,
+  },
+  expPosition: {
+    fontSize: 8.5,
+    fontWeight: 'bold',
+    color: '#111827',
+  },
+  expCompany: {
+    fontSize: 6.8,
+    color: '#888888',
+    marginTop: 1,
+    marginBottom: 2,
+  },
+  expDesc: {
+    fontSize: 7.2,
+    color: '#555555',
+    lineHeight: 1.4,
+    marginBottom: 2,
+  },
+  bulletRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginTop: 1.5,
+  },
+  bulletDot: {
+    fontSize: 7.2,
+    color: '#888888',
+    marginRight: 4,
+  },
+  bulletText: {
+    fontSize: 7.2,
+    color: '#555555',
+    lineHeight: 1.4,
+    flex: 1,
+  },
+  twoColGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  gridItem: {
+    width: '48%',
+    marginBottom: 6,
+  },
+  gridItemName: {
+    fontSize: 7.5,
+    fontWeight: 'bold',
+    color: '#333333',
+    marginBottom: 2,
+  },
+  yellowBarUnderline: {
+    height: 1.6,
+    width: 26,
+    backgroundColor: '#f5c518',
+    borderRadius: 1,
+  },
+  projItem: {
+    marginBottom: 7,
+  },
+  projName: {
+    fontSize: 8.5,
+    fontWeight: 'bold',
+    color: '#111827',
+    marginBottom: 1,
+  },
+  projDesc: {
+    fontSize: 7.2,
+    color: '#555555',
+    lineHeight: 1.4,
+  },
+});
+
+const ByYellowBadge = ({ title }: { title: string }) => (
+  <View style={byStyles.yellowBadge}>
+    <Text style={byStyles.yellowBadgeText}>{title}</Text>
+  </View>
+);
+
+function renderBlackYellowPdf(data: ResumeData) {
+  const p = data.personalInfo || {
+    fullName: 'Candidate',
+    email: '',
+    phone: '',
+    location: '',
+    summary: '',
+  };
+
+  const name = p.fullName || (p as any).name || 'Your Name';
+  const title = (p as any).title || data.title || 'Your Title';
+  const email = p.email || '';
+  const phone = p.phone || '';
+  const location = p.location || '';
+  const linkedin = p.linkedin || '';
+  const website = p.website || p.github || '';
+  const photo = p.profileImage || (p as any).photo || '';
+  const summary = p.summary || data.summary || '';
+
+  const nameParts = name.trim().split(' ');
+  const firstName = nameParts[0] ?? 'YOUR';
+  const lastName = nameParts.slice(1).join(' ') || 'NAME';
+
+  const validEducation = (data.education || []).filter(e => e.school || e.degree);
+  const validExperience = (data.experience || []).filter(e => e.company || e.position);
+  const validProjects = (data.projects || []).filter(pr => pr.name);
+  const validSkills: string[] = (data.skills || [])
+    .map(s => (typeof s === 'string' ? s : s.name))
+    .filter(Boolean);
+  const validLanguages: string[] = (data.languages || [])
+    .map(l => (typeof l === 'string' ? l : l.name))
+    .filter(Boolean);
+  const validCertifications: string[] = (data.certifications || [])
+    .map(c => (typeof c === 'string' ? c : (c as any).name))
+    .filter(Boolean);
+
+  return (
+    <Document title={`${name} - Resume`} author="FreeResume.dev" subject="ATS-Optimized Resume">
+      <Page size="A4" style={byStyles.page} wrap>
+        {/* ── LEFT DARK SIDEBAR (width 224px / 794px ~ 28.2%) ── */}
+        <View style={byStyles.sidebar}>
+          {/* Top Profile / Photo Box */}
+          <View style={byStyles.photoContainer}>
+            {photo ? (
+              // eslint-disable-next-line jsx-a11y/alt-text
+              <Image src={photo} style={byStyles.photoImg} />
+            ) : (
+              <View style={byStyles.avatarCircle}>
+                <Text style={byStyles.avatarText}>{firstName.charAt(0).toUpperCase()}</Text>
+              </View>
+            )}
+          </View>
+
+          {/* Sidebar Content */}
+          <View style={byStyles.sidebarContent}>
+            {/* Education in Sidebar */}
+            {validEducation.length > 0 && (
+              <View style={{ marginBottom: 12 }}>
+                <ByYellowBadge title="EDUCATION" />
+                {validEducation.map((edu, i) => (
+                  <View key={i} style={byStyles.eduItem} wrap={false}>
+                    <Text style={byStyles.eduDegree}>{edu.degree || 'Degree'}</Text>
+                    <Text style={byStyles.eduSchool}>{edu.school || 'University'}</Text>
+                    <Text style={byStyles.eduYear}>
+                      {edu.startDate ? `${edu.startDate} — ${edu.endDate ?? 'Present'}` : edu.year || ''}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            )}
+
+            {/* Certifications in Sidebar */}
+            {validCertifications.length > 0 && (
+              <View style={{ marginBottom: 12 }}>
+                <ByYellowBadge title="CERTIFICATIONS" />
+                {validCertifications.map((cert, i) => (
+                  <Text key={i} style={byStyles.certItem} wrap={false}>{cert}</Text>
+                ))}
+              </View>
+            )}
+
+            {/* Spacer */}
+            <View style={{ flex: 1 }} />
+
+            {/* Contact Info at Bottom of Sidebar */}
+            <View style={byStyles.contactSection}>
+              {phone ? (
+                <View style={byStyles.contactRow} wrap={false}>
+                  <View style={byStyles.contactYellowBar} />
+                  <View style={{ flex: 1 }}>
+                    <Text style={byStyles.contactLabel}>Phone</Text>
+                    <Text style={byStyles.contactValue}>{phone}</Text>
+                  </View>
+                </View>
+              ) : null}
+
+              {email ? (
+                <View style={byStyles.contactRow} wrap={false}>
+                  <View style={byStyles.contactYellowBar} />
+                  <View style={{ flex: 1 }}>
+                    <Text style={byStyles.contactLabel}>Email</Text>
+                    <Text style={byStyles.contactValue}>{email}</Text>
+                  </View>
+                </View>
+              ) : null}
+
+              {linkedin ? (
+                <View style={byStyles.contactRow} wrap={false}>
+                  <View style={byStyles.contactYellowBar} />
+                  <View style={{ flex: 1 }}>
+                    <Text style={byStyles.contactLabel}>LinkedIn</Text>
+                    <Text style={byStyles.contactValue}>{linkedin.replace('https://', '')}</Text>
+                  </View>
+                </View>
+              ) : null}
+
+              {website ? (
+                <View style={byStyles.contactRow} wrap={false}>
+                  <View style={byStyles.contactYellowBar} />
+                  <View style={{ flex: 1 }}>
+                    <Text style={byStyles.contactLabel}>Website</Text>
+                    <Text style={byStyles.contactValue}>{website.replace('https://', '')}</Text>
+                  </View>
+                </View>
+              ) : null}
+
+              {location ? (
+                <View style={byStyles.contactRow} wrap={false}>
+                  <View style={byStyles.contactYellowBar} />
+                  <View style={{ flex: 1 }}>
+                    <Text style={byStyles.contactLabel}>Address</Text>
+                    <Text style={byStyles.contactValue}>{location}</Text>
+                  </View>
+                </View>
+              ) : null}
+            </View>
+          </View>
+        </View>
+
+        {/* ── RIGHT MAIN CONTENT (width 570px / 794px ~ 71.8%) ── */}
+        <View style={byStyles.mainColumn}>
+          {/* Candidate Name & Title Header */}
+          <View style={byStyles.mainHeader}>
+            <Text style={byStyles.headerFirstName}>{firstName}</Text>
+            <Text style={byStyles.headerLastName}>{lastName}</Text>
+            <Text style={byStyles.headerTitle}>{title}</Text>
+          </View>
+
+          {/* About Me / Summary */}
+          {summary ? (
+            <View style={byStyles.sectionBox} wrap={false}>
+              <ByYellowBadge title="ABOUT ME" />
+              <Text style={byStyles.bodySummary}>{summary}</Text>
+            </View>
+          ) : null}
+
+          {/* Work Experience */}
+          {validExperience.length > 0 && (
+            <View style={byStyles.sectionBox}>
+              <ByYellowBadge title="WORK EXPERIENCE" />
+              {validExperience.map((exp, i) => (
+                <View key={i} style={byStyles.expItem} wrap={false}>
+                  <View style={byStyles.expDateCol}>
+                    <Text style={byStyles.expDateText}>
+                      {exp.startDate || (exp.duration?.includes('-') ? exp.duration.split('-')[0]?.trim() : exp.duration || '')}
+                    </Text>
+                    <Text style={byStyles.expDateText}>
+                      {exp.endDate || (exp.duration?.includes('-') ? exp.duration.split('-')[1]?.trim() : 'Present')}
+                    </Text>
+                  </View>
+                  <View style={byStyles.expContentCol}>
+                    <Text style={byStyles.expPosition}>{exp.position}</Text>
+                    <Text style={byStyles.expCompany}>{exp.company}</Text>
+                    {exp.description ? <Text style={byStyles.expDesc}>{exp.description}</Text> : null}
+                    {exp.bullets && exp.bullets.length > 0 && (
+                      <View style={{ marginTop: 2 }}>
+                        {exp.bullets.map((b, j) => (
+                          <View key={j} style={byStyles.bulletRow}>
+                            <Text style={byStyles.bulletDot}>•</Text>
+                            <Text style={byStyles.bulletText}>{b}</Text>
+                          </View>
+                        ))}
+                      </View>
+                    )}
+                  </View>
+                </View>
+              ))}
+            </View>
+          )}
+
+          {/* Software Skill */}
+          {validSkills.length > 0 && (
+            <View style={byStyles.sectionBox} wrap={false}>
+              <ByYellowBadge title="SOFTWARE SKILL" />
+              <View style={byStyles.twoColGrid}>
+                {validSkills.map((skill, i) => (
+                  <View key={i} style={byStyles.gridItem}>
+                    <Text style={byStyles.gridItemName}>{skill}</Text>
+                    <View style={byStyles.yellowBarUnderline} />
+                  </View>
+                ))}
+              </View>
+            </View>
+          )}
+
+          {/* Languages */}
+          {validLanguages.length > 0 && (
+            <View style={byStyles.sectionBox} wrap={false}>
+              <ByYellowBadge title="LANGUAGES" />
+              <View style={byStyles.twoColGrid}>
+                {validLanguages.map((lang, i) => (
+                  <View key={i} style={byStyles.gridItem}>
+                    <Text style={byStyles.gridItemName}>{lang}</Text>
+                    <View style={byStyles.yellowBarUnderline} />
+                  </View>
+                ))}
+              </View>
+            </View>
+          )}
+
+          {/* Projects */}
+          {validProjects.length > 0 && (
+            <View style={byStyles.sectionBox}>
+              <ByYellowBadge title="PROJECTS" />
+              {validProjects.map((proj, i) => (
+                <View key={i} style={byStyles.projItem} wrap={false}>
+                  <Text style={byStyles.projName}>{proj.name}</Text>
+                  {proj.description ? <Text style={byStyles.projDesc}>{proj.description}</Text> : null}
+                </View>
+              ))}
+            </View>
+          )}
+        </View>
+      </Page>
+    </Document>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// SHARED CONFIGURATION AND ENGINE FOR ALL OTHER TEMPLATES
+// ════════════════════════════════════════════════════════════════════════════
 interface TemplateConfig {
-  fontFamily: 'Helvetica' | 'Times-Roman';
-  fontBold: 'Helvetica-Bold' | 'Times-Bold';
-  fontItalic: 'Helvetica-Oblique' | 'Times-Italic';
+  fontFamily: string;
   primaryColor: string;
   secondaryColor: string;
   accentColor: string;
@@ -29,9 +553,7 @@ function getTemplateConfig(template: ResumeTemplate): TemplateConfig {
   switch (template) {
     case 'classic':
       return {
-        fontFamily: 'Times-Roman',
-        fontBold: 'Times-Bold',
-        fontItalic: 'Times-Italic',
+        fontFamily: DEFAULT_SERIF,
         primaryColor: '#1f2937',
         secondaryColor: '#4b5563',
         accentColor: '#111827',
@@ -42,9 +564,7 @@ function getTemplateConfig(template: ResumeTemplate): TemplateConfig {
     case 'lawyer-classic':
     case 'minimal-pro':
       return {
-        fontFamily: 'Times-Roman',
-        fontBold: 'Times-Bold',
-        fontItalic: 'Times-Italic',
+        fontFamily: DEFAULT_SERIF,
         primaryColor: '#111827',
         secondaryColor: '#374151',
         accentColor: '#1e293b',
@@ -53,9 +573,7 @@ function getTemplateConfig(template: ResumeTemplate): TemplateConfig {
       };
     case 'two-column':
       return {
-        fontFamily: 'Helvetica',
-        fontBold: 'Helvetica-Bold',
-        fontItalic: 'Helvetica-Oblique',
+        fontFamily: DEFAULT_SANS,
         primaryColor: '#0f172a',
         secondaryColor: '#334155',
         accentColor: '#818cf8',
@@ -69,9 +587,7 @@ function getTemplateConfig(template: ResumeTemplate): TemplateConfig {
       };
     case 'executive':
       return {
-        fontFamily: 'Helvetica',
-        fontBold: 'Helvetica-Bold',
-        fontItalic: 'Helvetica-Oblique',
+        fontFamily: DEFAULT_SANS,
         primaryColor: '#1e293b',
         secondaryColor: '#475569',
         accentColor: '#d97706',
@@ -85,9 +601,7 @@ function getTemplateConfig(template: ResumeTemplate): TemplateConfig {
       };
     case 'premium':
       return {
-        fontFamily: 'Helvetica',
-        fontBold: 'Helvetica-Bold',
-        fontItalic: 'Helvetica-Oblique',
+        fontFamily: DEFAULT_SANS,
         primaryColor: '#312e81',
         secondaryColor: '#334155',
         accentColor: '#6366f1',
@@ -102,9 +616,7 @@ function getTemplateConfig(template: ResumeTemplate): TemplateConfig {
     case 'navy':
     case 'dark-navy':
       return {
-        fontFamily: 'Helvetica',
-        fontBold: 'Helvetica-Bold',
-        fontItalic: 'Helvetica-Oblique',
+        fontFamily: DEFAULT_SANS,
         primaryColor: '#1e3a8a',
         secondaryColor: '#334155',
         accentColor: '#3b82f6',
@@ -118,9 +630,7 @@ function getTemplateConfig(template: ResumeTemplate): TemplateConfig {
       };
     case 'crimson':
       return {
-        fontFamily: 'Helvetica',
-        fontBold: 'Helvetica-Bold',
-        fontItalic: 'Helvetica-Oblique',
+        fontFamily: DEFAULT_SANS,
         primaryColor: '#7f1d1d',
         secondaryColor: '#334155',
         accentColor: '#dc2626',
@@ -134,9 +644,7 @@ function getTemplateConfig(template: ResumeTemplate): TemplateConfig {
       };
     case 'luxury-gold':
       return {
-        fontFamily: 'Helvetica',
-        fontBold: 'Helvetica-Bold',
-        fontItalic: 'Helvetica-Oblique',
+        fontFamily: DEFAULT_SANS,
         primaryColor: '#b45309',
         secondaryColor: '#334155',
         accentColor: '#d97706',
@@ -148,28 +656,10 @@ function getTemplateConfig(template: ResumeTemplate): TemplateConfig {
         headerAlign: 'left',
         educationInSidebar: false,
       };
-    case 'black-yellow':
-      return {
-        fontFamily: 'Helvetica',
-        fontBold: 'Helvetica-Bold',
-        fontItalic: 'Helvetica-Oblique',
-        primaryColor: '#000000',
-        secondaryColor: '#1e293b',
-        accentColor: '#ca8a04',
-        sidebarBg: '#18181b',
-        sidebarText: '#fef08a',
-        isTwoColumn: true,
-        sidebarWidth: '30%',
-        mainWidth: '70%',
-        headerAlign: 'left',
-        educationInSidebar: false,
-      };
     case 'photo-sidebar':
     case 'photo-circle':
       return {
-        fontFamily: 'Helvetica',
-        fontBold: 'Helvetica-Bold',
-        fontItalic: 'Helvetica-Oblique',
+        fontFamily: DEFAULT_SANS,
         primaryColor: '#334155',
         secondaryColor: '#475569',
         accentColor: '#4f46e5',
@@ -183,9 +673,7 @@ function getTemplateConfig(template: ResumeTemplate): TemplateConfig {
       };
     case 'redline':
       return {
-        fontFamily: 'Helvetica',
-        fontBold: 'Helvetica-Bold',
-        fontItalic: 'Helvetica-Oblique',
+        fontFamily: DEFAULT_SANS,
         primaryColor: '#dc2626',
         secondaryColor: '#334155',
         accentColor: '#b91c1c',
@@ -194,9 +682,7 @@ function getTemplateConfig(template: ResumeTemplate): TemplateConfig {
       };
     case 'pink-header':
       return {
-        fontFamily: 'Helvetica',
-        fontBold: 'Helvetica-Bold',
-        fontItalic: 'Helvetica-Oblique',
+        fontFamily: DEFAULT_SANS,
         primaryColor: '#db2777',
         secondaryColor: '#374151',
         accentColor: '#be185d',
@@ -205,9 +691,7 @@ function getTemplateConfig(template: ResumeTemplate): TemplateConfig {
       };
     case 'minimal':
       return {
-        fontFamily: 'Helvetica',
-        fontBold: 'Helvetica-Bold',
-        fontItalic: 'Helvetica-Oblique',
+        fontFamily: DEFAULT_SANS,
         primaryColor: '#18181b',
         secondaryColor: '#52525b',
         accentColor: '#27272a',
@@ -217,9 +701,7 @@ function getTemplateConfig(template: ResumeTemplate): TemplateConfig {
     case 'modern':
     default:
       return {
-        fontFamily: 'Helvetica',
-        fontBold: 'Helvetica-Bold',
-        fontItalic: 'Helvetica-Oblique',
+        fontFamily: DEFAULT_SANS,
         primaryColor: '#4338ca',
         secondaryColor: '#334155',
         accentColor: '#4f46e5',
@@ -229,10 +711,7 @@ function getTemplateConfig(template: ResumeTemplate): TemplateConfig {
   }
 }
 
-export async function generateResumePdfBuffer(data: ResumeData): Promise<Buffer> {
-  const template = data.template || 'classic';
-  const cfg = getTemplateConfig(template);
-
+function renderGenericPdf(data: ResumeData, cfg: TemplateConfig) {
   const p = data.personalInfo || {
     fullName: 'Candidate',
     email: '',
@@ -286,7 +765,7 @@ export async function generateResumePdfBuffer(data: ResumeData): Promise<Buffer>
     },
     headerName: {
       fontSize: 22,
-      fontFamily: cfg.fontBold,
+      fontWeight: 'bold',
       color: cfg.primaryColor,
       letterSpacing: 0.5,
       marginBottom: 4,
@@ -303,7 +782,7 @@ export async function generateResumePdfBuffer(data: ResumeData): Promise<Buffer>
     },
     sidebarName: {
       fontSize: 18,
-      fontFamily: cfg.fontBold,
+      fontWeight: 'bold',
       color: cfg.sidebarText || '#ffffff',
       marginBottom: 4,
       lineHeight: 1.2,
@@ -315,7 +794,7 @@ export async function generateResumePdfBuffer(data: ResumeData): Promise<Buffer>
     },
     sidebarSectionTitle: {
       fontSize: 9.5,
-      fontFamily: cfg.fontBold,
+      fontWeight: 'bold',
       color: cfg.accentColor,
       textTransform: 'uppercase',
       letterSpacing: 1.2,
@@ -346,7 +825,7 @@ export async function generateResumePdfBuffer(data: ResumeData): Promise<Buffer>
     },
     sectionTitle: {
       fontSize: 11,
-      fontFamily: cfg.fontBold,
+      fontWeight: 'bold',
       color: cfg.primaryColor,
       textTransform: 'uppercase',
       letterSpacing: 0.8,
@@ -366,12 +845,12 @@ export async function generateResumePdfBuffer(data: ResumeData): Promise<Buffer>
     },
     itemTitle: {
       fontSize: 10,
-      fontFamily: cfg.fontBold,
+      fontWeight: 'bold',
       color: '#0f172a',
     },
     itemSubtitle: {
       fontSize: 9,
-      fontFamily: cfg.fontItalic,
+      fontStyle: 'italic',
       color: '#475569',
       marginBottom: 2,
     },
@@ -395,11 +874,11 @@ export async function generateResumePdfBuffer(data: ResumeData): Promise<Buffer>
 
   const validExperience = (data.experience || []).filter(e => e.company || e.position);
   const validEducation = (data.education || []).filter(e => e.school || e.degree);
-  const validProjects = (data.projects || []).filter(p => p.name);
+  const validProjects = (data.projects || []).filter(pr => pr.name);
   const validAchievements = (data.achievements || []).filter(a => a.title);
   const validInternships = (data.internships || []).filter(i => i.company);
 
-  const DocumentComponent = () => (
+  return (
     <Document
       title={`${p.fullName || 'Resume'} - FreeResume.dev`}
       author="FreeResume.dev"
@@ -434,13 +913,13 @@ export async function generateResumePdfBuffer(data: ResumeData): Promise<Buffer>
               </View>
             )}
 
-            {/* Education in Sidebar (e.g. for TwoColumnTemplate) */}
+            {/* Education in Sidebar */}
             {cfg.educationInSidebar && validEducation.length > 0 && (
               <View style={{ marginTop: 4 }}>
                 <Text style={styles.sidebarSectionTitle}>Education</Text>
                 {validEducation.map((edu, idx) => (
                   <View key={idx} style={{ marginBottom: 6 }} wrap={false}>
-                    <Text style={[styles.sidebarTextItem, { fontFamily: cfg.fontBold, color: '#ffffff' }]}>
+                    <Text style={[styles.sidebarTextItem, { fontWeight: 'bold', color: '#ffffff' }]}>
                       {edu.school}
                     </Text>
                     <Text style={styles.sidebarTextItem}>{edu.degree}</Text>
@@ -552,7 +1031,7 @@ export async function generateResumePdfBuffer(data: ResumeData): Promise<Buffer>
             </View>
           )}
 
-          {/* Education in Main Column (for templates where education is in main) */}
+          {/* Education in Main Column */}
           {!cfg.educationInSidebar && validEducation.length > 0 && (
             <View style={styles.sectionContainer}>
               <Text style={styles.sectionTitle}>Education</Text>
@@ -624,6 +1103,19 @@ export async function generateResumePdfBuffer(data: ResumeData): Promise<Buffer>
       </Page>
     </Document>
   );
+}
 
-  return await renderToBuffer(React.createElement(DocumentComponent));
+export async function generateResumePdfBuffer(data: ResumeData): Promise<Buffer> {
+  const template = data.template || 'classic';
+
+  // Dedicated pixel-perfect renderer for Black & Yellow Pro
+  if (template === 'black-yellow') {
+    const byDoc = renderBlackYellowPdf(data);
+    return await renderToBuffer(byDoc);
+  }
+
+  // Generic document renderer for all other template families
+  const cfg = getTemplateConfig(template);
+  const doc = renderGenericPdf(data, cfg);
+  return await renderToBuffer(doc);
 }
