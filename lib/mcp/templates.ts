@@ -235,8 +235,18 @@ export const MCP_TEMPLATES: TemplateMetadata[] = [
   },
 ];
 
+export function normalizeTemplateId(id?: string): ResumeTemplate {
+  if (!id) return 'classic';
+  const clean = id.trim().toLowerCase();
+  if (clean === 'tech-modern') return 'modern';
+  if (clean === 'business-classic' || clean === 'fresher-india') return 'classic';
+  if (clean === 'fresher-minimal') return 'minimal';
+  return clean as ResumeTemplate;
+}
+
 export function getTemplateById(id: string): TemplateMetadata | undefined {
-  return MCP_TEMPLATES.find(t => t.id === id);
+  const normalized = normalizeTemplateId(id);
+  return MCP_TEMPLATES.find(t => t.id === normalized || t.id === id);
 }
 
 export function getAllTemplates(category?: string, atsFriendlyOnly?: boolean): TemplateMetadata[] {

@@ -36,7 +36,21 @@ export const templateComponents: Record<string, any> = {
   'crimson': CrimsonTemplate,
   'black-yellow': BlackYellowTemplate,
   'luxury-gold': LuxuryGoldTemplate,
+  // Aliases for full backward and cross-system compatibility
+  'tech-modern': ModernTemplate,
+  'business-classic': ClassicTemplate,
+  'fresher-minimal': MinimalTemplate,
+  'fresher-india': ClassicTemplate,
 };
+
+export function normalizeTemplateId(id?: string): string {
+  if (!id) return 'classic';
+  const clean = id.trim().toLowerCase();
+  if (clean === 'tech-modern') return 'modern';
+  if (clean === 'business-classic' || clean === 'fresher-india') return 'classic';
+  if (clean === 'fresher-minimal') return 'minimal';
+  return clean;
+}
 
 export const categories = [
   'All',

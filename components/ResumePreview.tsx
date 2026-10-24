@@ -20,6 +20,7 @@ import DarkNavyTemplate from '@/components/templates/DarkNavyTemplate';
 import CrimsonTemplate from '@/components/templates/CrimsonTemplate';
 import BlackYellowTemplate from '@/components/templates/BlackYellowTemplate';
 import { LuxuryGoldTemplate } from '@/components/templates/LuxuryGoldTemplate';
+import { normalizeTemplateId } from '@/constants/templates';
 import { ZoomIn, ZoomOut, RotateCcw, Maximize2, Minimize2, Check, Layout } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -269,7 +270,7 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({ data }) => {
   const handleZoomReset = () => setZoomFactor(1);
 
   const renderTemplate = () => {
-    switch (processedData.template) {
+    switch (normalizeTemplateId(processedData.template)) {
       case 'modern':
         return <ModernTemplate data={processedData} />;
       case 'minimal':
