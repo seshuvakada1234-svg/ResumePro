@@ -43,7 +43,7 @@ export async function GET() {
         storageBucket: process.env.FIREBASE_STORAGE_BUCKET || 'studio-8830367951-73851.firebasestorage.app',
         messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID || '303359164045',
         appId: process.env.FIREBASE_APP_ID || '1:303359164045:web:9bbbde70f885e31cf9acc4',
-        firestoreDatabaseId: '',
+        firestoreDatabaseId: process.env.FIREBASE_DATABASE_ID || 'ai-studio-4e27264a-a0f8-43d7-af27-382a6cf462fb',
       };
     }
 

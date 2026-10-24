@@ -2,7 +2,8 @@ import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
 import {
   getAuth,
   GoogleAuthProvider,
-  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   signOut,
   onAuthStateChanged,
   type Auth,
@@ -23,17 +24,23 @@ let initPromise: Promise<FirebaseServices> | null = null;
 let isSignInInProgress = false;
 
 export const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({ prompt: 'select_account' });
 
-function getOrInitFirestore(app: FirebaseApp): Firestore {
+function getOrInitFirestore(app: FirebaseApp, databaseId?: string): Firestore {
   try {
-    return initializeFirestore(app, {
-      experimentalForceLongPolling: true,
-      experimentalAutoDetectLongPolling: false,
-    });
+    return databaseId
+      ? initializeFirestore(app, {
+          experimentalForceLongPolling: true,
+          experimentalAutoDetectLongPolling: false,
+        }, databaseId)
+      : initializeFirestore(app, {
+          experimentalForceLongPolling: true,
+          experimentalAutoDetectLongPolling: false,
+        });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
     if (msg.includes('already been started')) {
-      return getFirestore(app);
+      return databaseId ? getFirestore(app, databaseId) : getFirestore(app);
     }
     throw err;
   }
@@ -53,7 +60,8 @@ export async function getFirebaseServices(): Promise<FirebaseServices> {
       if (getApps().length > 0) {
         const app = getApp();
         const auth = getAuth(app);
-        const db = getOrInitFirestore(app);
+        const databaseId = (app.options as any)?.firestoreDatabaseId;
+        const db = getOrInitFirestore(app, databaseId);
         const storage = getStorage(app);
         cachedServices = { app, auth, db, storage };
         return cachedServices;
@@ -82,7 +90,7 @@ export async function getFirebaseServices(): Promise<FirebaseServices> {
       setLogLevel('error');
 
       const auth = getAuth(app);
-      const db = getOrInitFirestore(app);
+      const db = getOrInitFirestore(app, config.firestoreDatabaseId);
       const storage = getStorage(app);
 
       cachedServices = { app, auth, db, storage };
@@ -93,31 +101,33 @@ export async function getFirebaseServices(): Promise<FirebaseServices> {
   return initPromise;
 }
 
-// ✅ GOOGLE LOGIN
+// Pre-warm Firebase initialization in the browser so auth is immediately ready on user click
+if (typeof window !== 'undefined') {
+  getFirebaseServices().catch((err) => {
+    console.warn('Pre-warming Firebase initialization deferred:', err);
+  });
+}
+
+// ✅ GOOGLE LOGIN (REDIRECT - ZERO POPUPS, PREVENTS BROWSER POPUP BLOCKING)
 export async function signInWithGoogle() {
   if (isSignInInProgress) {
-    console.warn('Sign-in with Google is already in progress.');
-    return null;
+    console.warn('Sign-in with Google redirect is already in progress.');
+    return;
   }
   isSignInInProgress = true;
   try {
-    const { auth } = await getFirebaseServices();
-    const result = await signInWithPopup(auth, googleProvider);
-    return result;
+    const services = cachedServices || (await getFirebaseServices());
+    await signInWithRedirect(services.auth, googleProvider);
   } catch (err: unknown) {
-    const errorCode = (err as { code?: string })?.code;
-    if (
-      errorCode === 'auth/popup-closed-by-user' ||
-      errorCode === 'auth/cancelled-popup-request'
-    ) {
-      console.warn('Google sign-in popup was closed or cancelled by user.');
-      return null;
-    }
-    console.error('Sign-in with Google error:', err);
-    throw err;
-  } finally {
     isSignInInProgress = false;
+    console.error('Sign-in with Google redirect error:', err);
+    throw err;
   }
+}
+
+// ✅ GOOGLE LOGIN REDIRECT ALIAS
+export async function signInWithGoogleRedirect() {
+  return signInWithGoogle();
 }
 
 // ✅ LOGOUT
@@ -126,13 +136,27 @@ export async function logout() {
   return signOut(auth);
 }
 
-// ✅ AUTH STATE SUBSCRIPTION
+// ✅ AUTH STATE SUBSCRIPTION WITH REDIRECT RESULT CHECK
 export async function subscribeToAuth(
   onUser: (user: User | null) => void,
   onError?: (err: Error) => void
 ): Promise<() => void> {
   try {
     const { auth } = await getFirebaseServices();
+    
+    // Process any returning redirect flow seamlessly
+    try {
+      const redirectResult = await getRedirectResult(auth);
+      if (redirectResult?.user) {
+        onUser(redirectResult.user);
+      }
+    } catch (redirectErr: any) {
+      console.warn('Redirect sign-in inspection:', redirectErr);
+      if (onError && redirectErr instanceof Error) {
+        onError(redirectErr);
+      }
+    }
+
     return onAuthStateChanged(auth, onUser, onError);
   } catch (err) {
     if (onError && err instanceof Error) {

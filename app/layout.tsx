@@ -6,6 +6,7 @@ import { Navbar } from "@/components/Navbar";
 import { ResumeFunnelProvider } from "@/context/ResumeFunnelContext";
 import Script from "next/script";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
+import { Toaster } from "sonner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -161,6 +162,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         <ResumeFunnelProvider>
+          <Toaster richColors position="top-right" />
           <Navbar />
           <ServiceWorkerRegister />
           {children}

@@ -10,11 +10,47 @@ import Link from 'next/link';
 
 function PreviewContent() {
   const searchParams = useSearchParams();
-  const templateId = (searchParams.get('template') as ResumeTemplate) || 'classic';
+  const resumeId = searchParams.get('id');
+  const token = searchParams.get('token');
+  const templateParam = searchParams.get('template') as ResumeTemplate | null;
 
-  const data = {
+  const [loading, setLoading] = React.useState(!!resumeId);
+  const [error, setError] = React.useState<string | null>(null);
+  const [customData, setCustomData] = React.useState<any>(null);
+
+  React.useEffect(() => {
+    if (!resumeId) return;
+
+    let isMounted = true;
+    async function loadResume() {
+      try {
+        setLoading(true);
+        const url = `/api/resumes/${encodeURIComponent(resumeId!)}?token=${encodeURIComponent(token || '')}`;
+        const res = await fetch(url);
+        if (!res.ok) {
+          throw new Error('Unable to load resume. The link may have expired or is invalid.');
+        }
+        const json = await res.json();
+        if (isMounted) {
+          setCustomData(json.resume);
+        }
+      } catch (err: any) {
+        if (isMounted) {
+          setError(err.message || 'Failed to load resume');
+        }
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    }
+
+    loadResume();
+    return () => { isMounted = false; };
+  }, [resumeId, token]);
+
+  const activeTemplate = customData?.template || templateParam || 'classic';
+  const displayData = customData || {
     ...dummyResumeData,
-    template: templateId,
+    template: activeTemplate,
   };
 
   return (
@@ -28,24 +64,44 @@ function PreviewContent() {
             <ChevronLeft size={24} />
           </Link>
           <div>
-            <h1 className="font-bold text-gray-900">Template Preview</h1>
-            <p className="text-xs text-gray-500 uppercase tracking-widest font-bold">{templateId}</p>
+            <h1 className="font-bold text-gray-900">
+              {resumeId ? (customData?.personalInfo?.fullName || 'Generated Resume') : 'Template Preview'}
+            </h1>
+            <p className="text-xs text-gray-500 uppercase tracking-widest font-bold">{activeTemplate}</p>
           </div>
         </div>
 
-        {/* FIX: pass templateId as ?template= query param so the main page
-            knows which template the user selected and can apply it directly. */}
-        <Link
-          href={`/?template=${templateId}`}
-          className="px-6 py-2 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-700 transition-all shadow-md"
-        >
-          Use This Template
-        </Link>
+        <div className="flex items-center gap-3">
+          {resumeId && token && (
+            <a
+              href={`/api/resumes/download/${encodeURIComponent(resumeId)}?token=${encodeURIComponent(token)}`}
+              className="px-5 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold rounded-lg hover:opacity-95 transition-all shadow-md text-sm"
+              download
+            >
+              Download PDF 🚀
+            </a>
+          )}
+          <Link
+            href={`/?template=${activeTemplate}`}
+            className="px-5 py-2 bg-indigo-50 text-indigo-700 font-bold rounded-lg hover:bg-indigo-100 transition-all border border-indigo-200 text-sm"
+          >
+            Open in Builder
+          </Link>
+        </div>
       </header>
 
       <main className="flex-grow flex items-center justify-center p-8">
         <div className="w-full max-w-5xl h-full flex flex-col items-center">
-          <ResumePreview data={data} />
+          {loading ? (
+            <div className="text-center py-20 text-gray-500 font-medium">Loading your resume...</div>
+          ) : error ? (
+            <div className="text-center py-20">
+              <p className="text-red-600 font-semibold mb-2">{error}</p>
+              <Link href="/" className="text-indigo-600 font-bold hover:underline">Return to Home</Link>
+            </div>
+          ) : (
+            <ResumePreview data={displayData} />
+          )}
         </div>
       </main>
     </div>

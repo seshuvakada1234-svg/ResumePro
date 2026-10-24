@@ -1,0 +1,90 @@
+{
+  "id": "res_21eae92dce845fd0",
+  "accessToken": "tok_4acc1d9915d910a6cc577e3b5337ccad",
+  "data": {
+    "uid": "mcp-user",
+    "title": "Alex Vance - Resume",
+    "template": "premium",
+    "personalInfo": {
+      "fullName": "Alex Vance",
+      "email": "alex.vance@example.com",
+      "phone": "+1 415-555-0182",
+      "location": "San Francisco, CA",
+      "summary": "Staff-level engineer with 7+ years delivering distributed cloud applications, web performance optimization, and developer platforms.",
+      "linkedin": "https://linkedin.com/in/alexvance",
+      "github": "https://github.com/alexvance"
+    },
+    "summary": "Staff-level engineer with 7+ years delivering distributed cloud applications, web performance optimization, and developer platforms.",
+    "education": [
+      {
+        "school": "UC Berkeley",
+        "degree": "B.S. in Computer Science",
+        "year": "2016 - 2020"
+      }
+    ],
+    "experience": [
+      {
+        "company": "ScaleWorks Inc",
+        "position": "Lead Full Stack Engineer",
+        "duration": "2022 - Present",
+        "description": "Led core web engineering group building high-volume customer analytics dashboards.",
+        "bullets": [
+          "Architected event-driven analytics pipeline handling 50M+ daily events with 99.99% uptime",
+          "Reduced frontend page load time by 45% via SSR and edge rendering in Next.js"
+        ]
+      }
+    ],
+    "projects": [],
+    "skills": [
+      {
+        "name": "React",
+        "level": 85
+      },
+      {
+        "name": "Next.js",
+        "level": 85
+      },
+      {
+        "name": "TypeScript",
+        "level": 85
+      },
+      {
+        "name": "Node.js",
+        "level": 85
+      },
+      {
+        "name": "PostgreSQL",
+        "level": 85
+      },
+      {
+        "name": "Docker",
+        "level": 85
+      },
+      {
+        "name": "AWS",
+        "level": 85
+      },
+      {
+        "name": "GraphQL",
+        "level": 85
+      },
+      {
+        "name": "Kubernetes",
+        "level": 85
+      }
+    ],
+    "languages": [],
+    "certifications": [],
+    "achievements": [],
+    "internships": [],
+    "experienceType": "experienced",
+    "id": "res_21eae92dce845fd0",
+    "createdAt": "2026-10-24T04:41:37.997Z",
+    "updatedAt": "2026-10-24T04:41:38.066Z"
+  },
+  "targetRole": "Senior Full Stack Engineer",
+  "targetJobDescription": "Seeking Senior Full Stack Engineer with extensive experience in React, Next.js, Node.js, TypeScript, PostgreSQL, and scalable microservices.",
+  "createdAt": "2026-10-24T04:41:37.997Z",
+  "updatedAt": "2026-10-24T04:41:38.066Z",
+  "expiresAt": "2026-11-23T04:41:37.997Z"
+}
