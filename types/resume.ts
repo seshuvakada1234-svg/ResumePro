@@ -39,7 +39,9 @@ export interface Experience {
   startDate?: string; // For PhotoSidebarTemplate
   endDate?: string; // For PhotoSidebarTemplate
   description: string;
-  bullets?: string[]; // For PhotoSidebarTemplate
+  bullets?: string[];
+  responsibilities?: string[];
+  achievements?: string[];
 }
 
 export interface Project {

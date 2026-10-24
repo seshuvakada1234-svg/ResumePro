@@ -63,11 +63,9 @@ export const ExecutiveTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
       className="font-sans"
       style={{
         width: '794px',
-        height: `${A4_H}px`,
         minHeight: `${A4_H}px`,
         display: 'grid',
         gridTemplateColumns: '230px 1fr',
-        overflow: 'hidden',
         background: '#fff',
       }}
     >
@@ -76,11 +74,9 @@ export const ExecutiveTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
         style={{
           background: '#2d2d2d',
           color: '#fff',
-          height: `${A4_H}px`,
           minHeight: `${A4_H}px`,
           display: 'flex',
           flexDirection: 'column',
-          overflow: 'hidden',
           flexShrink: 0,
           boxSizing: 'border-box',
         }}
@@ -499,7 +495,6 @@ export const ExecutiveTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
         <div
           style={{
             padding: '20px 28px',
-            overflow: 'hidden',
             flex: 1,
             boxSizing: 'border-box',
           }}
@@ -524,11 +519,11 @@ export const ExecutiveTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
           )}
 
           {/* Experience */}
-          {experience?.length > 0 && experience[0].company && (
+          {experience?.length > 0 && experience.some(e => e.company || e.position || e.description || (e.bullets && e.bullets.length > 0)) && (
             <div style={{ marginBottom: '20px' }}>
               <SectionHeader label="Work Experience" />
               {experience.map((exp, i) => (
-                <div key={i} style={{ marginBottom: '12px' }}>
+                <div key={i} style={{ marginBottom: '14px' }}>
                   <div
                     style={{
                       display: 'flex',
@@ -576,18 +571,41 @@ export const ExecutiveTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
                   >
                     {exp.position}
                   </div>
-                  <div
-                    style={{
-                      fontSize: '11px',
-                      color: '#777',
-                      lineHeight: 1.65,
-                      overflowWrap: 'break-word',
-                      wordBreak: 'normal',
-                      whiteSpace: 'normal',
-                    }}
-                  >
-                    {exp.description}
-                  </div>
+                  {exp.description && (
+                    <div
+                      style={{
+                        fontSize: '11px',
+                        color: '#777',
+                        lineHeight: 1.65,
+                        overflowWrap: 'break-word',
+                        wordBreak: 'normal',
+                        whiteSpace: 'normal',
+                      }}
+                    >
+                      {exp.description}
+                    </div>
+                  )}
+                  {exp.bullets && exp.bullets.length > 0 && (
+                    <ul style={{ margin: '6px 0 0 0', padding: 0, listStyle: 'none' }}>
+                      {exp.bullets.map((b, bi) => (
+                        <li
+                          key={bi}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'flex-start',
+                            gap: '6px',
+                            fontSize: '11px',
+                            lineHeight: 1.5,
+                            color: '#666',
+                            marginBottom: '3px',
+                          }}
+                        >
+                          <span style={{ color: '#c9a84c', fontWeight: 'bold' }}>•</span>
+                          <span>{b}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
               ))}
             </div>

@@ -58,11 +58,9 @@ export const TwoColumnTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
     <div
       style={{
         width: '794px',
-        height: `${A4_H}px`,
         minHeight: `${A4_H}px`,
         display: 'flex',
         flexDirection: 'row',
-        overflow: 'hidden',
         fontFamily: "'Inter', 'Helvetica Neue', sans-serif",
         background: '#fff',
       }}
@@ -72,16 +70,15 @@ export const TwoColumnTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
         style={{
           width: '238px',
           minWidth: '238px',
-          height: `${A4_H}px`,
           minHeight: `${A4_H}px`,
           backgroundColor: '#0f172a',
           flexShrink: 0,
-          overflow: 'hidden',
           display: 'flex',
           flexDirection: 'column',
           gap: '28px',
           padding: '36px 24px',
           boxSizing: 'border-box',
+          alignSelf: 'stretch',
         }}
       >
         {/* Name + Location */}
@@ -263,9 +260,7 @@ export const TwoColumnTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
           flex: 1,
           padding: '40px 36px',
           backgroundColor: '#ffffff',
-          height: `${A4_H}px`,
           minHeight: `${A4_H}px`,
-          overflow: 'hidden',
           display: 'flex',
           flexDirection: 'column',
           gap: '28px',
@@ -363,18 +358,41 @@ export const TwoColumnTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
                   >
                     {exp.company}
                   </div>
-                  <p
-                    style={{
-                      fontSize: '11px',
-                      lineHeight: 1.6,
-                      color: '#64748b',
-                      whiteSpace: 'pre-line',
-                      overflowWrap: 'break-word',
-                      wordBreak: 'normal',
-                    }}
-                  >
-                    {exp.description}
-                  </p>
+                  {exp.description && (
+                    <p
+                      style={{
+                        fontSize: '11px',
+                        lineHeight: 1.6,
+                        color: '#64748b',
+                        whiteSpace: 'pre-line',
+                        overflowWrap: 'break-word',
+                        wordBreak: 'normal',
+                      }}
+                    >
+                      {exp.description}
+                    </p>
+                  )}
+                  {exp.bullets && exp.bullets.length > 0 && (
+                    <ul style={{ margin: '6px 0 0 0', padding: 0, listStyle: 'none' }}>
+                      {exp.bullets.map((b, bi) => (
+                        <li
+                          key={bi}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'flex-start',
+                            gap: '6px',
+                            fontSize: '11px',
+                            lineHeight: 1.5,
+                            color: '#64748b',
+                            marginBottom: '3px',
+                          }}
+                        >
+                          <span style={{ color: '#4f46e5', fontWeight: 'bold' }}>•</span>
+                          <span>{b}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
               ))}
             </div>

@@ -1,3 +1,4 @@
+import React from "react";
 import { ResumeData } from "@/types/resume";
 import { FresherSections } from "./FresherSectionsRenderer";
 
@@ -12,10 +13,7 @@ export default function DarkNavyTemplate({ data }: Props) {
     <div
       style={{
         width: "794px",
-        height: "1123px",
         minHeight: "1123px",
-        maxHeight: "1123px",
-        overflow: "hidden",
         background: "#ffffff",
         fontFamily: "'Montserrat', sans-serif",
         display: "flex",
@@ -63,9 +61,9 @@ export default function DarkNavyTemplate({ data }: Props) {
       </div>
 
       {/* BODY */}
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1">
         {/* SIDEBAR */}
-        <div className="w-[205px] bg-[#1a2a4a] shrink-0 px-4 py-6 text-white flex flex-col gap-6 overflow-hidden">
+        <div className="w-[205px] bg-[#1a2a4a] shrink-0 px-4 py-6 text-white flex flex-col gap-6">
           {/* Contact */}
           <div className="space-y-3">
             <h3 className="text-[10.5px] font-bold tracking-[2.5px] uppercase border-b border-white/15 pb-1 mb-3">
@@ -230,9 +228,21 @@ export default function DarkNavyTemplate({ data }: Props) {
                       <div className="text-[9px] text-[#4a8fe8] font-semibold">
                         {exp.company}
                       </div>
-                      <p className="text-[9px] text-[#666] leading-relaxed mt-1 whitespace-pre-line">
-                        {exp.description}
-                      </p>
+                      {exp.description && (
+                        <p className="text-[9px] text-[#666] leading-relaxed mt-1 whitespace-pre-line">
+                          {exp.description}
+                        </p>
+                      )}
+                      {exp.bullets && exp.bullets.length > 0 && (
+                        <ul className="mt-1.5 space-y-1">
+                          {exp.bullets.map((b, j) => (
+                            <li key={j} className="text-[9px] text-[#666] flex items-start gap-1.5 leading-relaxed">
+                              <span className="text-[#4a8fe8] font-bold shrink-0">•</span>
+                              <span>{b}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
                     </div>
                   </div>
                 ))}

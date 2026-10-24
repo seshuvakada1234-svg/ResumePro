@@ -11,11 +11,9 @@ export const SerifTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
     <div
       style={{
         width: '794px',
-        height: `${A4_H}px`,
         minHeight: `${A4_H}px`,
         display: 'grid',
         gridTemplateColumns: '260px 1fr',
-        overflow: 'hidden',
         background: '#fff',
         fontFamily: "'Georgia', 'Times New Roman', serif",
       }}
@@ -25,7 +23,6 @@ export const SerifTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
         style={{
           background: '#2b2b2b',
           color: '#fff',
-          height: `${A4_H}px`,
           minHeight: `${A4_H}px`,
           display: 'flex',
           flexDirection: 'column',
@@ -136,7 +133,6 @@ export const SerifTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
       <main
         style={{
           background: '#fff',
-          height: `${A4_H}px`,
           minHeight: `${A4_H}px`,
           flex: 1,
           minWidth: 0,
@@ -154,7 +150,7 @@ export const SerifTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
         )}
 
         {/* Experience */}
-        {experience?.length > 0 && experience[0].company && (
+        {experience?.length > 0 && experience.some(e => e.company || e.position || e.description || (e.bullets && e.bullets.length > 0)) && (
           <div style={{ marginBottom: '28px' }}>
             <h2 style={{ fontFamily: 'Georgia, serif', fontSize: '20px', fontWeight: 700, color: '#1a1a1a', marginBottom: '6px' }}>Experience</h2>
             <div style={{ width: '28px', height: '3px', background: '#2b2b2b', marginBottom: '14px' }} />
@@ -165,7 +161,32 @@ export const SerifTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
                   <div style={{ fontSize: '10px', color: '#888', marginTop: '2px' }}>{exp.duration}</div>
                   <div style={{ fontSize: '10px', color: '#888' }}>{exp.company}</div>
                 </div>
-                <div style={{ fontSize: '11px', color: '#666', lineHeight: 1.65 }}>{exp.description}</div>
+                <div>
+                  {exp.description && (
+                    <div style={{ fontSize: '11px', color: '#666', lineHeight: 1.65 }}>{exp.description}</div>
+                  )}
+                  {exp.bullets && exp.bullets.length > 0 && (
+                    <ul style={{ margin: '6px 0 0 0', padding: 0, listStyle: 'none' }}>
+                      {exp.bullets.map((b, bi) => (
+                        <li
+                          key={bi}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'flex-start',
+                            gap: '6px',
+                            fontSize: '11px',
+                            lineHeight: 1.5,
+                            color: '#555',
+                            marginBottom: '3px',
+                          }}
+                        >
+                          <span style={{ color: '#2b2b2b', fontWeight: 'bold' }}>•</span>
+                          <span>{b}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
               </div>
             ))}
           </div>

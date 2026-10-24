@@ -39,7 +39,7 @@ export const ClassicTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
         </section>
       )}
 
-      {experience.length > 0 && experience[0].company && (
+      {experience && experience.length > 0 && experience.some(e => e.company || e.position || e.description || (e.bullets && e.bullets.length > 0)) && (
         <section className="mb-8">
           <h2 className="text-lg font-bold uppercase border-b border-gray-300 mb-4">Experience</h2>
           <div className="space-y-6">
@@ -50,7 +50,18 @@ export const ClassicTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
                   <span className="text-sm italic text-gray-600">{exp.duration}</span>
                 </div>
                 <div className="text-sm font-semibold mb-2">{exp.company}</div>
-                <p className="text-sm leading-relaxed whitespace-pre-line">{exp.description}</p>
+                {exp.description && (
+                  <p className="text-sm leading-relaxed whitespace-pre-line text-gray-700">{exp.description}</p>
+                )}
+                {exp.bullets && exp.bullets.length > 0 && (
+                  <ul className="mt-2 space-y-1 list-disc list-inside text-sm leading-relaxed text-gray-700">
+                    {exp.bullets.map((b, bi) => (
+                      <li key={bi} className="leading-relaxed">
+                        <span>{b}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
             ))}
           </div>

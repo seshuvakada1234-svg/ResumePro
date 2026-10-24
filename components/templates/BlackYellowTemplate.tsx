@@ -1,3 +1,4 @@
+import React from "react";
 import { ResumeData } from "@/types/resume";
 import { FresherSections } from "./FresherSectionsRenderer";
 
@@ -29,11 +30,9 @@ export default function BlackYellowTemplate({ data }: Props) {
       style={{
         width: "794px",
         minHeight: "1123px",
-        height: "1123px",
         fontFamily: "Arial, sans-serif",
         display: "flex",
         backgroundColor: "#ffffff",
-        overflow: "hidden",
         boxSizing: "border-box",
       }}
     >
@@ -46,6 +45,7 @@ export default function BlackYellowTemplate({ data }: Props) {
           display: "flex",
           flexDirection: "column",
           flexShrink: 0,
+          alignSelf: "stretch",
         }}
       >
         {/* Photo */}

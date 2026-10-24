@@ -1,3 +1,4 @@
+import React from "react";
 import { ResumeData } from "@/types/resume";
 import { FresherSections } from "./FresherSectionsRenderer";
 
@@ -12,17 +13,14 @@ export default function CrimsonTemplate({ data }: Props) {
     <div
       style={{
         width: "794px",
-        height: "1123px",
         minHeight: "1123px",
-        maxHeight: "1123px",
-        overflow: "hidden",
         background: "#f9f4ef",
         fontFamily: "'Lato', sans-serif",
         display: "flex",
       }}
     >
       {/* SIDEBAR */}
-      <div className="w-[232px] bg-[#8b1a2a] shrink-0 relative flex flex-col overflow-hidden">
+      <div className="w-[232px] bg-[#8b1a2a] shrink-0 relative flex flex-col">
         {/* Diagonal corner top-right */}
         <div
           className="absolute top-0 right-0 w-0 h-0 border-solid border-t-[65px] border-r-[65px] border-t-[#f9f4ef] border-r-transparent z-0"
@@ -150,9 +148,21 @@ export default function CrimsonTemplate({ data }: Props) {
                   <div className="text-[10px] text-[#8b1a2a] font-bold">
                     {exp.company}
                   </div>
-                  <p className="text-[10px] text-[#555] leading-relaxed whitespace-pre-line">
-                    {exp.description}
-                  </p>
+                  {exp.description && (
+                    <p className="text-[10px] text-[#555] leading-relaxed whitespace-pre-line">
+                      {exp.description}
+                    </p>
+                  )}
+                  {exp.bullets && exp.bullets.length > 0 && (
+                    <ul className="mt-1.5 space-y-1">
+                      {exp.bullets.map((b, j) => (
+                        <li key={j} className="text-[10px] text-[#555] flex items-start gap-1.5 leading-relaxed">
+                          <span className="text-[#8b1a2a] font-bold shrink-0">•</span>
+                          <span>{b}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
               ))}
             </div>

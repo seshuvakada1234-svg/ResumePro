@@ -31,7 +31,7 @@ export const ModernTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
             </section>
           )}
 
-          {experience.length > 0 && experience[0].company && (
+          {experience && experience.length > 0 && experience.some(e => e.company || e.position || e.description || (e.bullets && e.bullets.length > 0)) && (
             <section>
               <h2 className="text-lg font-bold text-indigo-700 mb-4 uppercase tracking-wider">Experience</h2>
               <div className="space-y-6">
@@ -42,7 +42,19 @@ export const ModernTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
                       <span className="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded">{exp.duration}</span>
                     </div>
                     <div className="text-sm font-semibold text-gray-500 mb-2">{exp.company}</div>
-                    <p className="text-sm text-gray-600 leading-relaxed">{exp.description}</p>
+                    {exp.description && (
+                      <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-line">{exp.description}</p>
+                    )}
+                    {exp.bullets && exp.bullets.length > 0 && (
+                      <ul className="mt-2 space-y-1 text-sm text-gray-600">
+                        {exp.bullets.map((b, bi) => (
+                          <li key={bi} className="flex items-start gap-2 leading-relaxed">
+                            <span className="text-indigo-400 font-bold shrink-0 mt-0.5">•</span>
+                            <span>{b}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
                   </div>
                 ))}
               </div>

@@ -1,3 +1,4 @@
+import React from "react";
 import { ResumeData } from "@/types/resume";
 import { FresherSections } from "./FresherSectionsRenderer";
 
@@ -12,10 +13,7 @@ export default function PhotoCircleTemplate({ data }: Props) {
     <div
       style={{
         width: "794px",
-        height: "1123px",
         minHeight: "1123px",
-        maxHeight: "1123px",
-        overflow: "hidden",
         background: "#ffffff",
         fontFamily: "sans-serif",
         display: "grid",

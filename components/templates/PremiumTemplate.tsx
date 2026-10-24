@@ -105,11 +105,9 @@ export default function PremiumTemplate({ data }: Props) {
       className="font-sans"
       style={{
         width: '794px',
-        height: `${A4_H}px`,
         minHeight: `${A4_H}px`,
         display: 'flex',
         flexDirection: 'row',
-        overflow: 'hidden',
       }}
     >
       <aside
@@ -117,10 +115,10 @@ export default function PremiumTemplate({ data }: Props) {
         style={{
           width: '254px',
           minWidth: '254px',
-          height: `${A4_H}px`,
           minHeight: `${A4_H}px`,
           background: 'linear-gradient(to bottom, #4338ca, #3730a3, #581c87)',
           flexShrink: 0,
+          alignSelf: 'stretch',
         }}
       >
         <div className="flex flex-col items-start gap-4 min-w-0">
@@ -229,7 +227,6 @@ export default function PremiumTemplate({ data }: Props) {
         style={{
           flex: 1,
           backgroundColor: '#ffffff',
-          height: `${A4_H}px`,
           minHeight: `${A4_H}px`,
         }}
       >
@@ -277,12 +274,24 @@ export default function PremiumTemplate({ data }: Props) {
                       {exp.duration}
                     </span>
                   </div>
-                  <p
-                    className="text-xs leading-relaxed pl-3"
-                    style={{ color: '#4b5563', borderLeft: '2px solid #e5e7eb' }}
-                  >
-                    {exp.description}
-                  </p>
+                  {exp.description && (
+                    <p
+                      className="text-xs leading-relaxed pl-3"
+                      style={{ color: '#4b5563', borderLeft: '2px solid #e5e7eb' }}
+                    >
+                      {exp.description}
+                    </p>
+                  )}
+                  {exp.bullets && exp.bullets.length > 0 && (
+                    <ul className="mt-2 space-y-1 pl-3" style={{ borderLeft: '2px solid #e5e7eb' }}>
+                      {exp.bullets.map((b, bi) => (
+                        <li key={bi} className="flex items-start gap-1.5 text-xs text-gray-600 leading-relaxed">
+                          <span className="text-indigo-600 font-bold shrink-0 mt-0.5">•</span>
+                          <span>{b}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
               ))}
             </div>

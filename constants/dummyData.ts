@@ -28,7 +28,12 @@ export const dummyResumeData: ResumeData = {
       company: 'Tech Solutions India',
       position: 'Software Engineering Intern',
       duration: 'June 2023 - August 2023',
-      description: '• Developed and maintained React components for a customer-facing dashboard.\n• Optimized database queries, reducing load times by 20%.\n• Collaborated with the UI/UX team to implement responsive designs.',
+      description: 'Contributed to high-impact core frontend and backend services.',
+      bullets: [
+        'Developed and maintained React components for a customer-facing dashboard.',
+        'Optimized database queries, reducing load times by 20%.',
+        'Collaborated with the UI/UX team to implement responsive designs.',
+      ],
     },
   ],
   skills: [

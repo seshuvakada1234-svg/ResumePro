@@ -12,7 +12,6 @@ export const RedlineTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
       className="font-sans"
       style={{
         width: '794px',
-        height: `${A4_H}px`,
         minHeight: `${A4_H}px`,
         display: 'grid',
         gridTemplateColumns: '240px 1fr',
@@ -25,7 +24,6 @@ export const RedlineTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
         style={{
           background: '#1a1a1a',
           color: '#fff',
-          height: `${A4_H}px`,
           minHeight: `${A4_H}px`,
           display: 'flex',
           flexDirection: 'column',
@@ -139,7 +137,6 @@ export const RedlineTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
       <main
         style={{
           background: '#fff',
-          height: `${A4_H}px`,
           minHeight: `${A4_H}px`,
           flex: 1,
           minWidth: 0,
@@ -179,17 +176,40 @@ export const RedlineTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
         )}
 
         {/* Experience */}
-        {experience?.length > 0 && experience[0].company && (
+        {experience?.length > 0 && experience.some(e => e.company || e.position || e.description || (e.bullets && e.bullets.length > 0)) && (
           <div style={{ marginBottom: '20px' }}>
             <SectionHdr label="Work Experience" />
             {experience.map((exp, i) => (
-              <div key={i} style={{ display: 'grid', gridTemplateColumns: '75px 1fr', gap: '0', marginBottom: '12px' }}>
+              <div key={i} style={{ display: 'grid', gridTemplateColumns: '75px 1fr', gap: '0', marginBottom: '14px' }}>
                 <div style={{ fontSize: '10px', color: '#999', paddingRight: '12px', textAlign: 'right', paddingTop: '2px' }}>{exp.duration}</div>
                 <div style={{ paddingLeft: '16px', borderLeft: '2px solid #e8e8e8', position: 'relative' }}>
                   <div style={{ position: 'absolute', left: '-5px', top: '5px', width: '8px', height: '8px', borderRadius: '50%', background: '#e8474a' }} />
                   <div style={{ fontSize: '11px', fontWeight: 700, color: '#e8474a', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{exp.position}</div>
                   <div style={{ fontSize: '11px', color: '#555', marginBottom: '3px' }}>{exp.company}</div>
-                  <div style={{ fontSize: '11px', color: '#777', lineHeight: 1.65 }}>{exp.description}</div>
+                  {exp.description && (
+                    <div style={{ fontSize: '11px', color: '#777', lineHeight: 1.65 }}>{exp.description}</div>
+                  )}
+                  {exp.bullets && exp.bullets.length > 0 && (
+                    <ul style={{ margin: '6px 0 0 0', padding: 0, listStyle: 'none' }}>
+                      {exp.bullets.map((b, bi) => (
+                        <li
+                          key={bi}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'flex-start',
+                            gap: '6px',
+                            fontSize: '11px',
+                            lineHeight: 1.5,
+                            color: '#666',
+                            marginBottom: '3px',
+                          }}
+                        >
+                          <span style={{ color: '#e8474a', fontWeight: 'bold' }}>•</span>
+                          <span>{b}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
               </div>
             ))}

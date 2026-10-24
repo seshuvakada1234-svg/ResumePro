@@ -144,6 +144,8 @@ export function createFreeResumeMcpServer(): McpServer {
             duration: z.string().describe('Employment dates (e.g. Jan 2022 - Present)'),
             description: z.string().optional().describe('High-level overview of responsibilities'),
             bullets: z.array(z.string()).optional().describe('Quantified achievement bullet points'),
+            responsibilities: z.array(z.string()).optional().describe('Responsibility bullet points'),
+            achievements: z.array(z.string()).optional().describe('Achievement bullet points'),
           })
         )
         .optional(),
@@ -267,13 +269,24 @@ export function createFreeResumeMcpServer(): McpServer {
           );
         }
 
-        const typedExperience: Experience[] = finalExperience.map(exp => ({
-          company: exp.company,
-          position: exp.position,
-          duration: exp.duration,
-          description: exp.description || '',
-          bullets: exp.bullets,
-        }));
+        const typedExperience: Experience[] = finalExperience.map(exp => {
+          const bullets = (exp.bullets && exp.bullets.length > 0)
+            ? exp.bullets
+            : ((exp as any).responsibilities && (exp as any).responsibilities.length > 0)
+              ? (exp as any).responsibilities
+              : ((exp as any).achievements && (exp as any).achievements.length > 0)
+                ? (exp as any).achievements
+                : [];
+          return {
+            company: exp.company,
+            position: exp.position,
+            duration: exp.duration,
+            description: exp.description || '',
+            bullets: bullets.length > 0 ? bullets : undefined,
+            responsibilities: (exp as any).responsibilities,
+            achievements: (exp as any).achievements,
+          };
+        });
 
         const resumeData: ResumeData = {
           uid: 'mcp-user',
@@ -483,6 +496,8 @@ export function createFreeResumeMcpServer(): McpServer {
             duration: z.string(),
             description: z.string().optional(),
             bullets: z.array(z.string()).optional(),
+            responsibilities: z.array(z.string()).optional(),
+            achievements: z.array(z.string()).optional(),
           })
         )
         .optional(),
@@ -594,13 +609,24 @@ export function createFreeResumeMcpServer(): McpServer {
 
         if (education !== undefined) updates.education = education;
         if (experience !== undefined) {
-          updates.experience = experience.map(exp => ({
-            company: exp.company,
-            position: exp.position,
-            duration: exp.duration,
-            description: exp.description || '',
-            bullets: exp.bullets,
-          }));
+          updates.experience = experience.map(exp => {
+            const bullets = (exp.bullets && exp.bullets.length > 0)
+              ? exp.bullets
+              : ((exp as any).responsibilities && (exp as any).responsibilities.length > 0)
+                ? (exp as any).responsibilities
+                : ((exp as any).achievements && (exp as any).achievements.length > 0)
+                  ? (exp as any).achievements
+                  : undefined;
+            return {
+              company: exp.company,
+              position: exp.position,
+              duration: exp.duration,
+              description: exp.description || '',
+              bullets,
+              responsibilities: (exp as any).responsibilities,
+              achievements: (exp as any).achievements,
+            };
+          });
         }
         if (projects !== undefined) updates.projects = projects;
         if (achievements !== undefined) updates.achievements = achievements;

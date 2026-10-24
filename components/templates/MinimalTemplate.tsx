@@ -24,7 +24,7 @@ export const MinimalTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
           </section>
         )}
 
-        {experience.length > 0 && experience[0].company && (
+        {experience && experience.length > 0 && experience.some(e => e.company || e.position || e.description || (e.bullets && e.bullets.length > 0)) && (
           <section>
             <h2 className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] mb-6">Experience</h2>
             <div className="space-y-8">
@@ -33,8 +33,20 @@ export const MinimalTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
                   <div className="text-xs text-slate-400 font-medium">{exp.duration}</div>
                   <div className="col-span-3">
                     <h3 className="font-bold text-sm mb-1">{exp.position}</h3>
-                    <div className="text-xs text-slate-500 mb-3">{exp.company}</div>
-                    <p className="text-xs text-slate-600 leading-relaxed">{exp.description}</p>
+                    <div className="text-xs text-slate-500 mb-2">{exp.company}</div>
+                    {exp.description && (
+                      <p className="text-xs text-slate-600 leading-relaxed whitespace-pre-line">{exp.description}</p>
+                    )}
+                    {exp.bullets && exp.bullets.length > 0 && (
+                      <ul className="mt-2 space-y-1 text-xs text-slate-600">
+                        {exp.bullets.map((b, bi) => (
+                          <li key={bi} className="flex items-start gap-2 leading-relaxed">
+                            <span className="text-slate-400 shrink-0 mt-0.5">•</span>
+                            <span>{b}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
                   </div>
                 </div>
               ))}

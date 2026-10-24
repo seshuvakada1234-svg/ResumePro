@@ -105,26 +105,103 @@ const preprocessResumeData = (raw: ResumeData): ResumeData => {
   // 2. Filter experience: hide completely if fresher or has no entries
   let experience: typeof raw.experience = [];
   if (!isFresher) {
-    experience = (raw.experience || []).map(exp => ({
-      ...exp,
-      company: isStringPlaceholder(exp.company) ? '' : exp.company.trim(),
-      position: isStringPlaceholder(exp.position) ? '' : exp.position.trim(),
-      duration: isStringPlaceholder(exp.duration) ? '' : exp.duration.trim(),
-      description: isStringPlaceholder(exp.description) ? '' : exp.description.trim(),
-    })).filter(exp => exp.company !== '' || exp.position !== '');
+    experience = (raw.experience || []).map(exp => {
+      // Collect bullets from exp.bullets, exp.responsibilities, or exp.achievements
+      let bullets: string[] = [];
+      if (Array.isArray(exp.bullets) && exp.bullets.length > 0) {
+        bullets = exp.bullets
+          .map(b => (typeof b === 'string' ? b.trim() : ''))
+          .filter(b => b && !isStringPlaceholder(b));
+      } else if (Array.isArray((exp as any).responsibilities) && (exp as any).responsibilities.length > 0) {
+        bullets = (exp as any).responsibilities
+          .map((b: any) => (typeof b === 'string' ? b.trim() : ''))
+          .filter((b: string) => b && !isStringPlaceholder(b));
+      } else if (Array.isArray((exp as any).achievements) && (exp as any).achievements.length > 0) {
+        bullets = (exp as any).achievements
+          .map((b: any) => (typeof b === 'string' ? b.trim() : ''))
+          .filter((b: string) => b && !isStringPlaceholder(b));
+      }
+
+      let desc = isStringPlaceholder(exp.description) ? '' : exp.description.trim();
+
+      // If no explicit bullets were provided, inspect if description contains bullet lines
+      if (bullets.length === 0 && desc) {
+        const lines = desc.split('\n').map(l => l.trim()).filter(Boolean);
+        const isBulletLine = (l: string) => /^([•\-\*▪▫·–—]|\d+[\.\)])\s+/.test(l);
+        const bulletLines = lines.filter(isBulletLine);
+
+        if (bulletLines.length > 0 && bulletLines.length === lines.length) {
+          bullets = lines
+            .map(l => l.replace(/^([•\-\*▪▫·–—]|\d+[\.\)])\s+/, '').trim())
+            .filter(b => b && !isStringPlaceholder(b));
+          desc = '';
+        } else if (bulletLines.length >= 2) {
+          const intro: string[] = [];
+          const extracted: string[] = [];
+          for (const line of lines) {
+            if (isBulletLine(line)) {
+              extracted.push(line.replace(/^([•\-\*▪▫·–—]|\d+[\.\)])\s+/, '').trim());
+            } else if (extracted.length === 0) {
+              intro.push(line);
+            } else {
+              extracted.push(line);
+            }
+          }
+          if (extracted.length > 0) {
+            bullets = extracted.filter(b => b && !isStringPlaceholder(b));
+            desc = intro.join('\n');
+          }
+        }
+      }
+
+      return {
+        ...exp,
+        company: isStringPlaceholder(exp.company) ? '' : exp.company.trim(),
+        position: isStringPlaceholder(exp.position) ? '' : exp.position.trim(),
+        duration: isStringPlaceholder(exp.duration) ? '' : exp.duration.trim(),
+        description: desc,
+        bullets,
+      };
+    }).filter(exp => exp.company !== '' || exp.position !== '' || exp.description !== '' || (exp.bullets && exp.bullets.length > 0));
   }
 
   // 3. Filter projects (including internships, volunteer work, achievements)
-  let projects = (raw.projects || []).map(proj => ({
-    ...proj,
-    name: isStringPlaceholder(proj.name) ? '' : proj.name.trim(),
-    description: isStringPlaceholder(proj.description) ? '' : proj.description.trim(),
-    technologies: isStringPlaceholder(proj.technologies) ? '' : (proj.technologies || '').trim(),
-    duration: isStringPlaceholder(proj.duration) ? '' : (proj.duration || '').trim(),
-    githubUrl: isStringPlaceholder(proj.githubUrl) ? '' : (proj.githubUrl || '').trim(),
-    liveUrl: isStringPlaceholder(proj.liveUrl) ? '' : (proj.liveUrl || '').trim(),
-    bullets: (proj.bullets || []).map(b => isStringPlaceholder(b) ? '' : b.trim()).filter(b => b !== ''),
-  })).filter(proj => proj.name !== '' || proj.description !== '' || (proj.bullets && proj.bullets.length > 0));
+  let projects = (raw.projects || []).map(proj => {
+    let bullets: string[] = [];
+    if (Array.isArray(proj.bullets) && proj.bullets.length > 0) {
+      bullets = proj.bullets
+        .map(b => (typeof b === 'string' ? b.trim() : ''))
+        .filter(b => b && !isStringPlaceholder(b));
+    } else if (Array.isArray((proj as any).responsibilities) && (proj as any).responsibilities.length > 0) {
+      bullets = (proj as any).responsibilities
+        .map((b: any) => (typeof b === 'string' ? b.trim() : ''))
+        .filter((b: string) => b && !isStringPlaceholder(b));
+    }
+
+    let desc = isStringPlaceholder(proj.description) ? '' : proj.description.trim();
+    if (bullets.length === 0 && desc) {
+      const lines = desc.split('\n').map(l => l.trim()).filter(Boolean);
+      const isBulletLine = (l: string) => /^([•\-\*▪▫·–—]|\d+[\.\)])\s+/.test(l);
+      const bulletLines = lines.filter(isBulletLine);
+      if (bulletLines.length > 0 && bulletLines.length === lines.length) {
+        bullets = lines
+          .map(l => l.replace(/^([•\-\*▪▫·–—]|\d+[\.\)])\s+/, '').trim())
+          .filter(b => b && !isStringPlaceholder(b));
+        desc = '';
+      }
+    }
+
+    return {
+      ...proj,
+      name: isStringPlaceholder(proj.name) ? '' : proj.name.trim(),
+      description: desc,
+      technologies: isStringPlaceholder(proj.technologies) ? '' : (proj.technologies || '').trim(),
+      duration: isStringPlaceholder(proj.duration) ? '' : (proj.duration || '').trim(),
+      githubUrl: isStringPlaceholder(proj.githubUrl) ? '' : (proj.githubUrl || '').trim(),
+      liveUrl: isStringPlaceholder(proj.liveUrl) ? '' : (proj.liveUrl || '').trim(),
+      bullets,
+    };
+  }).filter(proj => proj.name !== '' || proj.description !== '' || (proj.bullets && proj.bullets.length > 0));
 
   // 3b. Filter internships
   const internships = (raw.internships || []).map(intern => ({
@@ -237,11 +314,28 @@ interface ResumePreviewProps {
 
 export const ResumePreview: React.FC<ResumePreviewProps> = ({ data }) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [contentHeight, setContentHeight] = useState(A4_HEIGHT);
   const [baseScale, setBaseScale] = useState(1);
   const [zoomFactor, setZoomFactor] = useState(1); // 0.6 to 1.5
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   const processedData = preprocessResumeData(data);
+
+  useEffect(() => {
+    if (!contentRef.current) return;
+    const el = contentRef.current;
+    const updateHeight = () => {
+      const h = Math.max(A4_HEIGHT, el.scrollHeight, el.offsetHeight);
+      setContentHeight(h);
+    };
+    updateHeight();
+    const observer = new ResizeObserver(() => {
+      updateHeight();
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [processedData]);
 
   useEffect(() => {
     const observer = new ResizeObserver((entries) => {
@@ -368,7 +462,7 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({ data }) => {
         {/* Outer Workspace Canvas */}
         <div 
           ref={containerRef}
-          className="relative w-full flex items-start justify-center p-2.5 sm:p-6 lg:p-8 min-h-[380px] sm:min-h-[500px] overflow-x-auto overflow-y-hidden select-none"
+          className="relative w-full flex items-start justify-center p-2.5 sm:p-6 lg:p-8 min-h-[380px] sm:min-h-[500px] overflow-x-auto overflow-y-auto select-none"
           style={{
             backgroundImage: 'radial-gradient(#E2E8F0 1.2px, transparent 1.2px)',
             backgroundSize: '16px 16px',
@@ -379,16 +473,17 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({ data }) => {
           <div
             style={{
               width: `${A4_WIDTH * scale}px`,
-              height: `${A4_HEIGHT * scale}px`,
+              height: `${contentHeight * scale}px`,
               transition: 'width 0.2s ease-out, height 0.2s ease-out'
             }}
             className="relative bg-white shadow-2xl rounded-lg overflow-hidden border border-[#ECECF5]"
           >
             <div
+              ref={contentRef}
               style={{
                 width: `${A4_WIDTH}px`,
-                height: `${A4_HEIGHT}px`,
                 minHeight: `${A4_HEIGHT}px`,
+                height: 'auto',
                 transform: `scale(${scale})`,
                 transformOrigin: 'top left',
                 WebkitFontSmoothing: 'antialiased',
@@ -428,15 +523,16 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({ data }) => {
               exit={{ scale: 0.95, y: 15 }}
               style={{
                 width: 'min(95vw, 680px)',
-                aspectRatio: `${A4_WIDTH} / ${A4_HEIGHT}`,
+                height: 'min(90vh, 900px)',
               }}
-              className="bg-white rounded-xl shadow-2xl overflow-hidden relative max-h-[90vh]"
+              className="bg-white rounded-xl shadow-2xl overflow-hidden relative"
             >
-              <div className="w-full h-full overflow-auto p-4 bg-gray-100 flex justify-center">
+              <div className="w-full h-full overflow-y-auto p-4 bg-gray-100 flex justify-center">
                 <div 
                   style={{
                     width: `${A4_WIDTH}px`,
-                    height: `${A4_HEIGHT}px`,
+                    minHeight: `${A4_HEIGHT}px`,
+                    height: `${contentHeight}px`,
                     transform: `scale(${600 / A4_WIDTH})`,
                     transformOrigin: 'top center',
                   }}

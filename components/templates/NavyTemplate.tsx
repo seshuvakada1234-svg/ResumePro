@@ -67,7 +67,6 @@ export const NavyTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
       className="font-sans"
       style={{
         width: '794px',
-        height: `${A4_H}px`,
         minHeight: `${A4_H}px`,
         display: 'grid',
         gridTemplateColumns: '260px 1fr',
@@ -80,7 +79,6 @@ export const NavyTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
         style={{
           background: '#1a2e5a',
           color: '#fff',
-          height: `${A4_H}px`,
           minHeight: `${A4_H}px`,
           display: 'flex',
           flexDirection: 'column',
@@ -404,7 +402,7 @@ export const NavyTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
         {/* Body */}
         <div style={{ padding: '0 32px 32px', flex: 1, minWidth: 0 }}>
           {/* Experience */}
-          {experience?.length > 0 && experience[0].company && (
+          {experience?.length > 0 && experience.some(e => e.company || e.position || e.description || (e.bullets && e.bullets.length > 0)) && (
             <div style={{ marginBottom: '22px' }}>
               <NavySectionHdr label="Experience" />
               {experience.map((exp, i) => (
@@ -451,9 +449,32 @@ export const NavyTemplate: React.FC<{ data: ResumeData }> = ({ data }) => {
                   >
                     {exp.company}
                   </div>
-                  <p style={{ fontSize: '11px', color: '#555', lineHeight: 1.6 }}>
-                    {exp.description}
-                  </p>
+                  {exp.description && (
+                    <p style={{ fontSize: '11px', color: '#555', lineHeight: 1.6 }}>
+                      {exp.description}
+                    </p>
+                  )}
+                  {exp.bullets && exp.bullets.length > 0 && (
+                    <ul style={{ margin: '6px 0 0 0', padding: 0, listStyle: 'none' }}>
+                      {exp.bullets.map((b, bi) => (
+                        <li
+                          key={bi}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'flex-start',
+                            gap: '6px',
+                            fontSize: '11px',
+                            lineHeight: 1.5,
+                            color: '#555',
+                            marginBottom: '3px',
+                          }}
+                        >
+                          <span style={{ color: '#1a2e5a', fontWeight: 'bold' }}>•</span>
+                          <span>{b}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
               ))}
             </div>
