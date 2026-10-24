@@ -72,17 +72,17 @@ export default function PDFDownloadButton({ className, size = "lg" }: PDFDownloa
       const html2canvas = (await import("html2canvas")).default;
       const { jsPDF } = await import("jspdf");
 
-      // ── Clone & position off-screen at exact A4 size ──
+      // ── Clone & position off-screen at exact A4 width with natural height ──
       clonedElement = element.cloneNode(true) as HTMLElement;
       clonedElement.style.position = "fixed";
       clonedElement.style.top = "-99999px";
       clonedElement.style.left = "0";
       clonedElement.style.width = `${A4_W}px`;
-      clonedElement.style.height = `${A4_H}px`;
+      clonedElement.style.height = "auto";
       clonedElement.style.minHeight = `${A4_H}px`;
-      clonedElement.style.maxHeight = `${A4_H}px`;
+      clonedElement.style.maxHeight = "none";
       clonedElement.style.background = "#ffffff";
-      clonedElement.style.overflow = "hidden";
+      clonedElement.style.overflow = "visible";
       clonedElement.style.transform = "none";
       clonedElement.style.zoom = "1";
       // ── Font quality ──
@@ -112,6 +112,8 @@ export default function PDFDownloadButton({ className, size = "lg" }: PDFDownloa
         throw new Error("Cloned preview has invalid dimensions");
       }
 
+      const elementHeight = Math.max(clonedElement.scrollHeight, A4_H);
+
       // ── Capture at 3x scale ──
       const canvas = await html2canvas(clonedElement, {
         scale: SCALE,           // KEY: 3x = 216 DPI
@@ -120,9 +122,9 @@ export default function PDFDownloadButton({ className, size = "lg" }: PDFDownloa
         imageTimeout: 15000,
         logging: false,
         width: A4_W,
-        height: A4_H,
+        height: elementHeight,
         windowWidth: A4_W,
-        windowHeight: A4_H,
+        windowHeight: elementHeight,
         scrollX: 0,
         scrollY: 0,
         backgroundColor: "#ffffff",
@@ -141,7 +143,6 @@ export default function PDFDownloadButton({ className, size = "lg" }: PDFDownloa
           const all = Array.from(body.querySelectorAll<HTMLElement>("*"));
 
           for (const node of all) {
-            // Apply font smoothing to every node in clone
             (node.style as any).webkitFontSmoothing = "antialiased";
             (node.style as any).mozOsxFontSmoothing = "grayscale";
 
@@ -174,45 +175,56 @@ export default function PDFDownloadButton({ className, size = "lg" }: PDFDownloa
         throw new Error("Canvas rendering failed");
       }
 
-      // ── Composite onto final A4 canvas at 3x resolution ──
-      const a4Canvas = document.createElement("canvas");
-      a4Canvas.width = A4_W * SCALE;
-      a4Canvas.height = A4_H * SCALE;
-
-      const ctx = a4Canvas.getContext("2d");
-      if (!ctx) throw new Error("Failed to create canvas context");
-
-      ctx.fillStyle = "#ffffff";
-      ctx.fillRect(0, 0, a4Canvas.width, a4Canvas.height);
-      ctx.drawImage(canvas, 0, 0, a4Canvas.width, a4Canvas.height);
-
-      // ── Export as PNG (lossless) instead of JPEG ──
-      const imgData = a4Canvas.toDataURL("image/png", 1.0);
-      if (!imgData || imgData === "data:,") {
-        throw new Error("Canvas export failed");
-      }
-
-      // ── Create PDF at exact A4 mm dimensions ──
+      // ── Create PDF at exact A4 mm dimensions with multi-page slicing ──
       const pdf = new jsPDF({
         orientation: "portrait",
         unit: "mm",
-        format: "a4",          // 210 x 297 mm
-        compress: false,        // no lossy compression
+        format: "a4",
+        compress: false,
       });
 
       const pdfW = pdf.internal.pageSize.getWidth();   // 210mm
       const pdfH = pdf.internal.pageSize.getHeight();  // 297mm
 
-      pdf.addImage(
-        imgData,
-        "PNG",
-        0,
-        0,
-        pdfW,
-        pdfH,
-        "",
-        "FAST",                 // no extra canvas compression
-      );
+      const totalHeightPx = canvas.height;
+      const pageHeightCanvas = A4_H * SCALE;
+      let remainingHeight = totalHeightPx;
+      let pageIndex = 0;
+
+      while (remainingHeight > 0) {
+        if (pageIndex > 0) {
+          pdf.addPage();
+        }
+
+        const pageCanvas = document.createElement("canvas");
+        pageCanvas.width = A4_W * SCALE;
+        pageCanvas.height = pageHeightCanvas;
+
+        const ctx = pageCanvas.getContext("2d");
+        if (!ctx) throw new Error("Failed to create canvas context");
+
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
+
+        const sliceHeight = Math.min(remainingHeight, pageHeightCanvas);
+        ctx.drawImage(
+          canvas,
+          0,
+          pageIndex * pageHeightCanvas,
+          A4_W * SCALE,
+          sliceHeight,
+          0,
+          0,
+          A4_W * SCALE,
+          sliceHeight
+        );
+
+        const imgData = pageCanvas.toDataURL("image/png", 1.0);
+        pdf.addImage(imgData, "PNG", 0, 0, pdfW, pdfH, "", "FAST");
+
+        remainingHeight -= pageHeightCanvas;
+        pageIndex++;
+      }
 
       pdf.save("resume.pdf");
       toast.success("✅ Resume downloaded successfully");

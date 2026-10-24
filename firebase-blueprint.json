@@ -69,6 +69,22 @@
         "updatedAt": { "type": "string", "format": "date-time" }
       },
       "required": ["uid", "personalInfo"]
+    },
+    "McpResume": {
+      "title": "MCP Resume Record",
+      "description": "Secure persistent resume record generated via ChatGPT MCP or API",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique unguessable resume ID" },
+        "accessToken": { "type": "string", "description": "Cryptographically secure access token" },
+        "data": { "type": "object", "description": "Complete ResumeData payload" },
+        "targetRole": { "type": "string", "description": "Target job title" },
+        "targetJobDescription": { "type": "string", "description": "Target job description" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "expiresAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "accessToken", "data", "createdAt", "updatedAt"]
     }
   },
   "firestore": {
@@ -79,6 +95,10 @@
     "/resumes/{resumeId}": {
       "schema": "Resume",
       "description": "User resumes"
+    },
+    "/mcp_resumes/{resumeId}": {
+      "schema": "McpResume",
+      "description": "Persistent MCP-generated resumes with token-based access control"
     }
   }
 }

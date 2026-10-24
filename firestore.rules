@@ -52,6 +52,14 @@ service cloud.firestore {
              (!('projects' in data) || data.projects is list);
     }
 
+    function isValidMcpResume(data) {
+      return data.id is string && data.id.size() >= 8 && data.id.size() <= 128 &&
+             data.accessToken is string && data.accessToken.size() >= 16 && data.accessToken.size() <= 128 &&
+             data.data is map &&
+             data.createdAt is string &&
+             data.updatedAt is string;
+    }
+
     // ===============================================================
     // Rules
     // ===============================================================
@@ -66,6 +74,21 @@ service cloud.firestore {
       allow create: if isAuthenticated() && request.resource.data.uid == request.auth.uid && isValidResume(request.resource.data);
       allow update: if isDocOwner() && isValidResume(request.resource.data) && request.resource.data.uid == resource.data.uid;
       allow delete: if isDocOwner() || isAdmin();
+    }
+
+    match /mcp_resumes/{resumeId} {
+      // Prevent unauthorized collection enumeration
+      allow list: if false;
+      // Allow single document read if authenticated (server or user)
+      allow get: if isAuthenticated() || isAdmin();
+      // Allow creation of MCP resumes with valid schema
+      allow create: if isAuthenticated() && isValidMcpResume(request.resource.data);
+      // Allow updates only when matching existing accessToken and id
+      allow update: if isAuthenticated() &&
+                       isValidMcpResume(request.resource.data) &&
+                       request.resource.data.accessToken == resource.data.accessToken &&
+                       request.resource.data.id == resource.data.id;
+      allow delete: if isAdmin();
     }
   }
 }

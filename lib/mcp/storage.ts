@@ -1,78 +1,23 @@
-import fs from 'fs';
-import path from 'path';
 import crypto from 'crypto';
 import { ResumeData } from '@/types/resume';
+import {
+  persistResumeRecord,
+  fetchResumeRecord,
+  updateResumeRecord,
+  StoredResumeRecord,
+} from '@/lib/serverDb';
 
-export interface StoredResumeRecord {
-  id: string;
-  accessToken: string;
-  data: ResumeData;
-  targetRole?: string;
-  targetJobDescription?: string;
-  createdAt: string;
-  updatedAt: string;
-  expiresAt: string;
-}
-
-// In-memory cache for ultra-fast access
-const resumeMemoryCache = new Map<string, StoredResumeRecord>();
-
-// Filesystem persistence directory
-const STORAGE_DIR = path.resolve(process.cwd(), '.mcp_resumes');
-
-function ensureStorageDir(): void {
-  try {
-    if (!fs.existsSync(STORAGE_DIR)) {
-      fs.mkdirSync(STORAGE_DIR, { recursive: true });
-    }
-  } catch (err) {
-    console.error('Failed to create storage directory:', err);
-  }
-}
-
-function getFilePath(id: string): string {
-  // Prevent path traversal
-  const safeId = id.replace(/[^a-zA-Z0-9_-]/g, '');
-  return path.join(STORAGE_DIR, `${safeId}.json`);
-}
-
-function persistToDisk(record: StoredResumeRecord): void {
-  try {
-    ensureStorageDir();
-    const filePath = getFilePath(record.id);
-    fs.writeFileSync(filePath, JSON.stringify(record, null, 2), 'utf-8');
-  } catch (err) {
-    console.error('Failed to persist resume to disk:', err);
-  }
-}
-
-function readFromDisk(id: string): StoredResumeRecord | null {
-  try {
-    const filePath = getFilePath(id);
-    if (!fs.existsSync(filePath)) return null;
-    const content = fs.readFileSync(filePath, 'utf-8');
-    const parsed = JSON.parse(content) as StoredResumeRecord;
-    
-    // Check expiration (30 days)
-    if (parsed.expiresAt && new Date(parsed.expiresAt).getTime() < Date.now()) {
-      try { fs.unlinkSync(filePath); } catch {}
-      return null;
-    }
-    
-    return parsed;
-  } catch (err) {
-    console.error(`Failed to read resume ${id} from disk:`, err);
-    return null;
-  }
-}
+export type { StoredResumeRecord };
 
 export function generateSecureId(prefix = 'res'): string {
-  const bytes = crypto.randomBytes(8).toString('hex');
+  // 128-bit unguessable random hex string (16 bytes = 32 hex chars)
+  const bytes = crypto.randomBytes(16).toString('hex');
   return `${prefix}_${bytes}`;
 }
 
 export function generateAccessToken(): string {
-  return `tok_${crypto.randomBytes(16).toString('hex')}`;
+  // 256-bit unguessable random hex string (32 bytes = 64 hex chars)
+  return `tok_${crypto.randomBytes(32).toString('hex')}`;
 }
 
 export async function saveResume(
@@ -83,7 +28,8 @@ export async function saveResume(
   const id = resumeData.id || generateSecureId('res');
   const accessToken = generateAccessToken();
   const now = new Date().toISOString();
-  const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(); // 30 days
+  // 30 days expiration
+  const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
 
   const record: StoredResumeRecord = {
     id,
@@ -101,8 +47,14 @@ export async function saveResume(
     expiresAt,
   };
 
-  resumeMemoryCache.set(id, record);
-  persistToDisk(record);
+  try {
+    // Persist directly to Cloud Firestore database
+    await persistResumeRecord(record);
+  } catch (err: any) {
+    // Log failure without exposing secrets or personal data
+    console.error('Persistent storage error: Failed to save resume to Firestore');
+    throw new Error('Database persistence failed. Resume could not be securely saved.');
+  }
 
   return { id, accessToken, record };
 }
@@ -113,17 +65,17 @@ export async function getResume(
 ): Promise<StoredResumeRecord | null> {
   if (!id) return null;
 
-  let record = resumeMemoryCache.get(id);
-  if (!record) {
-    record = readFromDisk(id) || undefined;
-    if (record) {
-      resumeMemoryCache.set(id, record);
-    }
+  let record: StoredResumeRecord | null = null;
+  try {
+    record = await fetchResumeRecord(id);
+  } catch (err: any) {
+    console.error('Persistent storage error: Failed to fetch resume from Firestore');
+    return null;
   }
 
   if (!record) return null;
 
-  // Authorization check
+  // Strict authorization validation: separate users cannot read each other's resumes
   if (accessToken && record.accessToken !== accessToken) {
     return null; // Unauthorized
   }
@@ -143,7 +95,7 @@ export async function updateResume(
 
   const now = new Date().toISOString();
 
-  // Merge updates cleanly, preserving untouched fields
+  // Merge updates cleanly, preserving all untouched fields
   const mergedData: ResumeData = {
     ...existing.data,
     ...updates,
@@ -173,14 +125,17 @@ export async function updateResume(
     updatedAt: now,
   };
 
-  resumeMemoryCache.set(id, updatedRecord);
-  persistToDisk(updatedRecord);
+  try {
+    await updateResumeRecord(id, updatedRecord);
+  } catch (err: any) {
+    console.error('Persistent storage error: Failed to update resume in Firestore');
+    throw new Error('Database persistence failed. Resume could not be updated.');
+  }
 
   return updatedRecord;
 }
 
-export function verifyAccess(id: string, accessToken: string): boolean {
-  const record = resumeMemoryCache.get(id) || readFromDisk(id);
-  if (!record) return false;
-  return record.accessToken === accessToken;
+export async function verifyAccess(id: string, accessToken: string): Promise<boolean> {
+  const record = await getResume(id, accessToken);
+  return !!record;
 }

@@ -2,9 +2,17 @@ import { calculateATSScore, ScoringResult } from '@/constants/atsScorer';
 import { generateAIFeedback, AIFeedback } from '@/constants/generateAIFeedback';
 import { ResumeData } from '@/types/resume';
 
+export interface TargetRoleAnalysis {
+  targetRole?: string;
+  keywordMatchPercentage: number; // 0 - 100%
+  matchedJobKeywords: string[];
+  missingJobKeywords: string[];
+  distinctionNote: string;
+}
+
 export interface ATSEvaluationResult {
-  overallScore: number; // 0 - 100
-  rating: 'Exceptional (85-100)' | 'Strong (70-84)' | 'Moderate (50-69)' | 'Needs Work (<50)';
+  overallAtsScore: number; // 0 - 100 (Overall resume readiness & parsing compatibility)
+  overallRating: 'Exceptional (85-100)' | 'Strong (70-84)' | 'Moderate (50-69)' | 'Needs Work (<50)';
   categoryScores: {
     keywords: number;
     experience: number;
@@ -12,19 +20,15 @@ export interface ATSEvaluationResult {
     completeness: number;
     readability: number;
   };
-  matchedKeywords: string[];
-  missingKeywords: string[];
-  targetRoleMatch?: {
-    targetRole?: string;
-    jobDescriptionMatchScore?: number;
-    matchedJobKeywords: string[];
-    missingJobKeywords: string[];
-  };
+  matchedGeneralKeywords: string[];
+  missingGeneralKeywords: string[];
+  targetRoleKeywordMatch?: TargetRoleAnalysis;
   strengths: string[];
   weaknesses: string[];
   actionableImprovements: string[];
   suggestedBulletRewrites: { original: string; rewritten: string }[];
   summaryFeedback: string;
+  scoringClarification: string;
 }
 
 export function resumeDataToText(data: Partial<ResumeData>): string {
@@ -124,7 +128,10 @@ export function extractKeywordsFromJobDescription(text: string): string[] {
     'and', 'the', 'with', 'for', 'you', 'will', 'are', 'our', 'have', 'that', 'this',
     'from', 'your', 'team', 'work', 'years', 'experience', 'ability', 'must', 'should',
     'strong', 'about', 'role', 'looking', 'join', 'plus', 'preferred', 'required',
-    'skills', 'candidates', 'environment', 'equal', 'opportunity', 'employer'
+    'skills', 'candidates', 'environment', 'equal', 'opportunity', 'employer', 'responsibilities',
+    'requirements', 'qualifications', 'including', 'knowledge', 'understanding', 'working',
+    'across', 'closely', 'apply', 'degree', 'equivalent', 'related', 'field', 'position',
+    'opportunity', 'successful', 'candidate', 'proficiency', 'good', 'great', 'ideal'
   ]);
 
   const clean = text.toLowerCase().replace(/[^a-z0-9+#.\s]/g, ' ');
@@ -135,9 +142,10 @@ export function extractKeywordsFromJobDescription(text: string): string[] {
     freq[token] = (freq[token] || 0) + 1;
   }
 
+  // Pick top distinctive keywords that are genuinely in the job description
   return Object.entries(freq)
     .sort((a, b) => b[1] - a[1])
-    .slice(0, 20)
+    .slice(0, 15)
     .map(([w]) => w);
 }
 
@@ -153,8 +161,8 @@ export function evaluateResumeATS(
   
   if (!resumeText || resumeText.trim().length === 0) {
     return {
-      overallScore: 0,
-      rating: 'Needs Work (<50)',
+      overallAtsScore: 0,
+      overallRating: 'Needs Work (<50)',
       categoryScores: {
         keywords: 0,
         experience: 0,
@@ -162,43 +170,50 @@ export function evaluateResumeATS(
         completeness: 0,
         readability: 0,
       },
-      matchedKeywords: [],
-      missingKeywords: ['Add work experience', 'Add skills', 'Add contact details'],
+      matchedGeneralKeywords: [],
+      missingGeneralKeywords: ['Add work experience', 'Add skills', 'Add contact details'],
       strengths: [],
       weaknesses: ['Resume is completely empty'],
       actionableImprovements: ['Add complete contact details, work history, skills, and education.'],
       suggestedBulletRewrites: [],
       summaryFeedback: 'Resume content is empty. Please provide resume details to evaluate ATS score.',
+      scoringClarification: 'Overall ATS score is 0/100 because no resume content was supplied.',
     };
   }
 
   const scoring: ScoringResult = calculateATSScore(resumeText);
   const feedback: AIFeedback = generateAIFeedback(resumeText);
 
-  // Target Role & Job Description analysis
-  let targetRoleMatch: ATSEvaluationResult['targetRoleMatch'] = undefined;
+  // Target Role & Job Description analysis - DISTINCT FROM OVERALL ATS SCORE
+  let targetRoleKeywordMatch: ATSEvaluationResult['targetRoleKeywordMatch'] = undefined;
   if (input.targetJobDescription || input.targetRole) {
-    const jobKeywords = input.targetJobDescription 
-      ? extractKeywordsFromJobDescription(input.targetJobDescription)
-      : (input.targetRole ? input.targetRole.toLowerCase().split(/\s+/).filter(w => w.length > 2) : []);
+    let jobKeywords: string[] = [];
+    if (input.targetJobDescription && input.targetJobDescription.trim().length > 10) {
+      jobKeywords = extractKeywordsFromJobDescription(input.targetJobDescription);
+    } else if (input.targetRole) {
+      // Split target role into meaningful tokens (ignore words like 'senior', 'lead' if too generic)
+      const roleTokens = input.targetRole.toLowerCase().split(/\s+/).filter(w => w.length > 2);
+      jobKeywords = roleTokens;
+    }
     
     const resumeLower = resumeText.toLowerCase();
     const matchedJobKeywords = jobKeywords.filter(k => resumeLower.includes(k));
     const missingJobKeywords = jobKeywords.filter(k => !resumeLower.includes(k));
     
-    const matchPct = jobKeywords.length > 0 
+    const matchPercentage = jobKeywords.length > 0 
       ? Math.round((matchedJobKeywords.length / jobKeywords.length) * 100)
-      : scoring.score;
+      : 0;
 
-    targetRoleMatch = {
+    targetRoleKeywordMatch = {
       targetRole: input.targetRole,
-      jobDescriptionMatchScore: matchPct,
+      keywordMatchPercentage: matchPercentage,
       matchedJobKeywords,
       missingJobKeywords,
+      distinctionNote: `Target Role Keyword Match (${matchPercentage}%) measures the presence of target job keywords in the resume. This is separate from the Overall ATS Score (${scoring.score}/100), which evaluates section structure, action verbs, formatting, and measurable results. Having a high keyword match does not imply a high overall score if experience bullets lack quantifiable impact or standard sections.`,
     };
   }
 
-  let rating: ATSEvaluationResult['rating'] = 'Needs Work (<50)';
+  let rating: ATSEvaluationResult['overallRating'] = 'Needs Work (<50)';
   if (scoring.score >= 85) rating = 'Exceptional (85-100)';
   else if (scoring.score >= 70) rating = 'Strong (70-84)';
   else if (scoring.score >= 50) rating = 'Moderate (50-69)';
@@ -210,19 +225,20 @@ export function evaluateResumeATS(
     'docker', 'kubernetes', 'git', 'rest', 'api', 'graphql', 'ci/cd', 'linux',
     'agile', 'scrum', 'html', 'css', 'tailwind'
   ];
-  const matchedKeywords = knownTech.filter(k => resumeText.toLowerCase().includes(k));
+  const matchedGeneralKeywords = knownTech.filter(k => resumeText.toLowerCase().includes(k));
 
   return {
-    overallScore: scoring.score,
-    rating,
+    overallAtsScore: scoring.score,
+    overallRating: rating,
     categoryScores: scoring.breakdown,
-    matchedKeywords,
-    missingKeywords: feedback.missingKeywords,
-    targetRoleMatch,
+    matchedGeneralKeywords,
+    missingGeneralKeywords: feedback.missingKeywords,
+    targetRoleKeywordMatch,
     strengths: feedback.strengths,
     weaknesses: feedback.weaknesses,
     actionableImprovements: feedback.improvements.length > 0 ? feedback.improvements : scoring.improvements,
     suggestedBulletRewrites: feedback.rewrittenPoints,
     summaryFeedback: feedback.summary,
+    scoringClarification: `Overall ATS Score is ${scoring.score}/100 based on keyword density (30%), experience quality (25%), formatting compliance (15%), completeness (15%), and readability (15%).`,
   };
 }
