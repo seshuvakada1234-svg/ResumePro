@@ -6,7 +6,6 @@ import {
   View,
   Image,
   StyleSheet,
-  Font,
   renderToBuffer,
 } from '@react-pdf/renderer';
 import {
@@ -21,32 +20,14 @@ import {
   Internship,
 } from '@/types/resume';
 
-// ── Register High-Fidelity Embedded Fonts ──
-let hasEmbeddedFonts = false;
-try {
-  Font.register({
-    family: 'LiberationSans',
-    fonts: [
-      { src: '/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf' },
-      { src: '/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf', fontWeight: 'bold' },
-      { src: '/usr/share/fonts/truetype/liberation/LiberationSans-Italic.ttf', fontStyle: 'italic' },
-    ],
-  });
-  Font.register({
-    family: 'LiberationSerif',
-    fonts: [
-      { src: '/usr/share/fonts/truetype/liberation/LiberationSerif-Regular.ttf' },
-      { src: '/usr/share/fonts/truetype/liberation/LiberationSerif-Bold.ttf', fontWeight: 'bold' },
-      { src: '/usr/share/fonts/truetype/liberation/LiberationSerif-Italic.ttf', fontStyle: 'italic' },
-    ],
-  });
-  hasEmbeddedFonts = true;
-} catch {
-  hasEmbeddedFonts = false;
-}
-
-const DEFAULT_SANS = hasEmbeddedFonts ? 'LiberationSans' : 'Helvetica';
-const DEFAULT_SERIF = hasEmbeddedFonts ? 'LiberationSerif' : 'Times-Roman';
+// ── Built-in Standard PDF Fonts (Deployment & Serverless Safe) ──
+// @react-pdf/renderer natively supports standard PostScript PDF fonts:
+// 'Helvetica' (regular, bold, oblique/italic, bold-oblique) and
+// 'Times-Roman' (regular, bold, italic, bold-italic).
+// These standard fonts require zero external files or filesystem access,
+// guaranteeing 100% reliable execution in Vercel serverless environments and Node runtimes.
+const DEFAULT_SANS = 'Helvetica';
+const DEFAULT_SERIF = 'Times-Roman';
 
 // ════════════════════════════════════════════════════════════════════════════
 // BLACK & YELLOW PRO TEMPLATE STYLES AND COMPONENTS
