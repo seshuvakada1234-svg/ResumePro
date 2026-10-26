@@ -10,156 +10,157 @@ const styles = StyleSheet.create({
     padding: 0,
     flexDirection: 'column',
   },
+  // --- TOP HEADER ---
   header: {
     flexDirection: 'row',
-    alignItems: 'center',
-    padding: '20pt 24pt',
+    alignItems: 'flex-start',
+    gap: 18,
+    paddingHorizontal: 36,
+    paddingTop: 32,
+    paddingBottom: 20,
     borderBottomWidth: 1,
     borderBottomColor: '#d1d5db',
   },
   photoBox: {
-    width: 60,
-    height: 60,
+    width: 86,
+    height: 86,
     borderRadius: 4,
+    borderWidth: 1,
+    borderColor: '#d1d5db',
     backgroundColor: '#e5e7eb',
+    overflow: 'hidden',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 16,
-    overflow: 'hidden',
   },
   photoImg: {
     width: '100%',
     height: '100%',
     objectFit: 'cover',
   },
-  avatarText: {
-    fontSize: 28,
+  photoInitial: {
+    fontSize: 32,
     fontWeight: 'bold',
-    color: '#9ca3af',
+    color: '#6b7280',
   },
   headerInfo: {
     flex: 1,
   },
   name: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: 'bold',
     color: '#111827',
+    lineHeight: 1.15,
   },
   title: {
-    fontSize: 9,
+    fontSize: 12,
     color: '#6b7280',
     marginTop: 2,
-    marginBottom: 4,
+    marginBottom: 8,
+  },
+  contactCol: {
+    flexDirection: 'column',
+    gap: 2.5,
   },
   contactRow: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 10,
+    alignItems: 'center',
+    gap: 5,
   },
-  contactItem: {
-    fontSize: 7.5,
-    color: '#4b5563',
-  },
-  bodyGrid: {
-    flexDirection: 'row',
-    flex: 1,
-  },
-  sidebar: {
-    width: '35%',
-    backgroundColor: '#f9fafb',
-    padding: '16pt 16pt',
-    borderRightWidth: 1,
-    borderRightColor: '#e5e7eb',
-  },
-  main: {
-    width: '65%',
-    padding: '16pt 18pt',
-  },
-  sectionTitle: {
-    fontSize: 9,
-    fontWeight: 'bold',
-    color: '#111827',
-    textTransform: 'uppercase',
-    letterSpacing: 0.8,
-    borderBottomWidth: 0.8,
-    borderBottomColor: '#d1d5db',
-    paddingBottom: 2,
-    marginBottom: 6,
-  },
-  eduItem: {
-    marginBottom: 6,
-  },
-  eduDegree: {
+  contactIcon: {
     fontSize: 8,
-    fontWeight: 'bold',
-    color: '#111827',
-  },
-  eduSchool: {
-    fontSize: 7.5,
     color: '#4b5563',
   },
-  eduYear: {
-    fontSize: 7,
-    fontStyle: 'italic',
-    color: '#6b7280',
-    marginTop: 1,
+  contactVal: {
+    fontSize: 8.5,
+    color: '#4b5563',
   },
-  skillItem: {
-    fontSize: 7.5,
-    color: '#374151',
-    marginBottom: 2.5,
+  // --- BODY (Horizontal Bands: 96pt left label column, border-left divider, right content) ---
+  body: {
+    paddingHorizontal: 36,
+    paddingVertical: 20,
+    flexDirection: 'column',
+    gap: 16,
+  },
+  band: {
+    flexDirection: 'row',
+  },
+  bandLeft: {
+    width: 96,
+  },
+  bandTitle: {
+    fontSize: 8.5,
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+    letterSpacing: 1.5,
+    color: '#111827',
+    paddingTop: 1,
+  },
+  bandRight: {
+    flex: 1,
+    borderLeftWidth: 1,
+    borderLeftColor: '#d1d5db',
+    paddingLeft: 18,
   },
   summaryText: {
-    fontSize: 8,
-    lineHeight: 1.45,
+    fontSize: 9,
     color: '#374151',
-    marginBottom: 10,
+    lineHeight: 1.55,
   },
+  // Experience item
   expItem: {
-    marginBottom: 8,
+    marginBottom: 12,
   },
-  expHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'baseline',
-    marginBottom: 1,
+  expDate: {
+    fontSize: 8,
+    color: '#9ca3af',
+    marginBottom: 1.5,
   },
   expPosition: {
-    fontSize: 8.8,
+    fontSize: 10,
     fontWeight: 'bold',
     color: '#111827',
   },
-  expDuration: {
-    fontSize: 7.5,
-    fontStyle: 'italic',
-    color: '#6b7280',
-  },
-  expCompany: {
-    fontSize: 7.8,
-    fontWeight: 'bold',
-    color: '#4b5563',
-    marginBottom: 2,
-  },
   expDesc: {
-    fontSize: 7.8,
-    lineHeight: 1.4,
+    fontSize: 8.5,
     color: '#4b5563',
+    lineHeight: 1.45,
+    marginTop: 2,
   },
   bulletRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    marginTop: 1.5,
+    gap: 4,
+    marginTop: 2,
   },
   bulletDot: {
-    fontSize: 7.5,
+    fontSize: 8.5,
     color: '#4b5563',
-    marginRight: 4,
   },
   bulletText: {
-    fontSize: 7.8,
-    lineHeight: 1.35,
+    fontSize: 8.5,
     color: '#4b5563',
+    lineHeight: 1.4,
     flex: 1,
+  },
+  // Education item
+  eduItem: {
+    marginBottom: 8,
+  },
+  // Skills grid (2 columns)
+  skillsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  skillItem: {
+    width: '50%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginBottom: 3,
+  },
+  skillText: {
+    fontSize: 8.5,
+    color: '#374151',
   },
 });
 
@@ -171,124 +172,234 @@ export function renderPhotoSidebarPdf(data: ResumeData) {
     email,
     phone,
     location,
+    linkedin,
     photo,
     summary,
-    firstName,
     validEducation,
     validExperience,
     validProjects,
     validSkills,
     validLanguages,
+    validCertifications,
+    validAchievements,
+    validInternships,
   } = fields;
 
   return (
-    <Document title={`${name} - Resume`} author="FreeResume.dev" subject="Photo Classic Resume">
-      <Page size="A4" style={styles.page} wrap>
-        {/* TOP HEADER */}
+    <Document title={`${name} - Resume`} author={name}>
+      <Page size="A4" style={styles.page}>
+        {/* --- TOP HEADER --- */}
         <View style={styles.header}>
           <View style={styles.photoBox}>
             {photo ? (
-              // eslint-disable-next-line jsx-a11y/alt-text
               <Image src={photo} style={styles.photoImg} />
             ) : (
-              <Text style={styles.avatarText}>{firstName.charAt(0).toUpperCase()}</Text>
+              <Text style={styles.photoInitial}>{name ? name.charAt(0) : 'A'}</Text>
             )}
           </View>
           <View style={styles.headerInfo}>
             <Text style={styles.name}>{name}</Text>
-            {title ? <Text style={styles.title}>{title}</Text> : null}
-            <View style={styles.contactRow}>
-              {email ? <Text style={styles.contactItem}>{email}</Text> : null}
-              {phone ? <Text style={styles.contactItem}>• {phone}</Text> : null}
-              {location ? <Text style={styles.contactItem}>• {location}</Text> : null}
+            <Text style={styles.title}>{title || 'Professional Title'}</Text>
+            <View style={styles.contactCol}>
+              {email ? (
+                <View style={styles.contactRow}>
+                  <Text style={styles.contactIcon}>✉</Text>
+                  <Text style={styles.contactVal}>{email}</Text>
+                </View>
+              ) : null}
+              {phone ? (
+                <View style={styles.contactRow}>
+                  <Text style={styles.contactIcon}>📞</Text>
+                  <Text style={styles.contactVal}>{phone}</Text>
+                </View>
+              ) : null}
+              {location ? (
+                <View style={styles.contactRow}>
+                  <Text style={styles.contactIcon}>📍</Text>
+                  <Text style={styles.contactVal}>{location}</Text>
+                </View>
+              ) : null}
+              {linkedin ? (
+                <View style={styles.contactRow}>
+                  <Text style={styles.contactIcon}>🔗</Text>
+                  <Text style={styles.contactVal}>{linkedin.replace(/^https?:\/\//, '')}</Text>
+                </View>
+              ) : null}
             </View>
           </View>
         </View>
 
-        {/* 2-COLUMN BODY */}
-        <View style={styles.bodyGrid}>
-          {/* LEFT 35% SIDEBAR */}
-          <View style={styles.sidebar}>
-            {validEducation.length > 0 && (
-              <View style={{ marginBottom: 12 }}>
-                <Text style={styles.sectionTitle}>Education</Text>
-                {validEducation.map((edu, i) => (
-                  <View key={i} style={styles.eduItem} wrap={false}>
-                    <Text style={styles.eduDegree}>{edu.degree}</Text>
-                    <Text style={styles.eduSchool}>{edu.school}</Text>
-                    <Text style={styles.eduYear}>{edu.year}</Text>
-                  </View>
-                ))}
+        {/* --- BODY HORIZONTAL BANDS --- */}
+        <View style={styles.body}>
+          {/* Summary */}
+          {summary ? (
+            <View style={styles.band}>
+              <View style={styles.bandLeft}>
+                <Text style={styles.bandTitle}>Summary</Text>
               </View>
-            )}
-
-            {validSkills.length > 0 && (
-              <View style={{ marginBottom: 12 }}>
-                <Text style={styles.sectionTitle}>Skills</Text>
-                {validSkills.map((s, i) => (
-                  <Text key={i} style={styles.skillItem} wrap={false}>• {s.name}</Text>
-                ))}
-              </View>
-            )}
-
-            {validLanguages.length > 0 && (
-              <View>
-                <Text style={styles.sectionTitle}>Languages</Text>
-                {validLanguages.map((l, i) => (
-                  <Text key={i} style={styles.skillItem} wrap={false}>• {l.name}</Text>
-                ))}
-              </View>
-            )}
-          </View>
-
-          {/* RIGHT 65% MAIN */}
-          <View style={styles.main}>
-            {summary ? (
-              <View style={{ marginBottom: 12 }} wrap={false}>
-                <Text style={styles.sectionTitle}>Summary</Text>
+              <View style={styles.bandRight}>
                 <Text style={styles.summaryText}>{summary}</Text>
               </View>
-            ) : null}
+            </View>
+          ) : null}
 
-            {validExperience.length > 0 && (
-              <View style={{ marginBottom: 12 }}>
-                <Text style={styles.sectionTitle}>Experience</Text>
-                {validExperience.map((exp, i) => (
-                  <View key={i} style={styles.expItem} wrap={false}>
-                    <View style={styles.expHeader}>
-                      <Text style={styles.expPosition}>{exp.position}</Text>
-                      <Text style={styles.expDuration}>{exp.duration}</Text>
-                    </View>
-                    <Text style={styles.expCompany}>{exp.company}</Text>
+          {/* Experience */}
+          {validExperience.length > 0 && (
+            <View style={styles.band}>
+              <View style={styles.bandLeft}>
+                <Text style={styles.bandTitle}>Experience</Text>
+              </View>
+              <View style={styles.bandRight}>
+                {validExperience.map((exp, idx) => (
+                  <View key={idx} style={styles.expItem}>
+                    {exp.duration ? <Text style={styles.expDate}>{exp.duration}</Text> : null}
+                    <Text style={styles.expPosition}>
+                      {exp.position}
+                      {exp.company ? `, ${exp.company}` : ''}
+                    </Text>
                     {exp.description ? <Text style={styles.expDesc}>{exp.description}</Text> : null}
-                    {exp.bullets && exp.bullets.length > 0 && (
-                      <View style={{ marginTop: 2 }}>
-                        {exp.bullets.map((b, bi) => (
-                          <View key={bi} style={styles.bulletRow}>
-                            <Text style={styles.bulletDot}>•</Text>
-                            <Text style={styles.bulletText}>{b}</Text>
-                          </View>
-                        ))}
-                      </View>
-                    )}
+                    {exp.bullets &&
+                      exp.bullets.map((b, bi) => (
+                        <View key={bi} style={styles.bulletRow}>
+                          <Text style={styles.bulletDot}>•</Text>
+                          <Text style={styles.bulletText}>{b}</Text>
+                        </View>
+                      ))}
                   </View>
                 ))}
               </View>
-            )}
+            </View>
+          )}
 
-            {validProjects.length > 0 && (
-              <View>
-                <Text style={styles.sectionTitle}>Projects</Text>
-                {validProjects.map((proj, i) => (
-                  <View key={i} style={styles.expItem} wrap={false}>
-                    <Text style={styles.expPosition}>{proj.name}</Text>
-                    {proj.technologies ? <Text style={styles.expCompany}>{proj.technologies}</Text> : null}
-                    {proj.description ? <Text style={styles.expDesc}>{proj.description}</Text> : null}
+          {/* Education */}
+          {validEducation.length > 0 && (
+            <View style={styles.band}>
+              <View style={styles.bandLeft}>
+                <Text style={styles.bandTitle}>Education</Text>
+              </View>
+              <View style={styles.bandRight}>
+                {validEducation.map((edu, idx) => (
+                  <View key={idx} style={styles.eduItem}>
+                    {edu.year ? <Text style={styles.expDate}>{edu.year}</Text> : null}
+                    <Text style={styles.expPosition}>
+                      {edu.school}
+                      {edu.degree ? `, ${edu.degree}` : ''}
+                    </Text>
                   </View>
                 ))}
               </View>
-            )}
-          </View>
+            </View>
+          )}
+
+          {/* Skills */}
+          {validSkills.length > 0 && (
+            <View style={styles.band}>
+              <View style={styles.bandLeft}>
+                <Text style={styles.bandTitle}>Skills</Text>
+              </View>
+              <View style={styles.bandRight}>
+                <View style={styles.skillsGrid}>
+                  {validSkills.map((s, idx) => (
+                    <View key={idx} style={styles.skillItem}>
+                      <Text style={styles.bulletDot}>•</Text>
+                      <Text style={styles.skillText}>{s.name}</Text>
+                    </View>
+                  ))}
+                </View>
+              </View>
+            </View>
+          )}
+
+          {/* Languages */}
+          {validLanguages.length > 0 && (
+            <View style={styles.band}>
+              <View style={styles.bandLeft}>
+                <Text style={styles.bandTitle}>Languages</Text>
+              </View>
+              <View style={styles.bandRight}>
+                <View style={styles.skillsGrid}>
+                  {validLanguages.map((l, idx) => (
+                    <View key={idx} style={styles.skillItem}>
+                      <Text style={styles.bulletDot}>•</Text>
+                      <Text style={styles.skillText}>{l.name}</Text>
+                    </View>
+                  ))}
+                </View>
+              </View>
+            </View>
+          )}
+
+          {/* Certifications */}
+          {validCertifications.length > 0 && (
+            <View style={styles.band}>
+              <View style={styles.bandLeft}>
+                <Text style={styles.bandTitle}>Certifications</Text>
+              </View>
+              <View style={styles.bandRight}>
+                {validCertifications.map((c, idx) => (
+                  <View key={idx} style={styles.bulletRow}>
+                    <Text style={styles.bulletDot}>•</Text>
+                    <Text style={styles.bulletText}>{c}</Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+          )}
+
+          {/* Projects */}
+          {validProjects.length > 0 && (
+            <View style={styles.band}>
+              <View style={styles.bandLeft}>
+                <Text style={styles.bandTitle}>Projects</Text>
+              </View>
+              <View style={styles.bandRight}>
+                {validProjects.map((p, idx) => (
+                  <View key={idx} style={styles.expItem}>
+                    <Text style={styles.expPosition}>{p.name}</Text>
+                    {p.description ? <Text style={styles.expDesc}>{p.description}</Text> : null}
+                  </View>
+                ))}
+              </View>
+            </View>
+          )}
+
+          {/* Internships */}
+          {validInternships.length > 0 && (
+            <View style={styles.band}>
+              <View style={styles.bandLeft}>
+                <Text style={styles.bandTitle}>Internships</Text>
+              </View>
+              <View style={styles.bandRight}>
+                {validInternships.map((intn, idx) => (
+                  <View key={idx} style={styles.expItem}>
+                    {intn.duration ? <Text style={styles.expDate}>{intn.duration}</Text> : null}
+                    <Text style={styles.expPosition}>
+                      {intn.role}
+                      {intn.company ? `, ${intn.company}` : ''}
+                    </Text>
+                    {intn.description ? <Text style={styles.expDesc}>{intn.description}</Text> : null}
+                  </View>
+                ))}
+              </View>
+            </View>
+          )}
+
+          {/* Achievements */}
+          {validAchievements.length > 0 && (
+            <View style={styles.band}>
+              <View style={styles.bandLeft}>
+                <Text style={styles.bandTitle}>Achievements</Text>
+              </View>
+              <View style={styles.bandRight}>
+                {validAchievements.map((ach, idx) => (
+                  <View key={idx} style={styles.expItem}>
+                    <Text style={styles.expPosition}>{ach.title}</Text>
+                    {ach.description ? <Text style={styles.expDesc}>{ach.description}</Text> : null}
+                  </View>
+                ))}
+              </View>
+            </View>
+          )}
         </View>
       </Page>
     </Document>

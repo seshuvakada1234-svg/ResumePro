@@ -10,13 +10,14 @@ const styles = StyleSheet.create({
     padding: 0,
     flexDirection: 'column',
   },
-  headerBanner: {
+  // --- TOP BANNER (indigo-700 #4338ca) ---
+  banner: {
     backgroundColor: '#4338ca',
-    padding: '24pt 24pt',
     color: '#ffffff',
+    padding: '24pt 28pt',
   },
   name: {
-    fontSize: 22,
+    fontSize: 26,
     fontWeight: 'bold',
     color: '#ffffff',
     marginBottom: 6,
@@ -24,152 +25,153 @@ const styles = StyleSheet.create({
   contactRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 12,
-    marginTop: 2,
-  },
-  contactText: {
-    fontSize: 8.5,
-    color: '#e0e7ff',
-  },
-  linksRow: {
-    flexDirection: 'row',
     gap: 14,
-    marginTop: 4,
+    marginBottom: 6,
   },
-  linkText: {
+  contactItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  contactIcon: {
     fontSize: 8,
     color: '#c7d2fe',
   },
-  bodyGrid: {
+  contactText: {
+    fontSize: 8.8,
+    color: '#e0e7ff',
+  },
+  socialRow: {
     flexDirection: 'row',
-    padding: '16pt 20pt',
-    gap: 14,
+    gap: 12,
+  },
+  socialText: {
+    fontSize: 8,
+    color: '#c7d2fe',
+  },
+  // --- BODY (2 Columns: Left 65%, Right 35%) ---
+  bodyGrid: {
+    padding: '24pt 28pt',
+    flexDirection: 'row',
+    gap: 20,
+    flex: 1,
   },
   leftCol: {
     width: '65%',
+    flexDirection: 'column',
+    gap: 16,
   },
   rightCol: {
     width: '35%',
-    paddingLeft: 4,
+    flexDirection: 'column',
+    gap: 16,
   },
-  sectionTitle: {
-    fontSize: 9.5,
+  sectionHdr: {
+    fontSize: 10.5,
     fontWeight: 'bold',
     color: '#4338ca',
     textTransform: 'uppercase',
-    letterSpacing: 1,
-    marginBottom: 6,
+    letterSpacing: 1.2,
+    marginBottom: 8,
   },
   summaryText: {
-    fontSize: 8,
-    lineHeight: 1.45,
+    fontSize: 8.8,
     color: '#4b5563',
-    marginBottom: 10,
+    lineHeight: 1.55,
   },
-  expBlock: {
+  // Experience item
+  expItem: {
     borderLeftWidth: 2,
     borderLeftColor: '#e0e7ff',
-    paddingLeft: 8,
-    marginBottom: 10,
+    paddingLeft: 10,
+    marginBottom: 12,
   },
-  expHeader: {
+  expTopRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'baseline',
     marginBottom: 2,
   },
   expPosition: {
-    fontSize: 9,
+    fontSize: 10,
     fontWeight: 'bold',
     color: '#111827',
   },
   durationBadge: {
     backgroundColor: '#eef2ff',
-    color: '#4f46e5',
-    padding: '2 6',
+    paddingVertical: 1.5,
+    paddingHorizontal: 5,
     borderRadius: 3,
-    fontSize: 7,
+  },
+  durationBadgeText: {
+    fontSize: 7.5,
     fontWeight: 'bold',
+    color: '#4f46e5',
   },
   expCompany: {
-    fontSize: 7.8,
+    fontSize: 8.8,
     fontWeight: 'bold',
     color: '#6b7280',
-    marginBottom: 2,
+    marginBottom: 3,
   },
   expDesc: {
-    fontSize: 7.8,
-    lineHeight: 1.4,
+    fontSize: 8.5,
     color: '#4b5563',
+    lineHeight: 1.45,
   },
   bulletRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    marginTop: 1.5,
+    gap: 4,
+    marginTop: 2,
   },
   bulletDot: {
-    fontSize: 7.5,
-    color: '#6366f1',
-    marginRight: 4,
+    fontSize: 8,
+    color: '#818cf8',
+    fontWeight: 'bold',
   },
   bulletText: {
-    fontSize: 7.8,
-    lineHeight: 1.35,
+    fontSize: 8.5,
     color: '#4b5563',
+    lineHeight: 1.4,
     flex: 1,
   },
+  // Skills badges in right column
   skillsWrap: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 4,
-    marginBottom: 12,
+    gap: 5,
   },
-  skillPill: {
+  skillBadge: {
     backgroundColor: '#f3f4f6',
-    borderRadius: 8,
+    borderRadius: 10,
     paddingVertical: 3,
     paddingHorizontal: 7,
-    marginBottom: 4,
   },
-  skillPillText: {
-    fontSize: 7.5,
-    fontWeight: 'bold',
+  skillBadgeText: {
+    fontSize: 8,
     color: '#374151',
+    fontWeight: 'bold',
   },
+  // Education item in right column
   eduItem: {
-    marginBottom: 8,
+    marginBottom: 9,
   },
   eduSchool: {
-    fontSize: 8.5,
+    fontSize: 9.5,
     fontWeight: 'bold',
     color: '#111827',
   },
   eduDegree: {
-    fontSize: 7.8,
+    fontSize: 8.5,
     color: '#6b7280',
     marginTop: 1,
   },
   eduYear: {
-    fontSize: 7.5,
+    fontSize: 8,
     fontWeight: 'bold',
     color: '#4f46e5',
-    marginTop: 1,
-  },
-  projItem: {
-    borderLeftWidth: 2,
-    borderLeftColor: '#e0e7ff',
-    paddingLeft: 8,
-    marginBottom: 8,
-  },
-  projTitle: {
-    fontSize: 8.5,
-    fontWeight: 'bold',
-    color: '#111827',
-  },
-  projDesc: {
-    fontSize: 7.5,
-    color: '#4b5563',
-    lineHeight: 1.35,
+    marginTop: 1.5,
   },
 });
 
@@ -187,62 +189,79 @@ export function renderModernPdf(data: ResumeData) {
     validExperience,
     validProjects,
     validSkills,
-    validLanguages,
+    validAchievements,
+    validInternships,
   } = fields;
 
   return (
-    <Document title={`${name} - Resume`} author="FreeResume.dev" subject="Modern Clean Resume">
-      <Page size="A4" style={styles.page} wrap>
-        {/* TOP INDIGO BANNER */}
-        <View style={styles.headerBanner}>
+    <Document title={`${name} - Resume`} author={name}>
+      <Page size="A4" style={styles.page}>
+        {/* --- BANNER --- */}
+        <View style={styles.banner}>
           <Text style={styles.name}>{name}</Text>
           <View style={styles.contactRow}>
-            {email ? <Text style={styles.contactText}>{email}</Text> : null}
-            {email && phone ? <Text style={styles.contactText}>•</Text> : null}
-            {phone ? <Text style={styles.contactText}>{phone}</Text> : null}
-            {(email || phone) && location ? <Text style={styles.contactText}>•</Text> : null}
-            {location ? <Text style={styles.contactText}>{location}</Text> : null}
+            {email ? (
+              <View style={styles.contactItem}>
+                <Text style={styles.contactIcon}>✉</Text>
+                <Text style={styles.contactText}>{email}</Text>
+              </View>
+            ) : null}
+            {phone ? (
+              <View style={styles.contactItem}>
+                <Text style={styles.contactIcon}>📞</Text>
+                <Text style={styles.contactText}>{phone}</Text>
+              </View>
+            ) : null}
+            {location ? (
+              <View style={styles.contactItem}>
+                <Text style={styles.contactIcon}>📍</Text>
+                <Text style={styles.contactText}>{location}</Text>
+              </View>
+            ) : null}
           </View>
-          {(linkedin || github) && (
-            <View style={styles.linksRow}>
-              {linkedin ? <Text style={styles.linkText}>LinkedIn: {linkedin.replace('https://', '')}</Text> : null}
-              {github ? <Text style={styles.linkText}>GitHub: {github.replace('https://', '')}</Text> : null}
-            </View>
-          )}
+          <View style={styles.socialRow}>
+            {linkedin ? (
+              <Text style={styles.socialText}>LinkedIn: {linkedin.replace(/^https?:\/\//, '')}</Text>
+            ) : null}
+            {github ? (
+              <Text style={styles.socialText}>GitHub: {github.replace(/^https?:\/\//, '')}</Text>
+            ) : null}
+          </View>
         </View>
 
-        {/* 2-COLUMN BODY GRID */}
+        {/* --- BODY GRID --- */}
         <View style={styles.bodyGrid}>
-          {/* LEFT 65% COLUMN */}
+          {/* LEFT COLUMN (Summary + Experience + Projects) */}
           <View style={styles.leftCol}>
             {summary ? (
-              <View wrap={false}>
-                <Text style={styles.sectionTitle}>About Me</Text>
+              <View>
+                <Text style={styles.sectionHdr}>About Me</Text>
                 <Text style={styles.summaryText}>{summary}</Text>
               </View>
             ) : null}
 
             {validExperience.length > 0 && (
               <View>
-                <Text style={styles.sectionTitle}>Experience</Text>
-                {validExperience.map((exp, i) => (
-                  <View key={i} style={styles.expBlock} wrap={false}>
-                    <View style={styles.expHeader}>
+                <Text style={styles.sectionHdr}>Experience</Text>
+                {validExperience.map((exp, idx) => (
+                  <View key={idx} style={styles.expItem}>
+                    <View style={styles.expTopRow}>
                       <Text style={styles.expPosition}>{exp.position}</Text>
-                      {exp.duration ? <Text style={styles.durationBadge}>{exp.duration}</Text> : null}
+                      {exp.duration ? (
+                        <View style={styles.durationBadge}>
+                          <Text style={styles.durationBadgeText}>{exp.duration}</Text>
+                        </View>
+                      ) : null}
                     </View>
                     <Text style={styles.expCompany}>{exp.company}</Text>
                     {exp.description ? <Text style={styles.expDesc}>{exp.description}</Text> : null}
-                    {exp.bullets && exp.bullets.length > 0 && (
-                      <View style={{ marginTop: 2 }}>
-                        {exp.bullets.map((b, bi) => (
-                          <View key={bi} style={styles.bulletRow}>
-                            <Text style={styles.bulletDot}>•</Text>
-                            <Text style={styles.bulletText}>{b}</Text>
-                          </View>
-                        ))}
-                      </View>
-                    )}
+                    {exp.bullets &&
+                      exp.bullets.map((b, bi) => (
+                        <View key={bi} style={styles.bulletRow}>
+                          <Text style={styles.bulletDot}>•</Text>
+                          <Text style={styles.bulletText}>{b}</Text>
+                        </View>
+                      ))}
                   </View>
                 ))}
               </View>
@@ -250,27 +269,58 @@ export function renderModernPdf(data: ResumeData) {
 
             {validProjects.length > 0 && (
               <View>
-                <Text style={styles.sectionTitle}>Projects</Text>
-                {validProjects.map((proj, i) => (
-                  <View key={i} style={styles.projItem} wrap={false}>
-                    <Text style={styles.projTitle}>{proj.name}</Text>
-                    {proj.technologies ? <Text style={styles.expCompany}>{proj.technologies}</Text> : null}
-                    {proj.description ? <Text style={styles.projDesc}>{proj.description}</Text> : null}
+                <Text style={styles.sectionHdr}>Key Projects</Text>
+                {validProjects.map((p, idx) => (
+                  <View key={idx} style={styles.expItem}>
+                    <Text style={styles.expPosition}>{p.name}</Text>
+                    {p.description ? <Text style={styles.expDesc}>{p.description}</Text> : null}
+                  </View>
+                ))}
+              </View>
+            )}
+
+            {validInternships.length > 0 && (
+              <View>
+                <Text style={styles.sectionHdr}>Internships</Text>
+                {validInternships.map((intn, idx) => (
+                  <View key={idx} style={styles.expItem}>
+                    <View style={styles.expTopRow}>
+                      <Text style={styles.expPosition}>{intn.role}</Text>
+                      {intn.duration ? (
+                        <View style={styles.durationBadge}>
+                          <Text style={styles.durationBadgeText}>{intn.duration}</Text>
+                        </View>
+                      ) : null}
+                    </View>
+                    <Text style={styles.expCompany}>{intn.company}</Text>
+                    {intn.description ? <Text style={styles.expDesc}>{intn.description}</Text> : null}
+                  </View>
+                ))}
+              </View>
+            )}
+
+            {validAchievements.length > 0 && (
+              <View>
+                <Text style={styles.sectionHdr}>Achievements</Text>
+                {validAchievements.map((ach, idx) => (
+                  <View key={idx} style={styles.expItem}>
+                    <Text style={styles.expPosition}>{ach.title}</Text>
+                    {ach.description ? <Text style={styles.expDesc}>{ach.description}</Text> : null}
                   </View>
                 ))}
               </View>
             )}
           </View>
 
-          {/* RIGHT 35% COLUMN */}
+          {/* RIGHT COLUMN (Skills + Education) */}
           <View style={styles.rightCol}>
             {validSkills.length > 0 && (
-              <View wrap={false}>
-                <Text style={styles.sectionTitle}>Skills</Text>
+              <View>
+                <Text style={styles.sectionHdr}>Skills</Text>
                 <View style={styles.skillsWrap}>
-                  {validSkills.map((s, i) => (
-                    <View key={i} style={styles.skillPill}>
-                      <Text style={styles.skillPillText}>{s.name}</Text>
+                  {validSkills.map((s, idx) => (
+                    <View key={idx} style={styles.skillBadge}>
+                      <Text style={styles.skillBadgeText}>{s.name}</Text>
                     </View>
                   ))}
                 </View>
@@ -278,28 +328,15 @@ export function renderModernPdf(data: ResumeData) {
             )}
 
             {validEducation.length > 0 && (
-              <View wrap={false}>
-                <Text style={styles.sectionTitle}>Education</Text>
-                {validEducation.map((edu, i) => (
-                  <View key={i} style={styles.eduItem}>
+              <View>
+                <Text style={styles.sectionHdr}>Education</Text>
+                {validEducation.map((edu, idx) => (
+                  <View key={idx} style={styles.eduItem}>
                     <Text style={styles.eduSchool}>{edu.school}</Text>
                     <Text style={styles.eduDegree}>{edu.degree}</Text>
-                    <Text style={styles.eduYear}>{edu.year}</Text>
+                    {edu.year ? <Text style={styles.eduYear}>{edu.year}</Text> : null}
                   </View>
                 ))}
-              </View>
-            )}
-
-            {validLanguages.length > 0 && (
-              <View wrap={false} style={{ marginTop: 6 }}>
-                <Text style={styles.sectionTitle}>Languages</Text>
-                <View style={styles.skillsWrap}>
-                  {validLanguages.map((l, i) => (
-                    <View key={i} style={styles.skillPill}>
-                      <Text style={styles.skillPillText}>{l.name}</Text>
-                    </View>
-                  ))}
-                </View>
               </View>
             )}
           </View>

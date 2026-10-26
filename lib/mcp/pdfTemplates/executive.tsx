@@ -1,184 +1,321 @@
 import React from 'react';
-import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
+import { Document, Page, Text, View, Image, StyleSheet } from '@react-pdf/renderer';
 import { ResumeData } from '@/types/resume';
 import { DEFAULT_SANS, extractResumeFields } from './common';
 
 const styles = StyleSheet.create({
   page: {
-    backgroundColor: '#ffffff',
+    backgroundColor: '#f4f4f4',
     fontFamily: DEFAULT_SANS,
     padding: 0,
     flexDirection: 'row',
   },
+  // --- SIDEBAR (230px / 794px = ~29%) ---
   sidebar: {
-    width: '32%',
-    backgroundColor: '#1e293b',
-    padding: '24pt 16pt',
+    width: '29%',
+    backgroundColor: '#2d2d2d',
     color: '#ffffff',
     flexDirection: 'column',
     minHeight: '100%',
   },
-  main: {
-    width: '68%',
-    padding: '24pt 20pt',
-    backgroundColor: '#ffffff',
-    flexDirection: 'column',
+  profileBox: {
+    padding: '24pt 16pt 16pt',
+    alignItems: 'center',
+    textAlign: 'center',
   },
-  avatarCircle: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: '#d97706',
+  avatarRing: {
+    width: 76,
+    height: 76,
+    borderRadius: 38,
+    borderWidth: 2.5,
+    borderColor: '#c9a84c',
+    backgroundColor: '#1a1a1a',
+    overflow: 'hidden',
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 10,
   },
+  avatarImg: {
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover',
+  },
   avatarText: {
-    fontSize: 22,
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#c9a84c',
+  },
+  sideName: {
+    fontSize: 14,
     fontWeight: 'bold',
     color: '#ffffff',
-  },
-  name: {
-    fontSize: 15,
-    fontWeight: 'bold',
-    textTransform: 'uppercase',
     letterSpacing: 1,
-    color: '#ffffff',
-    marginBottom: 2,
-  },
-  title: {
-    fontSize: 7.5,
-    fontWeight: 'bold',
     textTransform: 'uppercase',
-    letterSpacing: 1.5,
-    color: '#d97706',
-    marginBottom: 14,
+    textAlign: 'center',
   },
-  sidebarSection: {
-    marginBottom: 14,
+  goldBar: {
+    width: 28,
+    height: 2,
+    backgroundColor: '#c9a84c',
+    marginVertical: 6,
   },
-  sidebarSectionTitle: {
+  sideProfession: {
     fontSize: 8,
-    fontWeight: 'bold',
+    color: '#aaaaaa',
+    letterSpacing: 1.5,
     textTransform: 'uppercase',
-    letterSpacing: 1.2,
-    color: '#cbd5e1',
-    borderBottomWidth: 1,
-    borderBottomColor: '#d97706',
-    paddingBottom: 2,
-    marginBottom: 6,
+    textAlign: 'center',
   },
-  contactRow: {
+  sideSection: {
+    paddingHorizontal: 16,
+    marginBottom: 14,
+  },
+  sideTitle: {
+    fontSize: 9,
+    fontWeight: 'bold',
+    color: '#ffffff',
+    textTransform: 'uppercase',
+    letterSpacing: 1.8,
+    marginBottom: 5,
+  },
+  sideDivider: {
+    height: 1,
+    backgroundColor: 'rgba(255,255,255,0.12)',
+    marginBottom: 8,
+  },
+  contactItem: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 5,
+    gap: 6,
   },
   contactBadge: {
-    width: 14,
-    height: 14,
-    borderRadius: 7,
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    marginRight: 6,
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: 'rgba(255,255,255,0.08)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  contactBadgeText: {
+    fontSize: 8,
+    color: '#c9a84c',
   },
   contactText: {
-    fontSize: 7.2,
-    color: '#cbd5e1',
+    fontSize: 8.5,
+    color: '#cccccc',
     flex: 1,
+    lineHeight: 1.3,
   },
-  eduItem: {
+  // Skills with 5 circular dots
+  skillRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     marginBottom: 6,
   },
-  eduDegree: {
-    fontSize: 8,
+  skillName: {
+    fontSize: 8.5,
+    color: '#cccccc',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    width: 75,
+  },
+  skillDotsBox: {
+    flexDirection: 'row',
+    gap: 2.5,
+  },
+  skillDotFilled: {
+    width: 7,
+    height: 7,
+    borderRadius: 3.5,
+    backgroundColor: '#c9a84c',
+  },
+  skillDotEmpty: {
+    width: 7,
+    height: 7,
+    borderRadius: 3.5,
+    backgroundColor: '#555555',
+  },
+  // Education
+  eduItem: {
+    marginBottom: 8,
+  },
+  eduSchool: {
+    fontSize: 9.5,
     fontWeight: 'bold',
     color: '#ffffff',
   },
-  eduSchool: {
-    fontSize: 7.2,
+  eduDegree: {
+    fontSize: 8.5,
     color: '#94a3b8',
+    marginTop: 1.5,
   },
   eduYear: {
-    fontSize: 6.8,
-    color: '#d97706',
+    fontSize: 8,
+    color: '#64748b',
+    fontStyle: 'italic',
     marginTop: 1,
   },
-  skillText: {
-    fontSize: 7.5,
-    color: '#e2e8f0',
-    marginBottom: 3,
+  // --- MAIN (Right ~71%) ---
+  main: {
+    flex: 1,
+    backgroundColor: '#f4f4f4',
+    flexDirection: 'column',
   },
-  mainSection: {
-    marginBottom: 13,
+  headerCard: {
+    backgroundColor: '#ffffff',
+    padding: '20pt 24pt 16pt',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e8e8e8',
   },
-  mainSectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 6,
-  },
-  goldBar: {
-    width: 16,
-    height: 2.5,
-    backgroundColor: '#d97706',
-    marginRight: 6,
-  },
-  mainSectionTitle: {
-    fontSize: 9.5,
+  mainName: {
+    fontSize: 24,
     fontWeight: 'bold',
-    color: '#1e293b',
+    color: '#2d2d2d',
     textTransform: 'uppercase',
     letterSpacing: 1,
   },
-  summaryText: {
-    fontSize: 8,
-    lineHeight: 1.45,
-    color: '#475569',
+  accentLineRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3.5,
+    marginTop: 4,
   },
-  expItem: {
+  accentGold: {
+    width: 32,
+    height: 2,
+    backgroundColor: '#c9a84c',
+  },
+  accentCharcoal: {
+    width: 16,
+    height: 2,
+    backgroundColor: '#2d2d2d',
+  },
+  mainProfession: {
+    fontSize: 8.5,
+    color: '#999999',
+    letterSpacing: 1.8,
+    textTransform: 'uppercase',
+    marginTop: 4,
+  },
+  mainBody: {
+    padding: '16pt 24pt',
+    flex: 1,
+  },
+  sectionBlock: {
+    marginBottom: 16,
+  },
+  // Section Header: 22pt circle #2d2d2d with 8pt gold dot #c9a84c
+  sectionHeaderBox: {
     marginBottom: 8,
   },
-  expHeader: {
+  sectionHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 7,
+  },
+  circleBadge: {
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    backgroundColor: '#2d2d2d',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  innerDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#c9a84c',
+  },
+  sectionTitleMain: {
+    fontSize: 11.5,
+    fontWeight: 'bold',
+    color: '#2d2d2d',
+  },
+  sectionDivider: {
+    height: 1,
+    backgroundColor: '#dddddd',
+    marginTop: 5,
+    marginBottom: 6,
+  },
+  summaryText: {
+    fontSize: 9.5,
+    color: '#666666',
+    lineHeight: 1.6,
+  },
+  expItem: {
+    marginBottom: 11,
+  },
+  expMetaRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'baseline',
-    marginBottom: 1,
-  },
-  expPosition: {
-    fontSize: 8.8,
-    fontWeight: 'bold',
-    color: '#1e293b',
-  },
-  expDuration: {
-    fontSize: 7.5,
-    fontWeight: 'bold',
-    color: '#d97706',
   },
   expCompany: {
-    fontSize: 7.8,
-    color: '#64748b',
-    marginBottom: 2,
+    fontSize: 8.5,
+    color: '#999999',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  expDuration: {
+    fontSize: 8.5,
+    color: '#999999',
+  },
+  expPosition: {
+    fontSize: 10.5,
+    fontWeight: 'bold',
+    color: '#2d2d2d',
+    marginVertical: 2,
   },
   expDesc: {
-    fontSize: 7.8,
-    lineHeight: 1.4,
-    color: '#475569',
+    fontSize: 9.5,
+    color: '#777777',
+    lineHeight: 1.5,
   },
   bulletRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    marginTop: 1.5,
+    gap: 5,
+    marginTop: 2.5,
   },
   bulletDot: {
-    fontSize: 7.5,
-    color: '#d97706',
-    marginRight: 4,
+    color: '#c9a84c',
+    fontSize: 9,
   },
   bulletText: {
-    fontSize: 7.8,
-    lineHeight: 1.35,
-    color: '#475569',
+    fontSize: 9.5,
+    color: '#666666',
+    lineHeight: 1.4,
     flex: 1,
   },
 });
+
+function SectionHeader({ label }: { label: string }) {
+  return (
+    <View style={styles.sectionHeaderBox}>
+      <View style={styles.sectionHeaderRow}>
+        <View style={styles.circleBadge}>
+          <View style={styles.innerDot} />
+        </View>
+        <Text style={styles.sectionTitleMain}>{label}</Text>
+      </View>
+      <View style={styles.sectionDivider} />
+    </View>
+  );
+}
+
+function SkillRating({ level }: { level: number }) {
+  const activeCount = Math.max(1, Math.min(5, Math.round(level <= 5 ? level : (level / 100) * 5)));
+  return (
+    <View style={styles.skillDotsBox}>
+      {[1, 2, 3, 4, 5].map((idx) => (
+        <View key={idx} style={idx <= activeCount ? styles.skillDotFilled : styles.skillDotEmpty} />
+      ))}
+    </View>
+  );
+}
 
 export function renderExecutivePdf(data: ResumeData) {
   const fields = extractResumeFields(data);
@@ -188,152 +325,202 @@ export function renderExecutivePdf(data: ResumeData) {
     email,
     phone,
     location,
-    linkedin,
+    photo,
     summary,
-    firstName,
     validEducation,
     validExperience,
     validProjects,
     validSkills,
+    validLanguages,
     validAchievements,
+    validInternships,
   } = fields;
 
+  const profession = validExperience[0]?.position || title || 'Professional';
+
   return (
-    <Document title={`${name} - Resume`} author="FreeResume.dev" subject="Executive Dark Resume">
-      <Page size="A4" style={styles.page} wrap>
-        {/* LEFT SLATE/GOLD SIDEBAR */}
+    <Document title={`${name} - Resume`} author={name}>
+      <Page size="A4" style={styles.page}>
+        {/* --- SIDEBAR --- */}
         <View style={styles.sidebar}>
-          <View style={styles.avatarCircle}>
-            <Text style={styles.avatarText}>{firstName.charAt(0).toUpperCase()}</Text>
+          {/* Profile Circle */}
+          <View style={styles.profileBox}>
+            <View style={styles.avatarRing}>
+              {photo ? (
+                <Image src={photo} style={styles.avatarImg} />
+              ) : (
+                <Text style={styles.avatarText}>{name ? name.charAt(0) : '?'}</Text>
+              )}
+            </View>
+            <Text style={styles.sideName}>{name}</Text>
+            <View style={styles.goldBar} />
+            <Text style={styles.sideProfession}>{profession}</Text>
           </View>
-          <Text style={styles.name}>{name}</Text>
-          {title ? <Text style={styles.title}>{title}</Text> : null}
 
           {/* Contact */}
-          <View style={styles.sidebarSection}>
-            <Text style={styles.sidebarSectionTitle}>Contact</Text>
-            {phone ? (
-              <View style={styles.contactRow}>
-                <View style={styles.contactBadge} />
-                <Text style={styles.contactText}>{phone}</Text>
-              </View>
-            ) : null}
+          <View style={styles.sideSection}>
+            <Text style={styles.sideTitle}>Contact</Text>
+            <View style={styles.sideDivider} />
             {email ? (
-              <View style={styles.contactRow}>
-                <View style={styles.contactBadge} />
+              <View style={styles.contactItem}>
+                <View style={styles.contactBadge}>
+                  <Text style={styles.contactBadgeText}>@</Text>
+                </View>
                 <Text style={styles.contactText}>{email}</Text>
               </View>
             ) : null}
-            {location ? (
-              <View style={styles.contactRow}>
-                <View style={styles.contactBadge} />
-                <Text style={styles.contactText}>{location}</Text>
+            {phone ? (
+              <View style={styles.contactItem}>
+                <View style={styles.contactBadge}>
+                  <Text style={styles.contactBadgeText}>P</Text>
+                </View>
+                <Text style={styles.contactText}>{phone}</Text>
               </View>
             ) : null}
-            {linkedin ? (
-              <View style={styles.contactRow}>
-                <View style={styles.contactBadge} />
-                <Text style={styles.contactText}>{linkedin.replace('https://', '')}</Text>
+            {location ? (
+              <View style={styles.contactItem}>
+                <View style={styles.contactBadge}>
+                  <Text style={styles.contactBadgeText}>L</Text>
+                </View>
+                <Text style={styles.contactText}>{location}</Text>
               </View>
             ) : null}
           </View>
 
-          {/* Education in Sidebar */}
-          {validEducation.length > 0 && (
-            <View style={styles.sidebarSection}>
-              <Text style={styles.sidebarSectionTitle}>Education</Text>
-              {validEducation.map((edu, i) => (
-                <View key={i} style={styles.eduItem} wrap={false}>
-                  <Text style={styles.eduDegree}>{edu.degree}</Text>
-                  <Text style={styles.eduSchool}>{edu.school}</Text>
-                  <Text style={styles.eduYear}>{edu.year}</Text>
+          {/* Skills */}
+          {validSkills.length > 0 && (
+            <View style={styles.sideSection}>
+              <Text style={styles.sideTitle}>Skills</Text>
+              <View style={styles.sideDivider} />
+              {validSkills.map((s, idx) => (
+                <View key={idx} style={styles.skillRow}>
+                  <Text style={styles.skillName}>{s.name}</Text>
+                  <SkillRating level={s.level} />
                 </View>
               ))}
             </View>
           )}
 
-          {/* Skills in Sidebar */}
-          {validSkills.length > 0 && (
-            <View style={styles.sidebarSection}>
-              <Text style={styles.sidebarSectionTitle}>Expertise</Text>
-              {validSkills.map((s, i) => (
-                <Text key={i} style={styles.skillText} wrap={false}>• {s.name}</Text>
+          {/* Languages */}
+          {validLanguages.length > 0 && (
+            <View style={styles.sideSection}>
+              <Text style={styles.sideTitle}>Languages</Text>
+              <View style={styles.sideDivider} />
+              {validLanguages.map((l, idx) => (
+                <View key={idx} style={styles.skillRow}>
+                  <Text style={styles.skillName}>{l.name}</Text>
+                  <SkillRating level={l.level} />
+                </View>
+              ))}
+            </View>
+          )}
+
+          {/* Education */}
+          {validEducation.length > 0 && (
+            <View style={styles.sideSection}>
+              <Text style={styles.sideTitle}>Education</Text>
+              <View style={styles.sideDivider} />
+              {validEducation.map((edu, idx) => (
+                <View key={idx} style={styles.eduItem}>
+                  <Text style={styles.eduSchool}>{edu.school}</Text>
+                  <Text style={styles.eduDegree}>{edu.degree}</Text>
+                  {edu.year ? <Text style={styles.eduYear}>{edu.year}</Text> : null}
+                </View>
               ))}
             </View>
           )}
         </View>
 
-        {/* RIGHT MAIN CONTENT */}
+        {/* --- MAIN CONTENT --- */}
         <View style={styles.main}>
-          {summary ? (
-            <View style={styles.mainSection} wrap={false}>
-              <View style={styles.mainSectionHeader}>
-                <View style={styles.goldBar} />
-                <Text style={styles.mainSectionTitle}>Executive Summary</Text>
-              </View>
-              <Text style={styles.summaryText}>{summary}</Text>
+          {/* Header Card */}
+          <View style={styles.headerCard}>
+            <Text style={styles.mainName}>{name}</Text>
+            <View style={styles.accentLineRow}>
+              <View style={styles.accentGold} />
+              <View style={styles.accentCharcoal} />
+              <View style={styles.accentCharcoal} />
             </View>
-          ) : null}
+            <Text style={styles.mainProfession}>{profession}</Text>
+          </View>
 
-          {validExperience.length > 0 && (
-            <View style={styles.mainSection}>
-              <View style={styles.mainSectionHeader}>
-                <View style={styles.goldBar} />
-                <Text style={styles.mainSectionTitle}>Professional Experience</Text>
+          {/* Body */}
+          <View style={styles.mainBody}>
+            {/* Profile / Summary */}
+            {summary ? (
+              <View style={styles.sectionBlock}>
+                <SectionHeader label="Profile" />
+                <Text style={styles.summaryText}>{summary}</Text>
               </View>
-              {validExperience.map((exp, i) => (
-                <View key={i} style={styles.expItem} wrap={false}>
-                  <View style={styles.expHeader}>
+            ) : null}
+
+            {/* Work Experience */}
+            {validExperience.length > 0 && (
+              <View style={styles.sectionBlock}>
+                <SectionHeader label="Work Experience" />
+                {validExperience.map((exp, idx) => (
+                  <View key={idx} style={styles.expItem}>
+                    <View style={styles.expMetaRow}>
+                      <Text style={styles.expCompany}>{exp.company}</Text>
+                      {exp.duration ? <Text style={styles.expDuration}>{exp.duration}</Text> : null}
+                    </View>
                     <Text style={styles.expPosition}>{exp.position}</Text>
-                    <Text style={styles.expDuration}>{exp.duration}</Text>
-                  </View>
-                  <Text style={styles.expCompany}>{exp.company}</Text>
-                  {exp.description ? <Text style={styles.expDesc}>{exp.description}</Text> : null}
-                  {exp.bullets && exp.bullets.length > 0 && (
-                    <View style={{ marginTop: 2 }}>
-                      {exp.bullets.map((b, bi) => (
+                    {exp.description ? <Text style={styles.expDesc}>{exp.description}</Text> : null}
+                    {exp.bullets &&
+                      exp.bullets.map((b, bi) => (
                         <View key={bi} style={styles.bulletRow}>
                           <Text style={styles.bulletDot}>•</Text>
                           <Text style={styles.bulletText}>{b}</Text>
                         </View>
                       ))}
+                  </View>
+                ))}
+              </View>
+            )}
+
+            {/* Projects */}
+            {validProjects.length > 0 && (
+              <View style={styles.sectionBlock}>
+                <SectionHeader label="Projects" />
+                {validProjects.map((proj, idx) => (
+                  <View key={idx} style={styles.expItem}>
+                    <Text style={styles.expPosition}>{proj.name}</Text>
+                    {proj.description ? <Text style={styles.expDesc}>{proj.description}</Text> : null}
+                  </View>
+                ))}
+              </View>
+            )}
+
+            {/* Internships */}
+            {validInternships.length > 0 && (
+              <View style={styles.sectionBlock}>
+                <SectionHeader label="Internships" />
+                {validInternships.map((intn, idx) => (
+                  <View key={idx} style={styles.expItem}>
+                    <View style={styles.expMetaRow}>
+                      <Text style={styles.expCompany}>{intn.company}</Text>
+                      {intn.duration ? <Text style={styles.expDuration}>{intn.duration}</Text> : null}
                     </View>
-                  )}
-                </View>
-              ))}
-            </View>
-          )}
-
-          {validProjects.length > 0 && (
-            <View style={styles.mainSection}>
-              <View style={styles.mainSectionHeader}>
-                <View style={styles.goldBar} />
-                <Text style={styles.mainSectionTitle}>Key Projects</Text>
+                    <Text style={styles.expPosition}>{intn.role}</Text>
+                    {intn.description ? <Text style={styles.expDesc}>{intn.description}</Text> : null}
+                  </View>
+                ))}
               </View>
-              {validProjects.map((proj, i) => (
-                <View key={i} style={styles.expItem} wrap={false}>
-                  <Text style={styles.expPosition}>{proj.name}</Text>
-                  {proj.technologies ? <Text style={styles.expCompany}>{proj.technologies}</Text> : null}
-                  {proj.description ? <Text style={styles.expDesc}>{proj.description}</Text> : null}
-                </View>
-              ))}
-            </View>
-          )}
+            )}
 
-          {validAchievements.length > 0 && (
-            <View style={styles.mainSection}>
-              <View style={styles.mainSectionHeader}>
-                <View style={styles.goldBar} />
-                <Text style={styles.mainSectionTitle}>Key Achievements</Text>
+            {/* Achievements */}
+            {validAchievements.length > 0 && (
+              <View style={styles.sectionBlock}>
+                <SectionHeader label="Achievements" />
+                {validAchievements.map((ach, idx) => (
+                  <View key={idx} style={styles.expItem}>
+                    <Text style={styles.expPosition}>{ach.title}</Text>
+                    {ach.description ? <Text style={styles.expDesc}>{ach.description}</Text> : null}
+                  </View>
+                ))}
               </View>
-              {validAchievements.map((ach, i) => (
-                <View key={i} style={{ marginBottom: 4 }} wrap={false}>
-                  <Text style={styles.expPosition}>{ach.title} {ach.organization ? `— ${ach.organization}` : ''}</Text>
-                  {ach.description ? <Text style={styles.expDesc}>{ach.description}</Text> : null}
-                </View>
-              ))}
-            </View>
-          )}
+            )}
+          </View>
         </View>
       </Page>
     </Document>
